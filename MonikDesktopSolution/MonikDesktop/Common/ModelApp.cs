@@ -32,6 +32,7 @@ namespace MonikDesktop
   {
     public long ID { get; set; }
     public DateTime Created { get; set; }
+    public string CreatedStr { get; set; }
     public DateTime Received { get; set; }
     public byte Level { get; set; }
     public byte Severity { get; set; }

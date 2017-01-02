@@ -14,6 +14,7 @@
     
     <Grid>
         <DataGrid 
+            x:Name="MainGrid"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             AutoGenerateColumns="False"
@@ -21,7 +22,7 @@
             HorizontalGridLinesBrush="Silver"
             VerticalGridLinesBrush="Silver"
             ItemsSource="{Binding LogsList}">
-            
+
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <Style.Triggers>
@@ -37,7 +38,7 @@
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="Auto" SortDirection="Descending" />
-                <DataGridTextColumn Header="Created" Binding="{Binding Created, StringFormat='HH:mm:ss'}" Width="Auto" />
+                <DataGridTextColumn Header="Created" Binding="{Binding CreatedStr}" Width="Auto" />
                 <DataGridTextColumn Header="Source" Binding="{Binding Instance.Source.Name}" Width="Auto" />
                 <DataGridTextColumn Header="Instance" Binding="{Binding Instance.Name}" Width="Auto" />
                 <DataGridTextColumn Header="Level" Binding="{Binding Path=Level, Converter={StaticResource LevelToName}}" Width="Auto" />

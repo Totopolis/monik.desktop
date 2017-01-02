@@ -23,7 +23,7 @@ namespace MonikDesktop.ViewModels
 
     private LogsModel FModel;
     public ShowModel Model { get { return FModel; } }
-
+    
     // TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
     public ReactiveList<LogItem> LogsList { get; set; }
 
@@ -120,6 +120,7 @@ namespace MonikDesktop.ViewModels
               {
                 ID = x.ID,
                 Created = x.Created.ToLocalTime(),
+                CreatedStr = x.Created.ToString(Model.DateTimeFormat),
                 Received = x.Received.ToLocalTime(),
                 Level = x.Level,
                 Severity = x.Severity,
