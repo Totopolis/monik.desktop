@@ -1,7 +1,4 @@
-﻿using Autofac;
-using Gemini.Framework;
-using MonikDesktop.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -18,7 +15,6 @@ namespace MonikDesktop
   {
     public App()
     {
-      Bootstrap.Init();
     }
   }
 }

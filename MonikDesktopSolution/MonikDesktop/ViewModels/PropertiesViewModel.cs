@@ -1,15 +1,14 @@
-﻿using Gemini.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Gemini.Framework.Services;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.ViewModels
 {
-  public class PropertiesViewModel : Tool, IPropertiesWindow
+  public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
   {
     private MApp FApp;
     public ShowModel Model { get; private set; }
@@ -18,7 +17,7 @@ namespace MonikDesktop.ViewModels
     public PropertiesViewModel(MApp aApp)
     {
       FApp = aApp;
-      DisplayName = "Properties";
+      //DisplayName = "Properties";
 
       aApp.WhenAnyValue(x => x.SelectedWindow).Subscribe(w => OnSelectedWindow(w));
     }
@@ -34,6 +33,11 @@ namespace MonikDesktop.ViewModels
     public IList<LevelType> LevelTypes { get { return Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList<LevelType>(); } }
     public IList<string> DatetimeFormats { get { return new string[] { "HH:mm:ss", "dd.MM.YYYY HH:mm:ss", "dd.MM HH:mm:ss" }; } }
 
-    public override PaneLocation PreferredLocation { get { return PaneLocation.Left; } }
+    [Reactive]
+    public string Title { get; set; }
+    [Reactive]
+    public bool CanClose { get; set; } = true;
+    [Reactive]
+    public ReactiveCommand CloseCommand { get; set; } = null;
   }
 }

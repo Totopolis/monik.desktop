@@ -1,4 +1,4 @@
-﻿using Gemini.Framework;
+﻿using MonikDesktop.Oak;
 using MonikDesktop.ViewModels;
 using ReactiveUI;
 using System;
@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace MonikDesktop
 {
-  public interface IApp
-  {
-    string Name { get; set; }
-    string ServerUrl { get; set; }
-    IMWindow SelectedWindow { get; set; }
-  }
-
   public interface IMonikService
   {
     ESource[] GetSources();
@@ -28,16 +21,12 @@ namespace MonikDesktop
   {
     Instance GetInstance(int aInstanceID);
   }
-
-  public interface IMWindow : ITool
-  {
-  }
   
-  public interface IStartupWindow : IMWindow
+  public interface IStartupWindow : IDockingWindow
   {
   }
 
-  public interface IShowWindow : IMWindow
+  public interface IShowWindow : IDockingWindow
   {
     ReactiveCommand StartCommand { get; set; }
     ReactiveCommand StopCommand { get; set; }
@@ -80,11 +69,11 @@ namespace MonikDesktop
   {
   }
 
-  public interface ISourcesWindow : IMWindow
+  public interface ISourcesWindow : IDockingWindow
   {
   }
 
-  public interface IPropertiesWindow : IMWindow
+  public interface IPropertiesWindow : IDockingWindow
   {
   }
 }

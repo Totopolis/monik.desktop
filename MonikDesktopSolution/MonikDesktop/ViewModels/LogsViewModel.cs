@@ -1,6 +1,4 @@
-﻿using Gemini.Framework;
-using Gemini.Framework.Services;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ using System.Windows.Media;
 
 namespace MonikDesktop.ViewModels
 {
-  public class LogsViewModel : Tool, ILogsWindow
+  public class LogsViewModel : ReactiveObject, ILogsWindow
   {
     private MApp FApp;
     private IMonikService FService;
@@ -42,8 +40,9 @@ namespace MonikDesktop.ViewModels
 
       FModel.Caption = "Logs";
 
-      FModel.WhenAnyValue(x => x.Caption, x => x.Online)
-        .Subscribe(v => this.DisplayName = v.Item1 + (v.Item2 ? " >" : " ||"));
+      // TODO:
+      //FModel.WhenAnyValue(x => x.Caption, x => x.Online)
+        //.Subscribe(v => this.DisplayName = v.Item1 + (v.Item2 ? " >" : " ||"));
 
       var _canStart = FModel.WhenAny(x => x.Online, x => !x.Value);
       StartCommand = ReactiveCommand.Create(OnStart, _canStart);
@@ -133,9 +132,11 @@ namespace MonikDesktop.ViewModels
 
     public long? LastID { get; private set; } = null;
 
-    public override PaneLocation PreferredLocation
-    {
-      get { return PaneLocation.Right; }
-    }
+    [Reactive]
+    public string Title { get; set; }
+    [Reactive]
+    public bool CanClose { get; set; } = true;
+    [Reactive]
+    public ReactiveCommand CloseCommand { get; set; } = null;
   }
 }

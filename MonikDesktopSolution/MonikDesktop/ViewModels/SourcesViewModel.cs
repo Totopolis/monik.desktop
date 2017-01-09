@@ -1,6 +1,4 @@
-﻿using Gemini.Framework;
-using Gemini.Framework.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +20,17 @@ namespace MonikDesktop.ViewModels
     public bool Checked { get; set; }
   }
 
-  public class SourcesViewModel : Tool, ISourcesWindow
+  public class SourcesViewModel : ReactiveObject, ISourcesWindow
   {
     private IMonikService FService;
     public ReactiveList<SourceItem> SourceItems { get; private set; } = null;
+
+    [Reactive]
+    public string Title { get; set; }
+    [Reactive]
+    public bool CanClose { get; set; } = true;
+    [Reactive]
+    public ReactiveCommand CloseCommand { get; set; } = null;
 
     private ReactiveList<short> FGroups = null;
     private ReactiveList<int> FInstances = null;
@@ -33,7 +38,7 @@ namespace MonikDesktop.ViewModels
     public SourcesViewModel(MApp aApp, IMonikService aService)
     {
       FService = aService;
-      DisplayName = "Sources";
+      //DisplayName = "Sources";
 
       aApp.WhenAnyValue(x => x.SelectedWindow).Subscribe(w => OnSelectedWindow(w));
     }
@@ -127,10 +132,5 @@ namespace MonikDesktop.ViewModels
         }
       }
     }
-
-    public override PaneLocation PreferredLocation
-    {
-      get { return PaneLocation.Left; }
-    }
-  }
+  }//end of class
 }

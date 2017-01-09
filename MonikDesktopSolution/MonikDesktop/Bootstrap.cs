@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using MonikDesktop.Oak;
 using MonikDesktop.ViewModels;
+using MonikDesktop.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace MonikDesktop
       var builder = new ContainerBuilder();
 
       builder.RegisterType<MApp>().SingleInstance();
+      builder.RegisterType<Shell>().SingleInstance();
       builder.RegisterType<MonikService>().As<IMonikService>();
       builder.RegisterType<SourcesCache>().As<ISourcesCache>().SingleInstance();
       builder.RegisterType<LogsViewModel>().As<ILogsWindow>();
@@ -25,6 +28,15 @@ namespace MonikDesktop
       builder.RegisterType<StartupViewModel>().As<IStartupWindow>().SingleInstance();
 
       Container = builder.Build();
+
+      var _shell = Container.Resolve<Shell>();
+
+      _shell.RegisterModelView(typeof(IStartupWindow), typeof(StartupView));
+      _shell.RegisterModelView(typeof(ILogsWindow), typeof(LogsView));
+      _shell.RegisterModelView(typeof(IPropertiesWindow), typeof(PropertiesView));
+      _shell.RegisterModelView(typeof(ISourcesWindow), typeof(SourcesView));
+
+      Container.Resolve<MApp>().ServerUrl = Properties.Settings.Default.ServerUrl;
     }
   }
 }
