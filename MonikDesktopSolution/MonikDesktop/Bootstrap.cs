@@ -31,10 +31,10 @@ namespace MonikDesktop
 
       var _shell = Container.Resolve<Shell>();
 
-      _shell.RegisterModelView(typeof(IStartupWindow), typeof(StartupView));
-      _shell.RegisterModelView(typeof(ILogsWindow), typeof(LogsView));
-      _shell.RegisterModelView(typeof(IPropertiesWindow), typeof(PropertiesView));
-      _shell.RegisterModelView(typeof(ISourcesWindow), typeof(SourcesView));
+      _shell.RegisterModelView<IStartupWindow, StartupView>();
+      _shell.RegisterModelView<ILogsWindow, LogsView>();
+      _shell.RegisterModelView<IPropertiesWindow, PropertiesView>();
+      _shell.RegisterModelView<ISourcesWindow, SourcesView>();
 
       Container.Resolve<MApp>().ServerUrl = Properties.Settings.Default.ServerUrl;
     }

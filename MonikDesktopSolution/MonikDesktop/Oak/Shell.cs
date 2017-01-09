@@ -26,9 +26,11 @@ namespace MonikDesktop.Oak
       FModelViews = new Dictionary<Type, Type>();
     }
 
-    public void RegisterModelView(Type aModel, Type aView)
+    public void RegisterModelView<MODEL, VIEW>() 
+      where MODEL : IDockingWindow
+      where VIEW : UserControl
     {
-      FModelViews.Add(aModel, aView);
+      FModelViews.Add(typeof(MODEL), typeof(VIEW));
     }
 
     public void AttachDocker(DockingManager aDocker)
