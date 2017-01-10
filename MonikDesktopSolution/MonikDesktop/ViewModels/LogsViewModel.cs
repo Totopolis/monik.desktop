@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Media;
+using MonikDesktop.Oak;
 
 namespace MonikDesktop.ViewModels
 {
   public class LogsViewModel : ReactiveObject, ILogsWindow
   {
-    private MApp FApp;
     private IMonikService FService;
     private ISourcesCache FCache;
 
@@ -29,9 +29,8 @@ namespace MonikDesktop.ViewModels
     public ReactiveCommand StopCommand { get; set; }
     public ReactiveCommand<Unit, LogItem[]> UpdateCommand { get; set; }
 
-    public LogsViewModel(MApp aApp, IMonikService aService, ISourcesCache aCache)
+    public LogsViewModel(IMonikService aService, ISourcesCache aCache)
     {
-      FApp = aApp;
       FService = aService;
       FCache = aCache;
 
@@ -40,9 +39,8 @@ namespace MonikDesktop.ViewModels
 
       FModel.Caption = "Logs";
 
-      // TODO:
-      //FModel.WhenAnyValue(x => x.Caption, x => x.Online)
-        //.Subscribe(v => this.DisplayName = v.Item1 + (v.Item2 ? " >" : " ||"));
+      FModel.WhenAnyValue(x => x.Caption, x => x.Online)
+        .Subscribe(v => this.Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
       var _canStart = FModel.WhenAny(x => x.Online, x => !x.Value);
       StartCommand = ReactiveCommand.Create(OnStart, _canStart);
@@ -119,7 +117,7 @@ namespace MonikDesktop.ViewModels
               {
                 ID = x.ID,
                 Created = x.Created.ToLocalTime(),
-                CreatedStr = x.Created.ToString(Model.DateTimeFormat),
+                CreatedStr = x.Created.ToLocalTime().ToString(Model.DateTimeFormat),
                 Received = x.Received.ToLocalTime(),
                 Level = x.Level,
                 Severity = x.Severity,

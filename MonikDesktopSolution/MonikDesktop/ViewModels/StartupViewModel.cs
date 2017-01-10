@@ -15,28 +15,28 @@ namespace MonikDesktop.ViewModels
   public class StartupViewModel : ReactiveObject, IStartupWindow
   {
     private Shell FShell;
-    private MApp FApp;
+    private OakApplication FAppModel;
 
-    public MApp App { get { return FApp; } }
+    public OakApplication App { get { return FAppModel; } }
 
     public ReactiveCommand NewLogCommand { get; set; }
     public ReactiveCommand NewKeepAliveCommand { get; set; }
 
-    public StartupViewModel(MApp aApp, Shell aShell)
+    public StartupViewModel(OakApplication aApp, Shell aShell)
     {
       FShell = aShell;
-      FApp = aApp;
+      FAppModel = aApp;
 
       Title = "App settings";
 
-      FApp.ObservableForProperty(x => x.ServerUrl)
+      FAppModel.ObservableForProperty(x => x.ServerUrl)
         .Subscribe(v=>
         {
           Properties.Settings.Default.ServerUrl = v.Value;
           Properties.Settings.Default.Save();
         });
 
-      var _canNew = FApp.WhenAny(x => x.ServerUrl, x => !String.IsNullOrWhiteSpace(x.Value));
+      var _canNew = FAppModel.WhenAny(x => x.ServerUrl, x => !String.IsNullOrWhiteSpace(x.Value));
       NewLogCommand = ReactiveCommand.Create(NewLog, _canNew);
       NewKeepAliveCommand = ReactiveCommand.Create(NewLog, _canNew);
     }
@@ -58,7 +58,7 @@ namespace MonikDesktop.ViewModels
       FShell.Show(_props);
       FShell.Show(_sources);
 
-      FApp.SelectedWindow = _log;
+      FShell.SelectedWindow = _log;
     }
   }
 }

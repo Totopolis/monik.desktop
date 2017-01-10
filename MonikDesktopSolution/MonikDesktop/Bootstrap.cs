@@ -18,7 +18,7 @@ namespace MonikDesktop
     {
       var builder = new ContainerBuilder();
 
-      builder.RegisterType<MApp>().SingleInstance();
+      builder.RegisterType<OakApplication>().SingleInstance();
       builder.RegisterType<Shell>().SingleInstance();
       builder.RegisterType<MonikService>().As<IMonikService>();
       builder.RegisterType<SourcesCache>().As<ISourcesCache>().SingleInstance();
@@ -36,7 +36,7 @@ namespace MonikDesktop
       _shell.RegisterModelView<IPropertiesWindow, PropertiesView>();
       _shell.RegisterModelView<ISourcesWindow, SourcesView>();
 
-      Container.Resolve<MApp>().ServerUrl = Properties.Settings.Default.ServerUrl;
+      Container.Resolve<OakApplication>().ServerUrl = Properties.Settings.Default.ServerUrl;
     }
   }
 }

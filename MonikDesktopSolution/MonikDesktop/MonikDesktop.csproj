@@ -159,7 +159,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\MApp.cs" />
+    <Compile Include="Common\OakApplication.cs" />
     <Compile Include="Common\Interfaces.cs" />
     <Compile Include="Common\ModelApi.cs" />
     <Compile Include="Common\MonikService.cs" />

@@ -11,9 +11,9 @@ namespace MonikDesktop
 {
   public class MonikService : IMonikService
   {
-    private MApp FApp;
+    private OakApplication FApp;
 
-    public MonikService(MApp aApp)
+    public MonikService(OakApplication aApp)
     {
       FApp = aApp;
     }

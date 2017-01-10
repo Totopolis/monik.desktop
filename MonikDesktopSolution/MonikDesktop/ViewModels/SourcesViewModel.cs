@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using MonikDesktop.Oak;
+using System.Reactive.Linq;
 
 namespace MonikDesktop.ViewModels
 {
@@ -35,12 +37,14 @@ namespace MonikDesktop.ViewModels
     private ReactiveList<short> FGroups = null;
     private ReactiveList<int> FInstances = null;
 
-    public SourcesViewModel(MApp aApp, IMonikService aService)
+    public SourcesViewModel(Shell aShell, IMonikService aService)
     {
       FService = aService;
-      //DisplayName = "Sources";
+      Title = "Sources";
 
-      aApp.WhenAnyValue(x => x.SelectedWindow).Subscribe(w => OnSelectedWindow(w));
+      aShell.WhenAnyValue(x => x.SelectedWindow)
+        .Where(v => v is IShowWindow)
+        .Subscribe(v => OnSelectedWindow(v as IShowWindow));
     }
 
     private void OnSelectedWindow(IShowWindow aWindow)

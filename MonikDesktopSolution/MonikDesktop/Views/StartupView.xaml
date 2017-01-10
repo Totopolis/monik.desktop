@@ -9,7 +9,7 @@
     <Grid>
         <StackPanel Orientation="Vertical" Margin="3">
             <Label>Window header</Label>
-            <TextBox Text="{Binding Path=App.Name}"/>
+            <TextBox Text="{Binding Path=App.Title}"/>
             <Label>Server Url</Label>
             <TextBox Text="{Binding Path=App.ServerUrl}"/>
             <Label>Actions</Label>

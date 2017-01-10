@@ -3,6 +3,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -15,9 +16,11 @@ namespace MonikDesktop.Oak
   public class Shell : ReactiveObject
   {
     [Reactive]
-    public ReactiveList<IDockingWindow> Windows { get; set; }
+    public ReactiveList<IDockingWindow> Windows { get; private set; }
+    [Reactive]
+    public IDockingWindow SelectedWindow { get; set; } = null;
 
-    private DockingManager FDocker;
+    private DockingManager FDocker = null;
     private Dictionary<Type, Type> FModelViews;
 
     public Shell()
@@ -36,6 +39,11 @@ namespace MonikDesktop.Oak
     public void AttachDocker(DockingManager aDocker)
     {
       FDocker = aDocker;
+
+      // TODO: not work
+      FDocker.ObservableForProperty(x => x.ActiveContent)
+        .Where(v => v is IDockingWindow)
+        .Subscribe(v => this.SelectedWindow = v as IDockingWindow);
     }
 
     public void Show(IDockingWindow aWondow)
@@ -60,11 +68,15 @@ namespace MonikDesktop.Oak
       var layoutdocpane = new LayoutDocumentPane();
 
       var LayoutDocument = new LayoutDocument();
-      LayoutDocument.Title = "Some text";
+
+      aWondow.WhenAnyValue(x => x.Title)
+        .Subscribe(v => LayoutDocument.Title = v);
+
       LayoutDocument.Content = _view;
 
       layoutdocpane.Children.Add(LayoutDocument);
       FDocker.Layout.RootPanel.Children.Add(layoutdocpane);
+      //FDocker.Layout.RootPanel.Orientation = Orientation.Vertical;
     }
   }
 }

@@ -5,21 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using MonikDesktop.Oak;
+using System.Reactive.Linq;
 
 namespace MonikDesktop.ViewModels
 {
   public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
   {
-    private MApp FApp;
     public ShowModel Model { get; private set; }
     public IShowWindow ShowWindow { get; private set; }
 
-    public PropertiesViewModel(MApp aApp)
+    public PropertiesViewModel(Shell aShell)
     {
-      FApp = aApp;
-      //DisplayName = "Properties";
+      Title = "Properties";
 
-      aApp.WhenAnyValue(x => x.SelectedWindow).Subscribe(w => OnSelectedWindow(w));
+      aShell.WhenAnyValue(x => x.SelectedWindow)
+        .Where(v => v is IShowWindow)
+        .Subscribe(v => OnSelectedWindow(v as IShowWindow));
     }
 
     private void OnSelectedWindow(IShowWindow aWindow)

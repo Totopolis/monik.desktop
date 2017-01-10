@@ -7,13 +7,10 @@
                       xmlns:vm="clr-namespace:MonikDesktop.ViewModels"
                       xmlns:v="clr-namespace:MonikDesktop.Views"
                       xmlns:l="clr-namespace:MonikDesktop"
-                      Title="Monik Desktop"
                       Height="600"
                       Width="800">
 
-    <dock:DockingManager Name="MainDocker"
-                         
-                         ActiveContentChanged="DockingManager_ActiveContentChanged">
+    <dock:DockingManager Name="MainDocker">
 
         <!--dock:DockingManager.Resources>
 DocumentsSource="{Binding Windows}" 

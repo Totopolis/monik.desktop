@@ -13,4 +13,9 @@ namespace MonikDesktop.Oak
     bool CanClose { get; set; }
     ReactiveCommand CloseCommand { get; set; }
   }
+
+  public interface IOakApplication
+  {
+    string Title { get; set; }
+  }
 }

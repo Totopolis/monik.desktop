@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using MonikDesktop.Oak;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,14 @@ using System.Threading.Tasks;
 
 namespace MonikDesktop
 {
-  public class MApp : ReactiveObject
+  public class OakApplication : ReactiveObject, IOakApplication
   {
     [Reactive]
-    public string Name { get; set; } = "Monik Desktop";
-    [Reactive]
-    public IShowWindow SelectedWindow { get; set; } = null;
-    [Reactive]
     public string ServerUrl { get; set; } = "";
+    [Reactive]
+    public string Title { get; set; } = "Monik Desktop";
 
-    public MApp()
+    public OakApplication()
     {
     }
 

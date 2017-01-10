@@ -1,8 +1,7 @@
 ﻿using Autofac;
 using MahApps.Metro.Controls;
 using MonikDesktop.Oak;
-using MonikDesktop.ViewModels;
-using MonikDesktop.Views;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace MonikDesktop
 {
@@ -42,16 +40,15 @@ namespace MonikDesktop
 
       Bootstrap.Init();
 
+      var _app = Bootstrap.Container.Resolve<OakApplication>();
+      _app.WhenAnyValue(x => x.Title)
+        .Subscribe(v => this.Title = v);
+
       var _shell = Bootstrap.Container.Resolve<Shell>();
       _shell.AttachDocker(MainDocker);
 
       var _startup = Bootstrap.Container.Resolve<IStartupWindow>();
       _shell.Show(_startup);
-    }
-
-    private void DockingManager_ActiveContentChanged(object sender, EventArgs e)
-    {
-      var _win = sender as IDockingWindow;
     }
   }
 
