@@ -25,7 +25,7 @@ namespace MonikDesktop
     public string Name { get; set; }
     public bool IsDefault { get; set; }
 
-    public Instance[] Instances { get; set; }
+    public List<Instance> Instances { get; set; }
   }
 
   public class LogItem

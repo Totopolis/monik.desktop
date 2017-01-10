@@ -14,8 +14,13 @@ namespace MonikDesktop
     private Instance FUnknownInstance;
 
     private List<Group> FGroups;
+    public Group[] Groups { get { return FGroups.ToArray(); } }
+
     private List<Source> FSources;
+    public Source[] Sources { get { return FSources.ToArray(); } }
+
     private Dictionary<int, Instance> FInstances;
+    public Instance[] Instances { get { return FInstances.Values.ToArray(); } }
 
     public SourcesCache(IMonikService aService)
     {
@@ -26,6 +31,7 @@ namespace MonikDesktop
 
       var _sources = FService.GetSources();
       var _instances = FService.GetInstances();
+      var _groups = FService.GetGroups();
 
       FSources = _sources.Select(x => new Source()
       {
@@ -48,6 +54,23 @@ namespace MonikDesktop
         };
 
         FInstances.Add(_instance.ID, _instance);
+      }
+
+      FGroups = new List<Group>();
+      foreach (var it in _groups)
+      {
+        Group _gr = new Group()
+        {
+          ID = it.ID,
+          IsDefault = it.IsDefault,
+          Name = it.Name
+        };
+
+        _gr.Instances = it.Instances
+          .Where(v => FInstances.Keys.Count(x => x == v) > 0)
+          .Select(v => FInstances.Values.First(x => x.ID == v)).ToList();
+
+        FGroups.Add(_gr);
       }
     }
 

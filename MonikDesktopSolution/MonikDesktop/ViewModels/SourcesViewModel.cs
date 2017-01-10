@@ -24,7 +24,7 @@ namespace MonikDesktop.ViewModels
 
   public class SourcesViewModel : ReactiveObject, ISourcesWindow
   {
-    private IMonikService FService;
+    private ISourcesCache FCache;
     public ReactiveList<SourceItem> SourceItems { get; private set; } = null;
 
     [Reactive]
@@ -37,9 +37,9 @@ namespace MonikDesktop.ViewModels
     private ReactiveList<short> FGroups = null;
     private ReactiveList<int> FInstances = null;
 
-    public SourcesViewModel(Shell aShell, IMonikService aService)
+    public SourcesViewModel(Shell aShell, ISourcesCache aCache)
     {
-      FService = aService;
+      FCache = aCache;
       Title = "Sources";
 
       aShell.WhenAnyValue(x => x.SelectedWindow)
@@ -62,23 +62,20 @@ namespace MonikDesktop.ViewModels
       FGroups = aWindow.Model.Groups;
       FInstances = aWindow.Model.Instances;
 
-      var _groups = FService.GetGroups();
-      var _sources = FService.GetSources();
-      var _instances = FService.GetInstances();
+      var _groups = FCache.Groups;
+      var _sources = FCache.Sources;
+      var _instances = FCache.Instances;
 
       foreach (var gr in _groups)
         foreach (var inst in gr.Instances)
         {
-          EInstance _instance = _instances.First(x => x.ID == inst);
-          ESource _source = _sources.First(x => x.ID == _instance.SourceID);
-
           SourceItem _si = new SourceItem()
           {
             GroupID = gr.ID,
             GroupName = gr.Name,
-            SourceName = _source.Name,
-            InstanceName = _instance.Name,
-            InstanceID = inst
+            SourceName = inst.Source.Name,
+            InstanceName = inst.Name,
+            InstanceID = inst.ID
           };
 
           SourceItems.Add(_si);
@@ -87,13 +84,11 @@ namespace MonikDesktop.ViewModels
       foreach (var inst in _instances)
         if (SourceItems.Count(x => x.InstanceID == inst.ID) == 0)
         {
-          ESource _source = _sources.First(x => x.ID == inst.SourceID);
-
           SourceItem _si = new SourceItem()
           {
             GroupID = 0,
             GroupName = "[NOGROUP]",
-            SourceName = _source.Name,
+            SourceName = inst.Source.Name,
             InstanceName = inst.Name,
             InstanceID = inst.ID
           };
