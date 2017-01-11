@@ -80,7 +80,7 @@ namespace MonikDesktop
         FInstances[aInstanceID] : 
         FUnknownInstance;
 
-      // TODO: if unknown instance then update from api
+      // TODO: if unknown instance then update from api?
     }
   }//end of class
 }

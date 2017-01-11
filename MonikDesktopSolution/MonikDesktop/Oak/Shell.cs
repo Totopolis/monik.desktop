@@ -52,11 +52,6 @@ namespace MonikDesktop.Oak
       FLeftPane = new LayoutAnchorablePane();
       FLayoutRoot.RootPanel.Children.Insert(0, FLeftPane);
       FLeftPane.DockWidth = new System.Windows.GridLength(410);
-
-      // TODO: not work
-      /*FDocker.ObservableForProperty(x => x.ActiveContent)
-        .Where(v => v is IDockingWindow)
-        .Subscribe(v => this.SelectedWindow = v as IDockingWindow);*/
     }
 
     public void ShowTool(IDockingWindow aWindow)

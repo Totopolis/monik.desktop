@@ -19,7 +19,7 @@ namespace MonikDesktop.ViewModels
     public int InstanceID { get; set; }
 
     [Reactive]
-    public bool Checked { get; set; }
+    public bool Checked { get; set; } = false;
   }
 
   public class SourcesViewModel : ReactiveObject, ISourcesWindow
@@ -36,33 +36,24 @@ namespace MonikDesktop.ViewModels
     [Reactive]
     public ReactiveCommand CloseCommand { get; set; } = null;
 
-    private ReactiveList<short> FGroups = null;
-    private ReactiveList<int> FInstances = null;
+    private ReactiveList<short> FSelectedGroups = null;
+    private ReactiveList<int> FSelectedInstances = null;
 
     public SourcesViewModel(Shell aShell, ISourcesCache aCache)
     {
       FCache = aCache;
       Title = "Sources";
 
+      FillSourcesTree();
+
       aShell.WhenAnyValue(x => x.SelectedWindow)
         .Where(v => v is IShowWindow)
         .Subscribe(v => OnSelectedWindow(v as IShowWindow));
     }
 
-    private void OnSelectedWindow(IShowWindow aWindow)
+    private void FillSourcesTree()
     {
-      if (aWindow == null)
-      {
-        SourceItems = null;
-        FGroups = null;
-        FInstances = null;
-
-        return;
-      }
-
-      SourceItems = new ReactiveList<SourceItem>() { ChangeTrackingEnabled = true };
-      FGroups = aWindow.Model.Groups;
-      FInstances = aWindow.Model.Instances;
+      SourceItems = new ReactiveList<SourceItem>();
 
       var _groups = FCache.Groups;
       var _sources = FCache.Sources;
@@ -98,9 +89,30 @@ namespace MonikDesktop.ViewModels
           SourceItems.Add(_si);
         }
 
-      // TODO: fill from IShowWindow !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SourceItems.ChangeTrackingEnabled = true;
 
       SourceItems.ItemChanged.Subscribe(x => OnSourceChanged(x.Sender));
+    }
+
+    private void OnSelectedWindow(IShowWindow aWindow)
+    {
+      SourceItems.ChangeTrackingEnabled = false;
+
+      foreach (var it in SourceItems)
+        it.Checked = false;
+
+      FSelectedGroups = aWindow.Model.Groups;
+      FSelectedInstances = aWindow.Model.Instances;
+
+      // fill from IShowWindow
+      foreach (var it in SourceItems)
+        if (FSelectedGroups.Contains(it.GroupID) || FSelectedInstances.Contains(it.InstanceID))
+          it.Checked = true;
+
+      SourceItems.ChangeTrackingEnabled = true;
+
+      // update view
+      this.RaisePropertyChanged("SourceItems");
     }
 
     /// <summary>
@@ -110,26 +122,26 @@ namespace MonikDesktop.ViewModels
     private void OnSourceChanged(SourceItem aItem)
     {
       if (aItem.Checked)
-        FInstances.Add(aItem.InstanceID);
+        FSelectedInstances.Add(aItem.InstanceID);
       else
-        FInstances.Remove(aItem.InstanceID);
+        FSelectedInstances.Remove(aItem.InstanceID);
 
-      if (!aItem.Checked && aItem.GroupID > 0 && FGroups.Contains(aItem.GroupID))
+      if (!aItem.Checked && aItem.GroupID > 0 && FSelectedGroups.Contains(aItem.GroupID))
       {
         var _checkedItems = SourceItems.Where(x => x.GroupID == aItem.GroupID && x.Checked).Select(x => x.InstanceID);
-        FInstances.AddRange(_checkedItems);
-        FGroups.Remove(aItem.GroupID);
+        FSelectedInstances.AddRange(_checkedItems);
+        FSelectedGroups.Remove(aItem.GroupID);
       }
 
-      if (aItem.Checked && aItem.GroupID > 0 && !FGroups.Contains(aItem.GroupID))
+      if (aItem.Checked && aItem.GroupID > 0 && !FSelectedGroups.Contains(aItem.GroupID))
       {
         var _allItems = SourceItems.Where(x => x.GroupID == aItem.GroupID);
         var _checkedItems = _allItems.Where(x => x.Checked);
 
         if (_allItems.Count() == _checkedItems.Count())
         {
-          FGroups.Add(aItem.GroupID);
-          FInstances.RemoveAll(_allItems.Select(x => x.InstanceID));
+          FSelectedGroups.Add(aItem.GroupID);
+          FSelectedInstances.RemoveAll(_allItems.Select(x => x.InstanceID));
         }
       }
     }
