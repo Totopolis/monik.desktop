@@ -10,10 +10,11 @@
                       Height="700"
                       Width="900">
 
-    <dock:DockingManager Name="MainDocker">
+    <dock:DockingManager Name="MainDocker"
+                         ActiveContentChanged="MainDocker_ActiveContentChanged">
 
         <!--dock:DockingManager.Resources>
-DocumentsSource="{Binding Windows}" 
+ DocumentsSource="{Binding Windows}"
             <DataTemplate DataType="{x:Type vm:StartupViewModel}">
                 <v:StartupView />
             </DataTemplate>

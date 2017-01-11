@@ -107,7 +107,17 @@ namespace MonikDesktop.ViewModels
         Groups = FModel.Groups.ToArray(),
         Instances = FModel.Instances.ToArray()
       };
-      var _response = FService.GetLogs(_req);
+
+      ELog_[] _response;
+
+      try
+      {
+        _response = FService.GetLogs(_req);
+      }
+      catch
+      {
+        return new LogItem[] { new LogItem() { Body = "INTERNAL ERROR" } };
+      }
 
       if (_response.Length > 0)
         LastID = _response.Max(x => x.ID);

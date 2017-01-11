@@ -12,7 +12,9 @@ namespace MonikDesktop.ViewModels
 {
   public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
   {
+    [Reactive]
     public ShowModel Model { get; private set; }
+    [Reactive]
     public IShowWindow ShowWindow { get; private set; }
 
     public PropertiesViewModel(Shell aShell)

@@ -50,6 +50,8 @@ namespace MonikDesktop.ViewModels
 
     private void NewLog()
     {
+      // TODO: check server url
+
       var _log = Bootstrap.Container.Resolve<ILogsWindow>();
       var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
       var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();

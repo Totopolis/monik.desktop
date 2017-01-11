@@ -18,7 +18,9 @@
             ItemsSource="{Binding Source={StaticResource customerView}}"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
-            AutoGenerateColumns="False">
+            AutoGenerateColumns="False"
+            GridLinesVisibility="Horizontal"
+            HorizontalGridLinesBrush="Silver">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Source" Binding="{Binding SourceName}"/>
@@ -55,8 +57,15 @@
             
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="White"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Pink"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
         </DataGrid>

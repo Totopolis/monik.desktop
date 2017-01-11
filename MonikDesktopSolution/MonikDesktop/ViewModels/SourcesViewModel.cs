@@ -25,6 +25,8 @@ namespace MonikDesktop.ViewModels
   public class SourcesViewModel : ReactiveObject, ISourcesWindow
   {
     private ISourcesCache FCache;
+
+    [Reactive]
     public ReactiveList<SourceItem> SourceItems { get; private set; } = null;
 
     [Reactive]
@@ -96,7 +98,7 @@ namespace MonikDesktop.ViewModels
           SourceItems.Add(_si);
         }
 
-      // TODO: fill from IShowWindow
+      // TODO: fill from IShowWindow !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       SourceItems.ItemChanged.Subscribe(x => OnSourceChanged(x.Sender));
     }

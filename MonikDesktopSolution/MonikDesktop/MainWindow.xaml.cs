@@ -36,7 +36,6 @@ namespace MonikDesktop
       //var _dts = new OakDataTemplateSelector();
       //var _dt = _dts.RegisterDataTemplate(typeof(StartupViewModel), typeof(StartupView));
       //MainDocker.LayoutItemTemplateSelector = _dts;
-      //this.DataContext = _shell;
 
       Bootstrap.Init();
 
@@ -47,8 +46,21 @@ namespace MonikDesktop
       var _shell = Bootstrap.Container.Resolve<Shell>();
       _shell.AttachDocker(MainDocker);
 
+      this.DataContext = _shell;
+
       var _startup = Bootstrap.Container.Resolve<IStartupWindow>();
       _shell.ShowDocument(_startup);
+    }
+
+    private void MainDocker_ActiveContentChanged(object sender, EventArgs e)
+    {
+      var _uc = MainDocker.ActiveContent as UserControl;
+
+      if (_uc != null && _uc.DataContext is IDockingWindow)
+      {
+        var _shell = Bootstrap.Container.Resolve<Shell>();
+        _shell.SelectedWindow = _uc.DataContext as IDockingWindow;
+       }
     }
   }
 

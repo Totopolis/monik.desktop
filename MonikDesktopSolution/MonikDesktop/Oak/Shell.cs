@@ -15,8 +15,8 @@ namespace MonikDesktop.Oak
   // http://stackoverflow.com/questions/12493117/wpf-avalondock-v2-0-layoutdocument
   public class Shell : ReactiveObject
   {
-    [Reactive]
-    public ReactiveList<IDockingWindow> Windows { get; private set; }
+    private ReactiveList<IDockingWindow> FWindows;
+
     [Reactive]
     public IDockingWindow SelectedWindow { get; set; } = null;
 
@@ -29,7 +29,7 @@ namespace MonikDesktop.Oak
 
     public Shell()
     {
-      Windows = new ReactiveList<IDockingWindow>();
+      FWindows = new ReactiveList<IDockingWindow>();
       FModelViews = new Dictionary<Type, Type>();
     }
 
@@ -54,14 +54,18 @@ namespace MonikDesktop.Oak
       FLeftPane.DockWidth = new System.Windows.GridLength(410);
 
       // TODO: not work
-      FDocker.ObservableForProperty(x => x.ActiveContent)
+      /*FDocker.ObservableForProperty(x => x.ActiveContent)
         .Where(v => v is IDockingWindow)
-        .Subscribe(v => this.SelectedWindow = v as IDockingWindow);
+        .Subscribe(v => this.SelectedWindow = v as IDockingWindow);*/
     }
 
     public void ShowTool(IDockingWindow aWindow)
     {
+      if (FWindows.Contains(aWindow))
+        return;
+
       var _view = CreateView(aWindow);
+      FWindows.Add(aWindow);
 
       var _layoutDocument = new LayoutAnchorable();
 
@@ -71,13 +75,12 @@ namespace MonikDesktop.Oak
       _layoutDocument.Content = _view;
 
       FLeftPane.Children.Add(_layoutDocument);
-
-      _layoutDocument.Show();
     }
 
     public void ShowDocument(IDockingWindow aWondow)
     {
       var _view = CreateView(aWondow);
+      FWindows.Add(aWondow);
 
       var _layoutDocument = new LayoutDocument();
 
@@ -87,6 +90,8 @@ namespace MonikDesktop.Oak
       _layoutDocument.Content = _view;
 
       FDocumentPane.Children.Add(_layoutDocument);
+
+      _layoutDocument.IsActive = true;
     }
 
     private UserControl CreateView(IDockingWindow aModel)

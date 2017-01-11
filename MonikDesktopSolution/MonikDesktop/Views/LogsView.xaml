@@ -21,17 +21,24 @@
             RowHeight="20"
             HorizontalGridLinesBrush="Silver"
             VerticalGridLinesBrush="Silver"
+            GridLinesVisibility="Horizontal"
+            Foreground="Black"
             ItemsSource="{Binding LogsList}">
 
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Severity}" Value="10">
+                            <Setter Property="Foreground" Value="White"></Setter>
                             <Setter Property="Background" Value="Red"></Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Severity}" Value="20">
                             <Setter Property="Background" Value="Yellow"></Setter>
                         </DataTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Pink"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
