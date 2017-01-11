@@ -54,9 +54,9 @@ namespace MonikDesktop.ViewModels
       var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
       var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();
 
-      FShell.Show(_log);
-      FShell.Show(_props);
-      FShell.Show(_sources);
+      FShell.ShowDocument(_log);
+      FShell.ShowTool(_props);
+      FShell.ShowTool(_sources);
 
       FShell.SelectedWindow = _log;
     }

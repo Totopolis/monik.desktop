@@ -48,7 +48,7 @@ namespace MonikDesktop
       _shell.AttachDocker(MainDocker);
 
       var _startup = Bootstrap.Container.Resolve<IStartupWindow>();
-      _shell.Show(_startup);
+      _shell.ShowDocument(_startup);
     }
   }
 

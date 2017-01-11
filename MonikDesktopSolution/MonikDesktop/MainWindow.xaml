@@ -7,8 +7,8 @@
                       xmlns:vm="clr-namespace:MonikDesktop.ViewModels"
                       xmlns:v="clr-namespace:MonikDesktop.Views"
                       xmlns:l="clr-namespace:MonikDesktop"
-                      Height="600"
-                      Width="800">
+                      Height="700"
+                      Width="900">
 
     <dock:DockingManager Name="MainDocker">
 

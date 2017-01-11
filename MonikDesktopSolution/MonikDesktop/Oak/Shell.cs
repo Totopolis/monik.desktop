@@ -21,6 +21,10 @@ namespace MonikDesktop.Oak
     public IDockingWindow SelectedWindow { get; set; } = null;
 
     private DockingManager FDocker = null;
+    private LayoutRoot FLayoutRoot = null;
+    private LayoutDocumentPane FDocumentPane = null;
+    private LayoutAnchorablePane FLeftPane = null;
+
     private Dictionary<Type, Type> FModelViews;
 
     public Shell()
@@ -40,15 +44,54 @@ namespace MonikDesktop.Oak
     {
       FDocker = aDocker;
 
+      FLayoutRoot = new LayoutRoot();
+      FDocker.Layout = FLayoutRoot;
+
+      FDocumentPane = FLayoutRoot.RootPanel.Children[0] as LayoutDocumentPane;
+
+      FLeftPane = new LayoutAnchorablePane();
+      FLayoutRoot.RootPanel.Children.Insert(0, FLeftPane);
+      FLeftPane.DockWidth = new System.Windows.GridLength(410);
+
       // TODO: not work
       FDocker.ObservableForProperty(x => x.ActiveContent)
         .Where(v => v is IDockingWindow)
         .Subscribe(v => this.SelectedWindow = v as IDockingWindow);
     }
 
-    public void Show(IDockingWindow aWondow)
+    public void ShowTool(IDockingWindow aWindow)
     {
-      var _types = aWondow.GetType().GetInterfaces();
+      var _view = CreateView(aWindow);
+
+      var _layoutDocument = new LayoutAnchorable();
+
+      aWindow.WhenAnyValue(x => x.Title)
+        .Subscribe(v => _layoutDocument.Title = v);
+
+      _layoutDocument.Content = _view;
+
+      FLeftPane.Children.Add(_layoutDocument);
+
+      _layoutDocument.Show();
+    }
+
+    public void ShowDocument(IDockingWindow aWondow)
+    {
+      var _view = CreateView(aWondow);
+
+      var _layoutDocument = new LayoutDocument();
+
+      aWondow.WhenAnyValue(x => x.Title)
+        .Subscribe(v => _layoutDocument.Title = v);
+
+      _layoutDocument.Content = _view;
+
+      FDocumentPane.Children.Add(_layoutDocument);
+    }
+
+    private UserControl CreateView(IDockingWindow aModel)
+    {
+      var _types = aModel.GetType().GetInterfaces();
 
       Type _type = null;
 
@@ -57,26 +100,15 @@ namespace MonikDesktop.Oak
           _type = FModelViews[it];
 
       if (_type == null)
-        throw new Exception($"Model {aWondow} not found");
+        throw new Exception($"Model {aModel} not found");
 
       var _view = Activator.CreateInstance(_type) as UserControl;
       if (_view == null)
         throw new Exception($"Cant create view for type {_type}");
 
-      _view.DataContext = aWondow;
+      _view.DataContext = aModel;
 
-      var layoutdocpane = new LayoutDocumentPane();
-
-      var LayoutDocument = new LayoutDocument();
-
-      aWondow.WhenAnyValue(x => x.Title)
-        .Subscribe(v => LayoutDocument.Title = v);
-
-      LayoutDocument.Content = _view;
-
-      layoutdocpane.Children.Add(LayoutDocument);
-      FDocker.Layout.RootPanel.Children.Add(layoutdocpane);
-      //FDocker.Layout.RootPanel.Orientation = Orientation.Vertical;
+      return _view;
     }
   }
 }
