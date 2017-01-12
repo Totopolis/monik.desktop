@@ -42,7 +42,7 @@ namespace MonikDesktop.ViewModels
     }
 
     [Reactive]
-    public bool CanClose { get; set; } = true;
+    public bool CanClose { get; set; } = false;
     [Reactive]
     public ReactiveCommand CloseCommand { get; set; } = null;
     [Reactive]
@@ -55,10 +55,12 @@ namespace MonikDesktop.ViewModels
       var _log = Bootstrap.Container.Resolve<ILogsWindow>();
       var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
       var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();
+      var _desc = Bootstrap.Container.Resolve<ILogDescription>();
 
       FShell.ShowDocument(_log);
       FShell.ShowTool(_props);
       FShell.ShowTool(_sources);
+      FShell.ShowTool(_desc);
 
       FShell.SelectedWindow = _log;
     }

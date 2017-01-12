@@ -49,6 +49,9 @@ namespace MonikDesktop.ViewModels
     [Reactive]
     public LevelType Level { get; set; } = LevelType.None;
 
+    [Reactive]
+    public LogItem SelectedItem { get; set; } = null;
+
     // at offline mode
     //DateTime From { get; set; }
     //DateTime To { get; set; }

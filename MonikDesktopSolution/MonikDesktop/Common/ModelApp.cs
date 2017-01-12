@@ -34,6 +34,7 @@ namespace MonikDesktop
     public DateTime Created { get; set; }
     public string CreatedStr { get; set; }
     public DateTime Received { get; set; }
+    public string ReceivedStr { get; set; }
     public byte Level { get; set; }
     public byte Severity { get; set; }
     public Instance Instance { get; set; }

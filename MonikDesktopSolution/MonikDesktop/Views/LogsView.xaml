@@ -23,6 +23,7 @@
             VerticalGridLinesBrush="Silver"
             GridLinesVisibility="Horizontal"
             Foreground="Black"
+            SelectedItem="{Binding Model.SelectedItem}"
             ItemsSource="{Binding LogsList}">
 
             <DataGrid.RowStyle>

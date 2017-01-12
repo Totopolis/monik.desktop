@@ -26,6 +26,7 @@ namespace MonikDesktop
       builder.RegisterType<SourcesViewModel>().As<ISourcesWindow>().SingleInstance();
       builder.RegisterType<PropertiesViewModel>().As<IPropertiesWindow>().SingleInstance();
       builder.RegisterType<StartupViewModel>().As<IStartupWindow>().SingleInstance();
+      builder.RegisterType<LogDescriptionViewModel>().As<ILogDescription>().SingleInstance();
 
       Container = builder.Build();
 
@@ -35,6 +36,7 @@ namespace MonikDesktop
       _shell.RegisterModelView<ILogsWindow, LogsView>();
       _shell.RegisterModelView<IPropertiesWindow, PropertiesView>();
       _shell.RegisterModelView<ISourcesWindow, SourcesView>();
+      _shell.RegisterModelView<ILogDescription, LogDescriptionView>();
 
       Container.Resolve<OakApplication>().ServerUrl = Properties.Settings.Default.ServerUrl;
     }

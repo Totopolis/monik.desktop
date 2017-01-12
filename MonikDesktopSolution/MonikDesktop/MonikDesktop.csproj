@@ -166,9 +166,13 @@
     <Compile Include="Oak\Interfaces.cs" />
     <Compile Include="Oak\Shell.cs" />
     <Compile Include="ViewModels\Converters.cs" />
+    <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\ViewModels.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
+    <Compile Include="Views\LogDescriptionView.xaml.cs">
+      <DependentUpon>LogDescriptionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LogsView.xaml.cs">
       <DependentUpon>LogsView.xaml</DependentUpon>
     </Compile>
@@ -197,6 +201,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\LogDescriptionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\LogsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

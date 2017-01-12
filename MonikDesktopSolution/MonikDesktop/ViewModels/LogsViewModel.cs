@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Media;
 using MonikDesktop.Oak;
+using Autofac;
 
 namespace MonikDesktop.ViewModels
 {
@@ -59,6 +60,13 @@ namespace MonikDesktop.ViewModels
         .Subscribe(ex =>
         {
           // TODO: handle
+        });
+
+      FModel.ObservableForProperty(x => x.SelectedItem)
+        .Subscribe(v=>
+        {
+          var _desc = Bootstrap.Container.Resolve<ILogDescription>();
+          _desc.SelectedItem = v.Value;
         });
 
       /*FModel
@@ -129,10 +137,11 @@ namespace MonikDesktop.ViewModels
                 Created = x.Created.ToLocalTime(),
                 CreatedStr = x.Created.ToLocalTime().ToString(Model.DateTimeFormat),
                 Received = x.Received.ToLocalTime(),
+                ReceivedStr = x.Received.ToLocalTime().ToString(Model.DateTimeFormat),
                 Level = x.Level,
                 Severity = x.Severity,
                 Instance = FCache.GetInstance(x.InstanceID),
-                Body = x.Body
+                Body = x.Body.Replace(Environment.NewLine, "")
               });
 
       return _res.ToArray();

@@ -62,14 +62,21 @@ namespace MonikDesktop.Oak
       var _view = CreateView(aWindow);
       FWindows.Add(aWindow);
 
-      var _layoutDocument = new LayoutAnchorable();
+      var _layoutAnchorable = new LayoutAnchorable();
 
       aWindow.WhenAnyValue(x => x.Title)
-        .Subscribe(v => _layoutDocument.Title = v);
+        .Subscribe(v => _layoutAnchorable.Title = v);
 
-      _layoutDocument.Content = _view;
+      aWindow.WhenAnyValue(x => x.CanClose)
+        .Subscribe(v =>
+        {
+          _layoutAnchorable.CanHide = v;
+          _layoutAnchorable.CanClose = v;
+        });
 
-      FLeftPane.Children.Add(_layoutDocument);
+      _layoutAnchorable.Content = _view;
+
+      FLeftPane.Children.Add(_layoutAnchorable);
     }
 
     public void ShowDocument(IDockingWindow aWondow)
@@ -81,6 +88,9 @@ namespace MonikDesktop.Oak
 
       aWondow.WhenAnyValue(x => x.Title)
         .Subscribe(v => _layoutDocument.Title = v);
+
+      aWondow.WhenAnyValue(x => x.CanClose)
+        .Subscribe(v => _layoutDocument.CanClose = v);
 
       _layoutDocument.Content = _view;
 

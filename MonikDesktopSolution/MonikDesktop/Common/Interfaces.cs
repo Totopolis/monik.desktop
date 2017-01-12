@@ -80,4 +80,9 @@ namespace MonikDesktop
   public interface IPropertiesWindow : IDockingWindow
   {
   }
+
+  public interface ILogDescription : IDockingWindow
+  {
+    LogItem SelectedItem { get; set; }
+  }
 }
