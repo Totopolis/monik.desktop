@@ -1,76 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.ViewModels
 {
-  public class ShowModel : ReactiveObject
-  {
-    public ReactiveList<short> Groups { get; } = new ReactiveList<short>() { ChangeTrackingEnabled = true };
-    public ReactiveList<int> Instances { get; } = new ReactiveList<int>() { ChangeTrackingEnabled = true };
+	public class ShowModel : ReactiveObject
+	{
+		protected ShowModel()
+		{
+			Groups.CountChanged.Subscribe(_ => Online = false);
+			Instances.CountChanged.Subscribe(_ => Online = false);
+			this.ObservableForProperty(x => x.RefreshSec).Subscribe(_ => Online = false);
+			this.ObservableForProperty(x => x.Colorized).Subscribe(_ => Online = false);
+			this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
+		}
 
-    [Reactive]
-    public string Caption { get; set; } = "";
+		public ReactiveList<short> Groups { get; } = new ReactiveList<short> {ChangeTrackingEnabled = true};
+		public ReactiveList<int> Instances { get; } = new ReactiveList<int> {ChangeTrackingEnabled = true};
 
-    [Reactive]
-    public bool Online { get; set; } = false;
+		[Reactive]
+		public string Caption { get; set; } = "";
 
-    [Reactive]
-    public int RefreshSec { get; set; } = 3;
+		[Reactive]
+		public bool Online { get; set; }
 
-    [Reactive]
-    public bool Colorized { get; set; } = true;
+		[Reactive]
+		public int RefreshSec { get; set; } = 3;
 
-    [Reactive]
-    public string DateTimeFormat { get; set; } = "HH:mm:ss";
+		[Reactive]
+		public bool Colorized { get; set; } = true;
 
-    protected ShowModel()
-    {
-      Groups.CountChanged.Subscribe(_ => Online = false);
-      Instances.CountChanged.Subscribe(_ => Online = false);
-      this.ObservableForProperty(x => x.RefreshSec).Subscribe(_ => Online = false);
-      this.ObservableForProperty(x => x.Colorized).Subscribe(_ => Online = false);
-      this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
-    }
-  }
+		[Reactive]
+		public string DateTimeFormat { get; set; } = "HH:mm:ss";
+	}
 
-  public class LogsModel : ShowModel
-  {
-    [Reactive]
-    public TopType Top { get; set; } = TopType.Top50;
+	public class LogsModel : ShowModel
+	{
+		// at offline mode
+		//DateTime From { get; set; }
+		//DateTime To { get; set; }
 
-    [Reactive]
-    public SeverityCutoffType SeverityCutoff { get; set; } = SeverityCutoffType.Info;
+		//bool UpDownDirection { get; set; }
 
-    [Reactive]
-    public LevelType Level { get; set; } = LevelType.None;
+		// wrapbody
+		// columns
 
-    [Reactive]
-    public LogItem SelectedItem { get; set; } = null;
+		public LogsModel()
+		{
+			this.ObservableForProperty(x => x.Level).Subscribe(_ => Online = false);
+			this.ObservableForProperty(x => x.Top).Subscribe(_ => Online = false);
+			this.ObservableForProperty(x => x.SeverityCutoff).Subscribe(_ => Online = false);
+		}
 
-    // at offline mode
-    //DateTime From { get; set; }
-    //DateTime To { get; set; }
+		[Reactive]
+		public TopType Top { get; set; } = TopType.Top50;
 
-    //bool UpDownDirection { get; set; }
+		[Reactive]
+		public SeverityCutoffType SeverityCutoff { get; set; } = SeverityCutoffType.Info;
 
-    // wrapbody
-    // columns
+		[Reactive]
+		public LevelType Level { get; set; } = LevelType.None;
 
-    public LogsModel() : base()
-    {
-      this.ObservableForProperty(x => x.Level).Subscribe(_ => Online = false);
-      this.ObservableForProperty(x => x.Top).Subscribe(_ => Online = false);
-      this.ObservableForProperty(x => x.SeverityCutoff).Subscribe(_ => Online = false);
-    }
-  }
+		[Reactive]
+		public LogItem SelectedItem { get; set; } = null;
+	}
 
-  public class KeepAliveModel : ShowModel
-  {
-    public KeepAliveModel() : base() { }
-  }
+	public class KeepAliveModel : ShowModel
+	{
+	}
 }

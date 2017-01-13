@@ -1,68 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReactiveUI;
-using System.Reactive;
-using MonikDesktop;
 using Autofac;
 using MonikDesktop.Oak;
+using MonikDesktop.Properties;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.ViewModels
 {
-  public class StartupViewModel : ReactiveObject, IStartupWindow
-  {
-    private Shell FShell;
-    private OakApplication FAppModel;
+	public class StartupViewModel : ReactiveObject, IStartupWindow
+	{
+		private readonly Shell FShell;
 
-    public OakApplication App { get { return FAppModel; } }
+		public StartupViewModel(OakApplication aApp, Shell aShell)
+		{
+			FShell = aShell;
+			App = aApp;
 
-    public ReactiveCommand NewLogCommand { get; set; }
-    public ReactiveCommand NewKeepAliveCommand { get; set; }
+			Title = "App settings";
 
-    public StartupViewModel(OakApplication aApp, Shell aShell)
-    {
-      FShell = aShell;
-      FAppModel = aApp;
+			App.ObservableForProperty(x => x.ServerUrl)
+				.Subscribe(v =>
+				{
+					Settings.Default.ServerUrl = v.Value;
+					Settings.Default.Save();
+				});
 
-      Title = "App settings";
+			var _canNew = App.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
+			NewLogCommand = ReactiveCommand.Create(NewLog, _canNew);
+			NewKeepAliveCommand = ReactiveCommand.Create(NewLog, _canNew);
+		}
 
-      FAppModel.ObservableForProperty(x => x.ServerUrl)
-        .Subscribe(v=>
-        {
-          Properties.Settings.Default.ServerUrl = v.Value;
-          Properties.Settings.Default.Save();
-        });
+		public OakApplication App { get; }
 
-      var _canNew = FAppModel.WhenAny(x => x.ServerUrl, x => !String.IsNullOrWhiteSpace(x.Value));
-      NewLogCommand = ReactiveCommand.Create(NewLog, _canNew);
-      NewKeepAliveCommand = ReactiveCommand.Create(NewLog, _canNew);
-    }
+		public ReactiveCommand NewLogCommand { get; set; }
+		public ReactiveCommand NewKeepAliveCommand { get; set; }
 
-    [Reactive]
-    public bool CanClose { get; set; } = false;
-    [Reactive]
-    public ReactiveCommand CloseCommand { get; set; } = null;
-    [Reactive]
-    public string Title { get; set; }
+		[Reactive]
+		public bool CanClose { get; set; } = false;
 
-    private void NewLog()
-    {
-      // TODO: check server url
+		[Reactive]
+		public ReactiveCommand CloseCommand { get; set; } = null;
 
-      var _log = Bootstrap.Container.Resolve<ILogsWindow>();
-      var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
-      var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();
-      var _desc = Bootstrap.Container.Resolve<ILogDescription>();
+		[Reactive]
+		public string Title { get; set; }
 
-      FShell.ShowDocument(_log);
-      FShell.ShowTool(_props);
-      FShell.ShowTool(_sources);
-      FShell.ShowTool(_desc);
+		private void NewLog()
+		{
+			// TODO: check server url
 
-      FShell.SelectedWindow = _log;
-    }
-  }
+			var _log = Bootstrap.Container.Resolve<ILogsWindow>();
+			var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
+			var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();
+			var _desc = Bootstrap.Container.Resolve<ILogDescription>();
+
+			FShell.ShowDocument(_log);
+			FShell.ShowTool(_props);
+			FShell.ShowTool(_sources);
+			FShell.ShowTool(_desc);
+
+			FShell.SelectedWindow = _log;
+		}
+	}
 }

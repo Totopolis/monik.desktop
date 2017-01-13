@@ -1,47 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reactive.Linq;
+using MonikDesktop.Oak;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using MonikDesktop.Oak;
-using System.Reactive.Linq;
 
 namespace MonikDesktop.ViewModels
 {
-  public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
-  {
-    [Reactive]
-    public ShowModel Model { get; private set; }
-    [Reactive]
-    public IShowWindow ShowWindow { get; private set; }
+	public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
+	{
+		public PropertiesViewModel(Shell aShell)
+		{
+			Title = "Properties";
 
-    public PropertiesViewModel(Shell aShell)
-    {
-      Title = "Properties";
+			aShell.WhenAnyValue(x => x.SelectedWindow)
+				.Where(v => v is IShowWindow)
+				.Subscribe(v => OnSelectedWindow(v as IShowWindow));
+		}
 
-      aShell.WhenAnyValue(x => x.SelectedWindow)
-        .Where(v => v is IShowWindow)
-        .Subscribe(v => OnSelectedWindow(v as IShowWindow));
-    }
+		[Reactive]
+		public ShowModel Model { get; private set; }
 
-    private void OnSelectedWindow(IShowWindow aWindow)
-    {
-      Model = aWindow == null ? null : aWindow.Model;
-      ShowWindow = aWindow;
-    }
+		[Reactive]
+		public IShowWindow ShowWindow { get; private set; }
 
-    public IList<TopType> TopTypes { get { return Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList<TopType>(); } }
-    public IList<SeverityCutoffType> SeverityCutoffTypes { get { return Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList<SeverityCutoffType>(); } }
-    public IList<LevelType> LevelTypes { get { return Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList<LevelType>(); } }
-    public IList<string> DatetimeFormats { get { return new string[] { "HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "dd.MM HH:mm:ss" }; } }
+		public IList<TopType> TopTypes
+		{
+			get { return Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList(); }
+		}
 
-    [Reactive]
-    public string Title { get; set; }
-    [Reactive]
-    public bool CanClose { get; set; } = false;
-    [Reactive]
-    public ReactiveCommand CloseCommand { get; set; } = null;
-  }
+		public IList<SeverityCutoffType> SeverityCutoffTypes
+		{
+			get { return Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList(); }
+		}
+
+		public IList<LevelType> LevelTypes
+		{
+			get { return Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList(); }
+		}
+
+		public IList<string> DatetimeFormats
+		{
+			get { return new[] {"HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "dd.MM HH:mm:ss"}; }
+		}
+
+		[Reactive]
+		public string Title { get; set; }
+
+		[Reactive]
+		public bool CanClose { get; set; } = false;
+
+		[Reactive]
+		public ReactiveCommand CloseCommand { get; set; } = null;
+
+		private void OnSelectedWindow(IShowWindow aWindow)
+		{
+			Model = aWindow == null ? null : aWindow.Model;
+			ShowWindow = aWindow;
+		}
+	}
 }

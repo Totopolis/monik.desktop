@@ -20,7 +20,7 @@
             </DataTemplate>
 
         </-->
-        
+
         <!--dock:DockingManager.LayoutItemContainerStyle>
             <Style TargetType="{x:Type dockctrl:LayoutItem}" >
                 <Setter Property="Title" Value="{Binding Model.Title}"/>

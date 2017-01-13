@@ -1,32 +1,33 @@
 ﻿<UserControl x:Class="MonikDesktop.Views.PropertiesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:MonikDesktop.Views"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignWidth="300">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="3">
 
-            <Button Command="{Binding Path=ShowWindow.StartCommand}" Content="Start" Margin="5"/>
-            <Button Command="{Binding Path=ShowWindow.StopCommand}" Content="Stop" Margin="5"/>
-            
+            <Button Command="{Binding Path=ShowWindow.StartCommand}" Content="Start" Margin="5" />
+            <Button Command="{Binding Path=ShowWindow.StopCommand}" Content="Stop" Margin="5" />
+
             <Label>Level filter</Label>
-            <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}" />
             <Label>Severity Cutoff</Label>
-            <ComboBox ItemsSource="{Binding SeverityCutoffTypes}" SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding SeverityCutoffTypes}"
+                      SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}" />
             <Label>Top</Label>
-            <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}" />
             <Label>Refresh period (sec.)</Label>
-            <xctk:IntegerUpDown Value="{Binding Model.RefreshSec}"/>
+            <xctk:IntegerUpDown Value="{Binding Model.RefreshSec}" />
             <Label>Colorized</Label>
-            <CheckBox IsChecked="{Binding Model.Colorized}"/>
+            <CheckBox IsChecked="{Binding Model.Colorized}" />
             <Label>Caption</Label>
-            <TextBox Text="{Binding Model.Caption}" Height="20"/>
+            <TextBox Text="{Binding Model.Caption}" Height="20" />
             <Label>Datetime format</Label>
-            <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}"/>
+            <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}" />
         </StackPanel>
     </Grid>
 </UserControl>

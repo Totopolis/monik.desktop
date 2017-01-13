@@ -1,88 +1,83 @@
 ﻿using MonikDesktop.Oak;
 using MonikDesktop.ViewModels;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonikDesktop
 {
-  public interface IMonikService
-  {
-    ESource[] GetSources();
-    EInstance[] GetInstances();
-    EGroup[] GetGroups();
-    ELog_[] GetLogs(ELogRequest aRequest);
-  }
+	public interface IMonikService
+	{
+		ESource[] GetSources();
+		EInstance[] GetInstances();
+		EGroup[] GetGroups();
+		ELog_[] GetLogs(ELogRequest aRequest);
+	}
 
-  public interface ISourcesCache
-  {
-    Group[] Groups { get; }
-    Source[] Sources { get; }
-    Instance[] Instances { get; }
+	public interface ISourcesCache
+	{
+		Group[] Groups { get; }
+		Source[] Sources { get; }
+		Instance[] Instances { get; }
 
-    Instance GetInstance(int aInstanceID);
-  }
-  
-  public interface IStartupWindow : IDockingWindow
-  {
-  }
+		Instance GetInstance(int aInstanceID);
+	}
 
-  public interface IShowWindow : IDockingWindow
-  {
-    ReactiveCommand StartCommand { get; set; }
-    ReactiveCommand StopCommand { get; set; }
+	public interface IStartupWindow : IDockingWindow
+	{
+	}
 
-    ShowModel Model { get; }
-  }
+	public interface IShowWindow : IDockingWindow
+	{
+		ReactiveCommand StartCommand { get; set; }
+		ReactiveCommand StopCommand { get; set; }
 
-  public enum SeverityCutoffType : byte
-  {
-    None = 255,
-    Info = 30,
-    Warning = 20,
-    Error = 10,
-    Fatal = 0
-  }
+		ShowModel Model { get; }
+	}
 
-  public enum LevelType : byte
-  {
-    None = 255,
-    System = 0,
-    Application = 10,
-    Logic = 20,
-    Security = 30
-  }
+	public enum SeverityCutoffType : byte
+	{
+		None = 255,
+		Info = 30,
+		Warning = 20,
+		Error = 10,
+		Fatal = 0
+	}
 
-  public enum TopType : int
-  {
-    None = 0,
-    Top50 = 50,
-    Top100 = 100,
-    Top500 = 500,
-    Top1000 = 1000
-  }
+	public enum LevelType : byte
+	{
+		None = 255,
+		System = 0,
+		Application = 10,
+		Logic = 20,
+		Security = 30
+	}
 
-  public interface ILogsWindow : IShowWindow
-  {
-  }
+	public enum TopType
+	{
+		None = 0,
+		Top50 = 50,
+		Top100 = 100,
+		Top500 = 500,
+		Top1000 = 1000
+	}
 
-  public interface IKeepAliveWindow : IShowWindow
-  {
-  }
+	public interface ILogsWindow : IShowWindow
+	{
+	}
 
-  public interface ISourcesWindow : IDockingWindow
-  {
-  }
+	public interface IKeepAliveWindow : IShowWindow
+	{
+	}
 
-  public interface IPropertiesWindow : IDockingWindow
-  {
-  }
+	public interface ISourcesWindow : IDockingWindow
+	{
+	}
 
-  public interface ILogDescription : IDockingWindow
-  {
-    LogItem SelectedItem { get; set; }
-  }
+	public interface IPropertiesWindow : IDockingWindow
+	{
+	}
+
+	public interface ILogDescription : IDockingWindow
+	{
+		LogItem SelectedItem { get; set; }
+	}
 }

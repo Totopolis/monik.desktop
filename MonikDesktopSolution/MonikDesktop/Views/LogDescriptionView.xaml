@@ -1,50 +1,51 @@
 ﻿<UserControl x:Class="MonikDesktop.Views.LogDescriptionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:MonikDesktop.Views"
              xmlns:vm="clr-namespace:MonikDesktop.ViewModels"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <vm:SeverityToNameConverter x:Key="SeverityToName"/>
-        <vm:LevelToNameConverter x:Key="LevelToName"/>
+        <vm:SeverityToNameConverter x:Key="SeverityToName" />
+        <vm:LevelToNameConverter x:Key="LevelToName" />
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label>Created:</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.CreatedStr}"/>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.CreatedStr}" />
             <Label>Received:</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.ReceivedStr}"/>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.ReceivedStr}" />
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label>Source:</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Source.Name}"/>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Source.Name}" />
             <TextBox>.</TextBox>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Name}"/>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Name}" />
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Label>Level</Label>
-            <TextBox IsReadOnly="True" Text="{Binding Path=SelectedItem.Level, Converter={StaticResource LevelToName}}"/>
+            <TextBox IsReadOnly="True" Text="{Binding Path=SelectedItem.Level, Converter={StaticResource LevelToName}}" />
             <Label>Severity</Label>
-            <TextBox IsReadOnly="True" Text="{Binding Path=SelectedItem.Severity, Converter={StaticResource SeverityToName}}"/>
+            <TextBox IsReadOnly="True"
+                     Text="{Binding Path=SelectedItem.Severity, Converter={StaticResource SeverityToName}}" />
         </StackPanel>
-        
-        <TextBox Grid.Row="3" TextWrapping="Wrap" 
-                 VerticalScrollBarVisibility="Auto" 
+
+        <TextBox Grid.Row="3" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
                  AcceptsReturn="True"
-                 IsReadOnly="True" 
-                 Text="{Binding SelectedItem.Body}"/>
+                 IsReadOnly="True"
+                 Text="{Binding SelectedItem.Body}" />
     </Grid>
 </UserControl>
