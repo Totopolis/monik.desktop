@@ -31,10 +31,10 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Severity}" Value="10">
                             <Setter Property="Foreground" Value="White"></Setter>
-                            <Setter Property="Background" Value="Red"></Setter>
+                            <Setter Property="Background" Value="#FFFF5959"></Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Severity}" Value="20">
-                            <Setter Property="Background" Value="Yellow"></Setter>
+                            <Setter Property="Background" Value="#FFFFFF64"></Setter>
                         </DataTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="Pink"/>
@@ -45,7 +45,7 @@
             </DataGrid.RowStyle>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="Auto" SortDirection="Descending" />
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="Auto" />
                 <DataGridTextColumn Header="Created" Binding="{Binding CreatedStr}" Width="Auto" />
                 <DataGridTextColumn Header="Source" Binding="{Binding Instance.Source.Name}" Width="Auto" />
                 <DataGridTextColumn Header="Instance" Binding="{Binding Instance.Name}" Width="Auto" />
