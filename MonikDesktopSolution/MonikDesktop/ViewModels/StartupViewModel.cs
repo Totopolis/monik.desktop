@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
+using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;

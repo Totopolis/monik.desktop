@@ -2,7 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MonikDesktop.ViewModels
+namespace MonikDesktop.ViewModels.ShowModels
 {
 	public class ShowModel : ReactiveObject
 	{

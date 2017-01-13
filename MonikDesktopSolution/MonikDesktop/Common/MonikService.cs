@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Net;
+using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApi;
 using Newtonsoft.Json;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common
 {
 	public class MonikService : IMonikService
 	{

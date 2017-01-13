@@ -1,6 +1,6 @@
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface ISourcesWindow : IDockingWindow
 	{

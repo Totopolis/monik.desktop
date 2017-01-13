@@ -1,4 +1,4 @@
-namespace MonikDesktop
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface ILogsWindow : IShowWindow
 	{

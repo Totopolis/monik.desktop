@@ -1,4 +1,6 @@
-﻿using MonikDesktop.Oak;
+﻿using Doaking.Core.Oak;
+using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 

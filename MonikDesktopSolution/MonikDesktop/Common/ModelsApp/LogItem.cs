@@ -1,6 +1,6 @@
 using System;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common.ModelsApp
 {
 	public class LogItem
 	{

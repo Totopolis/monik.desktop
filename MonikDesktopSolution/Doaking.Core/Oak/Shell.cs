@@ -8,7 +8,7 @@ using ReactiveUI.Fody.Helpers;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace MonikDesktop.Oak
+namespace Doaking.Core.Oak
 {
 	// http://stackoverflow.com/questions/12493117/wpf-avalondock-v2-0-layoutdocument
 	public class Shell : ReactiveObject

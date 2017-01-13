@@ -1,4 +1,4 @@
-﻿namespace MonikDesktop
+﻿namespace MonikDesktop.Common.ModelsApi
 {
 	public class ESource
 	{

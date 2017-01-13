@@ -1,8 +1,8 @@
-﻿using MonikDesktop.Oak;
+﻿using Doaking.Core.Oak;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common
 {
 	public class OakApplication : ReactiveObject, IOakApplication
 	{

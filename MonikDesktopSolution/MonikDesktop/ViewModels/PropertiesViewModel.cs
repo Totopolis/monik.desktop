@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
+using MonikDesktop.Common.Enums;
+using MonikDesktop.Common.Interfaces;
+using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 

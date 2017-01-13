@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApp;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common
 {
 	public class SourcesCache : ISourcesCache
 	{

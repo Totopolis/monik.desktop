@@ -1,4 +1,6 @@
-﻿namespace MonikDesktop
+﻿using MonikDesktop.Common.ModelsApi;
+
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface IMonikService
 	{

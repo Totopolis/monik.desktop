@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MonikDesktop.ViewModels
+namespace MonikDesktop.Common.Converters
 {
 	public class SeverityToNameConverter : IValueConverter
 	{

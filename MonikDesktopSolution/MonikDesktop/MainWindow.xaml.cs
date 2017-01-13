@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using MahApps.Metro.Controls;
-using MonikDesktop.Oak;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Doaking.Core.Oak;
+using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 
 namespace MonikDesktop
 {

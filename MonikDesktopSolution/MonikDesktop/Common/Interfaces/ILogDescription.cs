@@ -1,6 +1,7 @@
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
+using MonikDesktop.Common.ModelsApp;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface ILogDescription : IDockingWindow
 	{

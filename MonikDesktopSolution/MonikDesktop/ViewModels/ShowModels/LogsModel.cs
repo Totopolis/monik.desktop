@@ -1,8 +1,10 @@
 using System;
+using MonikDesktop.Common.Enums;
+using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MonikDesktop.ViewModels
+namespace MonikDesktop.ViewModels.ShowModels
 {
 	public class LogsModel : ShowModel
 	{

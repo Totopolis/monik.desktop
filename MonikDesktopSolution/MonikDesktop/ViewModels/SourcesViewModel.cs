@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
+using MonikDesktop.Common.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 

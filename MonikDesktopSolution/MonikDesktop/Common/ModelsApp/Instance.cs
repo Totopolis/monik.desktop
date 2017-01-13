@@ -1,4 +1,4 @@
-﻿namespace MonikDesktop
+﻿namespace MonikDesktop.Common.ModelsApp
 {
 	public class Instance
 	{

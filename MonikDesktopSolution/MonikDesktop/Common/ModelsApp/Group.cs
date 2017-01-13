@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common.ModelsApp
 {
 	public class Group
 	{

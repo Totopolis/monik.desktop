@@ -1,8 +1,9 @@
-using MonikDesktop.Oak;
+using Doaking.Core.Oak;
 using MonikDesktop.ViewModels;
+using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 
-namespace MonikDesktop
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface IShowWindow : IDockingWindow
 	{

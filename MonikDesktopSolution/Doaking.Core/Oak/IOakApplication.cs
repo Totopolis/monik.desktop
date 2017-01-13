@@ -1,4 +1,4 @@
-﻿namespace MonikDesktop.Oak
+﻿namespace Doaking.Core.Oak
 {
 	public interface IOakApplication
 	{

@@ -3,6 +3,11 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Autofac;
+using MonikDesktop.Common.Enums;
+using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApi;
+using MonikDesktop.Common.ModelsApp;
+using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 

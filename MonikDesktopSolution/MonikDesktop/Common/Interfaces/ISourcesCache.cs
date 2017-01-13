@@ -1,4 +1,6 @@
-namespace MonikDesktop
+using MonikDesktop.Common.ModelsApp;
+
+namespace MonikDesktop.Common.Interfaces
 {
 	public interface ISourcesCache
 	{
