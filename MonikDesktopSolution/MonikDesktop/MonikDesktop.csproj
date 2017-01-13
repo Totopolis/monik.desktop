@@ -155,11 +155,33 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="Common\ModelApp.cs" />
+    <Compile Include="Common\Converters\LevelToNameConverter.cs" />
+    <Compile Include="Common\Interfaces\IKeepAliveWindow.cs" />
+    <Compile Include="Common\Interfaces\ILogDescription.cs" />
+    <Compile Include="Common\Interfaces\ILogsWindow.cs" />
+    <Compile Include="Common\Interfaces\IPropertiesWindow.cs" />
+    <Compile Include="Common\Interfaces\IShowWindow.cs" />
+    <Compile Include="Common\Interfaces\ISourcesCache.cs" />
+    <Compile Include="Common\Interfaces\ISourcesWindow.cs" />
+    <Compile Include="Common\Interfaces\IStartupWindow.cs" />
+    <Compile Include="Common\Enums\LevelType.cs" />
+    <Compile Include="Common\Enums\SeverityCutoffType.cs" />
+    <Compile Include="Common\Enums\TopType.cs" />
+    <Compile Include="Common\ModelsApp\Group.cs" />
+    <Compile Include="Common\ModelsApp\LogItem.cs" />
+    <Compile Include="Common\ModelsApp\Instance.cs" />
+    <Compile Include="Common\ModelsApi\EGroup.cs" />
+    <Compile Include="Common\ModelsApi\EInstance.cs" />
+    <Compile Include="Common\ModelsApi\ELogRequest.cs" />
+    <Compile Include="Common\ModelsApi\ELog_.cs" />
+    <Compile Include="Common\ModelsApp\Source.cs" />
     <Compile Include="Common\SourcesCache.cs" />
-    <Compile Include="ViewModels\Converters.cs" />
+    <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
-    <Compile Include="ViewModels\ViewModels.cs" />
+    <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
+    <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
+    <Compile Include="ViewModels\SourceItem.cs" />
+    <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\LogDescriptionView.xaml.cs">
@@ -186,8 +208,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\OakApplication.cs" />
-    <Compile Include="Common\Interfaces.cs" />
-    <Compile Include="Common\ModelApi.cs" />
+    <Compile Include="Common\Interfaces\IMonikService.cs" />
+    <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -268,6 +290,7 @@
       <Name>Doaking.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
