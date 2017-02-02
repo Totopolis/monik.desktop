@@ -10,14 +10,14 @@ namespace MonikDesktop.ViewModels
 {
 	public class SourcesViewModel : ReactiveObject, ISourcesWindow
 	{
-		private readonly ISourcesCache FCache;
+		private readonly ISourcesCache _cache;
 
-		private ReactiveList<short> FSelectedGroups;
-		private ReactiveList<int> FSelectedInstances;
+		private ReactiveList<short> _selectedGroups;
+		private ReactiveList<int> _selectedInstances;
 
 		public SourcesViewModel(Shell aShell, ISourcesCache aCache)
 		{
-			FCache = aCache;
+			_cache = aCache;
 			Title = "Sources";
 
 			FillSourcesTree();
@@ -43,14 +43,13 @@ namespace MonikDesktop.ViewModels
 		{
 			SourceItems = new ReactiveList<SourceItem>();
 
-			var _groups = FCache.Groups;
-			var _sources = FCache.Sources;
-			var _instances = FCache.Instances;
+			var groups = _cache.Groups;
+			var instances = _cache.Instances;
 
-			foreach (var gr in _groups)
+			foreach (var gr in groups)
 				foreach (var inst in gr.Instances)
 				{
-					var _si = new SourceItem
+					var sitem = new SourceItem
 					{
 						GroupID = gr.ID,
 						GroupName = gr.Name,
@@ -59,13 +58,13 @@ namespace MonikDesktop.ViewModels
 						InstanceID = inst.ID
 					};
 
-					SourceItems.Add(_si);
+					SourceItems.Add(sitem);
 				}
 
-			foreach (var inst in _instances)
+			foreach (var inst in instances)
 				if (SourceItems.Count(x => x.InstanceID == inst.ID) == 0)
 				{
-					var _si = new SourceItem
+					var sitem = new SourceItem
 					{
 						GroupID = 0,
 						GroupName = "[NOGROUP]",
@@ -74,7 +73,7 @@ namespace MonikDesktop.ViewModels
 						InstanceID = inst.ID
 					};
 
-					SourceItems.Add(_si);
+					SourceItems.Add(sitem);
 				}
 
 			SourceItems.ChangeTrackingEnabled = true;
@@ -89,12 +88,12 @@ namespace MonikDesktop.ViewModels
 			foreach (var it in SourceItems)
 				it.Checked = false;
 
-			FSelectedGroups = aWindow.Model.Groups;
-			FSelectedInstances = aWindow.Model.Instances;
+			_selectedGroups = aWindow.Model.Groups;
+			_selectedInstances = aWindow.Model.Instances;
 
 			// fill from IShowWindow
 			foreach (var it in SourceItems)
-				if (FSelectedGroups.Contains(it.GroupID) || FSelectedInstances.Contains(it.InstanceID))
+				if (_selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID))
 					it.Checked = true;
 
 			SourceItems.ChangeTrackingEnabled = true;
@@ -110,26 +109,26 @@ namespace MonikDesktop.ViewModels
 		private void OnSourceChanged(SourceItem aItem)
 		{
 			if (aItem.Checked)
-				FSelectedInstances.Add(aItem.InstanceID);
+				_selectedInstances.Add(aItem.InstanceID);
 			else
-				FSelectedInstances.Remove(aItem.InstanceID);
+				_selectedInstances.Remove(aItem.InstanceID);
 
-			if (!aItem.Checked && (aItem.GroupID > 0) && FSelectedGroups.Contains(aItem.GroupID))
+			if (!aItem.Checked && (aItem.GroupID > 0) && _selectedGroups.Contains(aItem.GroupID))
 			{
-				var _checkedItems = SourceItems.Where(x => (x.GroupID == aItem.GroupID) && x.Checked).Select(x => x.InstanceID);
-				FSelectedInstances.AddRange(_checkedItems);
-				FSelectedGroups.Remove(aItem.GroupID);
+				var checkedItems = SourceItems.Where(x => (x.GroupID == aItem.GroupID) && x.Checked).Select(x => x.InstanceID);
+				_selectedInstances.AddRange(checkedItems);
+				_selectedGroups.Remove(aItem.GroupID);
 			}
 
-			if (aItem.Checked && (aItem.GroupID > 0) && !FSelectedGroups.Contains(aItem.GroupID))
+			if (aItem.Checked && (aItem.GroupID > 0) && !_selectedGroups.Contains(aItem.GroupID))
 			{
-				var _allItems = SourceItems.Where(x => x.GroupID == aItem.GroupID);
-				var _checkedItems = _allItems.Where(x => x.Checked);
+				var allItems = SourceItems.Where(x => x.GroupID == aItem.GroupID).ToArray();
+				var checkedItems = allItems.Where(x => x.Checked).ToArray();
 
-				if (_allItems.Count() == _checkedItems.Count())
+				if (allItems.Count() == checkedItems.Count())
 				{
-					FSelectedGroups.Add(aItem.GroupID);
-					FSelectedInstances.RemoveAll(_allItems.Select(x => x.InstanceID));
+					_selectedGroups.Add(aItem.GroupID);
+					_selectedInstances.RemoveAll(allItems.Select(x => x.InstanceID));
 				}
 			}
 		}

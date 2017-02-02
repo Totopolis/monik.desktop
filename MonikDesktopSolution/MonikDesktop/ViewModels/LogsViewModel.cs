@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using Autofac;
+using Doaking.Core.Oak;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
@@ -15,33 +15,31 @@ namespace MonikDesktop.ViewModels
 {
 	public class LogsViewModel : ReactiveObject, ILogsWindow
 	{
-		private readonly ISourcesCache FCache;
+		private readonly IMonikService _service;
+		private readonly ISourcesCache _cache;
 
-		private readonly LogsModel FModel;
-		private readonly IMonikService FService;
+		private readonly LogsModel _model;
+		 
+		private IDisposable _updateExecutor;
 
-		private IDisposable FUpdateExecutor;
-
-		public LogsViewModel(IMonikService aService, ISourcesCache aCache)
+		public LogsViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
 		{
-			FService = aService;
-			FCache = aCache;
+			_service = aService;
+			_cache = aCache;
 
 			LogsList = new ReactiveList<LogItem>();
-			FModel = new LogsModel();
+			_model = new LogsModel {Caption = "Logs"};
 
-			FModel.Caption = "Logs";
-
-			FModel.WhenAnyValue(x => x.Caption, x => x.Online)
+			_model.WhenAnyValue(x => x.Caption, x => x.Online)
 				.Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
-			var _canStart = FModel.WhenAny(x => x.Online, x => !x.Value);
-			StartCommand = ReactiveCommand.Create(OnStart, _canStart);
+			var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
+			StartCommand = ReactiveCommand.Create(OnStart, canStart);
 
-			var _canStop = FModel.WhenAny(x => x.Online, x => x.Value);
-			StopCommand = ReactiveCommand.Create(OnStop, _canStop);
+			var canStop = _model.WhenAny(x => x.Online, x => x.Value);
+			StopCommand = ReactiveCommand.Create(OnStop, canStop);
 
-			UpdateCommand = ReactiveCommand.Create(OnUpdate, _canStop);
+			UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
 			UpdateCommand.Subscribe(results =>
 			{
 				foreach (var it in results)
@@ -54,14 +52,14 @@ namespace MonikDesktop.ViewModels
 					// TODO: handle
 				});
 
-			FModel.ObservableForProperty(x => x.SelectedItem)
+			_model.ObservableForProperty(x => x.SelectedItem)
 				.Subscribe(v =>
 				{
-					var _desc = Bootstrap.Container.Resolve<ILogDescription>();
-					_desc.SelectedItem = v.Value;
+					var desc = aShell.Resolve<ILogDescription>();
+					desc.SelectedItem = v.Value;
 				});
 
-			/*FModel
+			/*_model
 			  .WhenAnyValue(x => x.Online)
 			  .Where(v => v)
 			  .Throttle(TimeSpan.FromSeconds(1), RxApp.MainThreadScheduler)
@@ -73,12 +71,9 @@ namespace MonikDesktop.ViewModels
 		public ReactiveList<LogItem> LogsList { get; set; }
 		public ReactiveCommand<Unit, LogItem[]> UpdateCommand { get; set; }
 
-		public long? LastID { get; private set; }
+		public long? LastId { get; private set; }
 
-		public ShowModel Model
-		{
-			get { return FModel; }
-		}
+		public ShowModel Model => _model;
 
 		public ReactiveCommand StartCommand { get; set; }
 		public ReactiveCommand StopCommand { get; set; }
@@ -94,11 +89,11 @@ namespace MonikDesktop.ViewModels
 
 		private void OnStart()
 		{
-			LastID = null;
+			LastId = null;
 			LogsList.Clear();
 
-			var interval = TimeSpan.FromSeconds(FModel.RefreshSec);
-			FUpdateExecutor = Observable
+			var interval = TimeSpan.FromSeconds(_model.RefreshSec);
+			_updateExecutor = Observable
 				.Timer(interval, interval)
 				.Select(_ => Unit.Default)
 				.InvokeCommand(UpdateCommand);
@@ -108,42 +103,42 @@ namespace MonikDesktop.ViewModels
 
 		private void OnStop()
 		{
-			if (FUpdateExecutor == null)
+			if (_updateExecutor == null)
 				return;
 
-			FUpdateExecutor.Dispose();
-			FUpdateExecutor = null;
+			_updateExecutor.Dispose();
+			_updateExecutor = null;
 
-			FModel.Online = false;
+			_model.Online = false;
 		}
 
 		private LogItem[] OnUpdate()
 		{
-			var _req = new ELogRequest
+			var req = new ELogRequest
 			{
-				LastID = LastID,
-				Level = FModel.Level == LevelType.None ? null : (byte?) FModel.Level,
-				SeverityCutoff = FModel.SeverityCutoff == SeverityCutoffType.None ? null : (byte?) FModel.SeverityCutoff,
-				Top = FModel.Top == TopType.None ? null : (byte?) FModel.Top,
-				Groups = FModel.Groups.ToArray(),
-				Instances = FModel.Instances.ToArray()
+				LastID = LastId,
+				Level = _model.Level == LevelType.None ? null : (byte?) _model.Level,
+				SeverityCutoff = _model.SeverityCutoff == SeverityCutoffType.None ? null : (byte?) _model.SeverityCutoff,
+				Top = _model.Top == TopType.None ? null : (byte?) _model.Top,
+				Groups = _model.Groups.ToArray(),
+				Instances = _model.Instances.ToArray()
 			};
 
-			ELog_[] _response;
+			ELog_[] response;
 
 			try
 			{
-				_response = FService.GetLogs(_req);
+				response = _service.GetLogs(req);
 			}
 			catch
 			{
 				return new[] {new LogItem {Body = "INTERNAL ERROR"}};
 			}
 
-			if (_response.Length > 0)
-				LastID = _response.Max(x => x.ID);
+			if (response.Length > 0)
+				LastId = response.Max(x => x.ID);
 
-			var _res = _response.Select(x =>
+			var result = response.Select(x =>
 				new LogItem
 				{
 					ID = x.ID,
@@ -153,11 +148,11 @@ namespace MonikDesktop.ViewModels
 					ReceivedStr = x.Received.ToLocalTime().ToString(Model.DateTimeFormat),
 					Level = x.Level,
 					Severity = x.Severity,
-					Instance = FCache.GetInstance(x.InstanceID),
+					Instance = _cache.GetInstance(x.InstanceID),
 					Body = x.Body.Replace(Environment.NewLine, "")
 				});
 
-			return _res.ToArray();
+			return result.ToArray();
 		}
 	}
 }

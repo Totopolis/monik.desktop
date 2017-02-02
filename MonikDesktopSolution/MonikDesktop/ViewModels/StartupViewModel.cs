@@ -11,11 +11,11 @@ namespace MonikDesktop.ViewModels
 {
 	public class StartupViewModel : ReactiveObject, IStartupWindow
 	{
-		private readonly Shell FShell;
+		private readonly Shell _shell;
 
-		public StartupViewModel(OakApplication aApp, Shell aShell)
+		public StartupViewModel(IOakApplication aApp, Shell aShell)
 		{
-			FShell = aShell;
+			_shell = aShell;
 			App = aApp;
 
 			Title = "App settings";
@@ -27,12 +27,12 @@ namespace MonikDesktop.ViewModels
 					Settings.Default.Save();
 				});
 
-			var _canNew = App.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
-			NewLogCommand = ReactiveCommand.Create(NewLog, _canNew);
-			NewKeepAliveCommand = ReactiveCommand.Create(NewLog, _canNew);
+			var canNew = App.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
+			NewLogCommand = ReactiveCommand.Create(NewLog, canNew);
+			NewKeepAliveCommand = ReactiveCommand.Create(NewLog, canNew);
 		}
 
-		public OakApplication App { get; }
+		public IOakApplication App { get; }
 
 		public ReactiveCommand NewLogCommand { get; set; }
 		public ReactiveCommand NewKeepAliveCommand { get; set; }
@@ -50,17 +50,17 @@ namespace MonikDesktop.ViewModels
 		{
 			// TODO: check server url
 
-			var _log = Bootstrap.Container.Resolve<ILogsWindow>();
-			var _props = Bootstrap.Container.Resolve<IPropertiesWindow>();
-			var _sources = Bootstrap.Container.Resolve<ISourcesWindow>();
-			var _desc = Bootstrap.Container.Resolve<ILogDescription>();
+			var log = _shell.Resolve<ILogsWindow>();
+			var props = _shell.Resolve<IPropertiesWindow>();
+			var sources = _shell.Resolve<ISourcesWindow>();
+			var desc = _shell.Resolve<ILogDescription>();
 
-			FShell.ShowDocument(_log);
-			FShell.ShowTool(_props);
-			FShell.ShowTool(_sources);
-			FShell.ShowTool(_desc);
+			_shell.ShowDocument(log);
+			_shell.ShowTool(props);
+			_shell.ShowTool(sources);
+			_shell.ShowTool(desc);
 
-			FShell.SelectedWindow = _log;
+			_shell.SelectedWindow = log;
 		}
 	}
 }

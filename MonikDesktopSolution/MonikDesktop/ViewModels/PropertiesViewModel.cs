@@ -28,25 +28,14 @@ namespace MonikDesktop.ViewModels
 		[Reactive]
 		public IShowWindow ShowWindow { get; private set; }
 
-		public IList<TopType> TopTypes
-		{
-			get { return Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList(); }
-		}
+		public IList<TopType> TopTypes => Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList();
 
 		public IList<SeverityCutoffType> SeverityCutoffTypes
-		{
-			get { return Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList(); }
-		}
+			=> Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList();
 
-		public IList<LevelType> LevelTypes
-		{
-			get { return Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList(); }
-		}
+		public IList<LevelType> LevelTypes => Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList();
 
-		public IList<string> DatetimeFormats
-		{
-			get { return new[] {"HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "dd.MM HH:mm:ss"}; }
-		}
+		public IList<string> DatetimeFormats => new[] {"HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "dd.MM HH:mm:ss"};
 
 		[Reactive]
 		public string Title { get; set; }
@@ -59,7 +48,7 @@ namespace MonikDesktop.ViewModels
 
 		private void OnSelectedWindow(IShowWindow aWindow)
 		{
-			Model = aWindow == null ? null : aWindow.Model;
+			Model = aWindow?.Model;
 			ShowWindow = aWindow;
 		}
 	}

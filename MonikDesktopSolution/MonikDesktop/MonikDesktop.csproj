@@ -67,8 +67,8 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.2.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.2.1\lib\net45\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.3.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.4.1.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
@@ -79,8 +79,8 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ReactiveUI, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\reactiveui-core.7.0.0\lib\Net45\ReactiveUI.dll</HintPath>
+    <Reference Include="ReactiveUI, Version=7.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\reactiveui-core.7.1.0\lib\Net45\ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ReactiveUI.Fody.Helpers, Version=2.0.65.0, Culture=neutral, processorArchitecture=MSIL">
@@ -199,10 +199,6 @@
     <Compile Include="Views\StartupView.xaml.cs">
       <DependentUpon>StartupView.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -211,10 +207,6 @@
     <Compile Include="Common\Interfaces\IMonikService.cs" />
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Page Include="Views\LogDescriptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

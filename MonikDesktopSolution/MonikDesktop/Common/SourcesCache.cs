@@ -7,88 +7,71 @@ namespace MonikDesktop.Common
 {
 	public class SourcesCache : ISourcesCache
 	{
-		private readonly List<Group> FGroups;
+		private readonly List<Group> _groups;
 
-		private readonly Dictionary<int, Instance> FInstances;
-		private readonly IMonikService FService;
+		private readonly Dictionary<int, Instance> _instances;
 
-		private readonly List<Source> FSources;
-		private readonly Instance FUnknownInstance;
-
-		private readonly Source FUnknownSource;
+		private readonly List<Source> _sources;
+		private readonly Instance _unknownInstance;
 
 		public SourcesCache(IMonikService aService)
 		{
-			FService = aService;
+			var unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
+			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = unknownSource};
 
-			FUnknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
-			FUnknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = FUnknownSource};
+			var sources = aService.GetSources();
+			var instances = aService.GetInstances();
+			var groups = aService.GetGroups();
 
-			var _sources = FService.GetSources();
-			var _instances = FService.GetInstances();
-			var _groups = FService.GetGroups();
-
-			FSources = _sources.Select(x => new Source
+			_sources = sources.Select(x => new Source
 			{
 				ID = x.ID,
 				Name = x.Name
 			}).ToList();
 
-			FInstances = new Dictionary<int, Instance>();
-			foreach (var it in _instances)
+			_instances = new Dictionary<int, Instance>();
+			foreach (var it in instances)
 			{
-				var _src = FSources.FirstOrDefault(x => x.ID == it.SourceID);
-				if (_src == null)
-					_src = FUnknownSource;
+				var src = _sources.FirstOrDefault(x => x.ID == it.SourceID) ?? unknownSource;
 
-				var _instance = new Instance
+				var instance = new Instance
 				{
 					ID = it.ID,
 					Name = it.Name,
-					Source = _src
+					Source = src
 				};
 
-				FInstances.Add(_instance.ID, _instance);
+				_instances.Add(instance.ID, instance);
 			}
 
-			FGroups = new List<Group>();
-			foreach (var it in _groups)
+			_groups = new List<Group>();
+			foreach (var it in groups)
 			{
-				var _gr = new Group
+				var gr = new Group
 				{
 					ID = it.ID,
 					IsDefault = it.IsDefault,
-					Name = it.Name
+					Name = it.Name,
+					Instances = it.Instances
+						.Where(v => _instances.Keys.Count(x => x == v) > 0)
+						.Select(v => _instances.Values.First(x => x.ID == v)).ToList()
 				};
 
-				_gr.Instances = it.Instances
-					.Where(v => FInstances.Keys.Count(x => x == v) > 0)
-					.Select(v => FInstances.Values.First(x => x.ID == v)).ToList();
-
-				FGroups.Add(_gr);
+				_groups.Add(gr);
 			}
 		}
 
-		public Group[] Groups
-		{
-			get { return FGroups.ToArray(); }
-		}
+		public Group[] Groups => _groups.ToArray();
 
-		public Source[] Sources
-		{
-			get { return FSources.ToArray(); }
-		}
+		public Source[] Sources => _sources.ToArray();
 
-		public Instance[] Instances
-		{
-			get { return FInstances.Values.ToArray(); }
-		}
+		public Instance[] Instances => _instances.Values.ToArray();
 
-		public Instance GetInstance(int aInstanceID)
+		public Instance GetInstance(int aInstanceId)
 		{
-			return FInstances.ContainsKey(aInstanceID)
-				? FInstances[aInstanceID]
-				: FUnknownInstance;
+			return _instances.ContainsKey(aInstanceId)
+				? _instances[aInstanceId]
+				: _unknownInstance;
 
 			// TODO: if unknown instance then update from api?
 		}

@@ -7,115 +7,127 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
+using Autofac;
 
 namespace Doaking.Core.Oak
 {
 	// http://stackoverflow.com/questions/12493117/wpf-avalondock-v2-0-layoutdocument
 	public class Shell : ReactiveObject
 	{
-		private DockingManager FDocker;
-		private LayoutDocumentPane FDocumentPane;
-		private LayoutRoot FLayoutRoot;
-		private LayoutAnchorablePane FLeftPane;
+		private DockingManager _docker;
+		private LayoutDocumentPane _documentPane;
+		private LayoutRoot _layoutRoot;
+		private LayoutAnchorablePane _leftPane;
 
-		private readonly Dictionary<Type, Type> FModelViews;
-		private readonly ReactiveList<IDockingWindow> FWindows;
+		private readonly Dictionary<Type, Type> _modelViews;
+		private readonly ReactiveList<IDockingWindow> _windows;
 
 		public Shell()
 		{
-			FWindows = new ReactiveList<IDockingWindow>();
-			FModelViews = new Dictionary<Type, Type>();
+			_windows = new ReactiveList<IDockingWindow>();
+			_modelViews = new Dictionary<Type, Type>();
+			Container = null;
 		}
+
+		public IContainer Container { get; set; }
 
 		[Reactive]
 		public IDockingWindow SelectedWindow { get; set; } = null;
 
-		public void RegisterModelView<MODEL, VIEW>()
-			where MODEL : IDockingWindow
-			where VIEW : UserControl
+		public void RegisterModelView<TModel, TView>()
+			where TModel : IDockingWindow
+			where TView : UserControl
 		{
-			FModelViews.Add(typeof(MODEL), typeof(VIEW));
+			_modelViews.Add(typeof(TModel), typeof(TView));
+		}
+
+		public T Resolve<T>()
+		{
+			if (Container == null)
+				throw new Exception("Container not initialized");
+
+			return Container.Resolve<T>();
 		}
 
 		public void AttachDocker(DockingManager aDocker)
 		{
-			FDocker = aDocker;
+			_docker = aDocker;
 
-			FLayoutRoot = new LayoutRoot();
-			FDocker.Layout = FLayoutRoot;
+			_layoutRoot = new LayoutRoot();
+			_docker.Layout = _layoutRoot;
 
-			FDocumentPane = FLayoutRoot.RootPanel.Children[0] as LayoutDocumentPane;
+			_documentPane = _layoutRoot.RootPanel.Children[0] as LayoutDocumentPane;
 
-			FLeftPane = new LayoutAnchorablePane();
-			FLayoutRoot.RootPanel.Children.Insert(0, FLeftPane);
-			FLeftPane.DockWidth = new GridLength(410);
+			_leftPane = new LayoutAnchorablePane();
+			_layoutRoot.RootPanel.Children.Insert(0, _leftPane);
+			_leftPane.DockWidth = new GridLength(410);
 		}
 
 		public void ShowTool(IDockingWindow aWindow)
 		{
-			if (FWindows.Contains(aWindow))
+			if (_windows.Contains(aWindow))
 				return;
 
-			var _view = CreateView(aWindow);
-			FWindows.Add(aWindow);
+			var view = CreateView(aWindow);
+			_windows.Add(aWindow);
 
-			var _layoutAnchorable = new LayoutAnchorable();
+			var layoutAnchorable = new LayoutAnchorable();
 
 			aWindow.WhenAnyValue(x => x.Title)
-				.Subscribe(v => _layoutAnchorable.Title = v);
+				.Subscribe(v => layoutAnchorable.Title = v);
 
 			aWindow.WhenAnyValue(x => x.CanClose)
 				.Subscribe(v =>
 				{
-					_layoutAnchorable.CanHide = v;
-					_layoutAnchorable.CanClose = v;
+					layoutAnchorable.CanHide = v;
+					layoutAnchorable.CanClose = v;
 				});
 
-			_layoutAnchorable.Content = _view;
+			layoutAnchorable.Content = view;
 
-			FLeftPane.Children.Add(_layoutAnchorable);
+			_leftPane.Children.Add(layoutAnchorable);
 		}
 
 		public void ShowDocument(IDockingWindow aWondow)
 		{
-			var _view = CreateView(aWondow);
-			FWindows.Add(aWondow);
+			var view = CreateView(aWondow);
+			_windows.Add(aWondow);
 
-			var _layoutDocument = new LayoutDocument();
+			var layoutDocument = new LayoutDocument();
 
 			aWondow.WhenAnyValue(x => x.Title)
-				.Subscribe(v => _layoutDocument.Title = v);
+				.Subscribe(v => layoutDocument.Title = v);
 
 			aWondow.WhenAnyValue(x => x.CanClose)
-				.Subscribe(v => _layoutDocument.CanClose = v);
+				.Subscribe(v => layoutDocument.CanClose = v);
 
-			_layoutDocument.Content = _view;
+			layoutDocument.Content = view;
 
-			FDocumentPane.Children.Add(_layoutDocument);
+			_documentPane.Children.Add(layoutDocument);
 
-			_layoutDocument.IsActive = true;
+			layoutDocument.IsActive = true;
 		}
 
 		private UserControl CreateView(IDockingWindow aModel)
 		{
-			var _types = aModel.GetType().GetInterfaces();
+			var types = aModel.GetType().GetInterfaces();
 
-			Type _type = null;
+			Type type = null;
 
-			foreach (var it in FModelViews.Keys)
-				if (_types.Contains(it))
-					_type = FModelViews[it];
+			foreach (var it in _modelViews.Keys)
+				if (types.Contains(it))
+					type = _modelViews[it];
 
-			if (_type == null)
+			if (type == null)
 				throw new Exception($"Model {aModel} not found");
 
-			var _view = Activator.CreateInstance(_type) as UserControl;
-			if (_view == null)
-				throw new Exception($"Cant create view for type {_type}");
+			var view = Activator.CreateInstance(type) as UserControl;
+			if (view == null)
+				throw new Exception($"Cant create view for type {type}");
 
-			_view.DataContext = aModel;
+			view.DataContext = aModel;
 
-			return _view;
+			return view;
 		}
 	}
 }

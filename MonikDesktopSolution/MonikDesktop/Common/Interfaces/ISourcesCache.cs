@@ -8,6 +8,6 @@ namespace MonikDesktop.Common.Interfaces
 		Source[] Sources { get; }
 		Instance[] Instances { get; }
 
-		Instance GetInstance(int aInstanceID);
+		Instance GetInstance(int aInstanceId);
 	}
 }

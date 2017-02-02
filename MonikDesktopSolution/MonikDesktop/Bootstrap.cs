@@ -10,13 +10,11 @@ namespace MonikDesktop
 {
 	public class Bootstrap
 	{
-		public static IContainer Container { get; set; }
-
-		public static void Init()
+		public static Shell Init()
 		{
 			var builder = new ContainerBuilder();
 
-			builder.RegisterType<OakApplication>().SingleInstance();
+			builder.RegisterType<OakApplication>().As<IOakApplication>().SingleInstance();
 			builder.RegisterType<Shell>().SingleInstance();
 			builder.RegisterType<MonikService>().As<IMonikService>();
 			builder.RegisterType<SourcesCache>().As<ISourcesCache>().SingleInstance();
@@ -26,17 +24,20 @@ namespace MonikDesktop
 			builder.RegisterType<StartupViewModel>().As<IStartupWindow>().SingleInstance();
 			builder.RegisterType<LogDescriptionViewModel>().As<ILogDescription>().SingleInstance();
 
-			Container = builder.Build();
+			var container = builder.Build();
 
-			var _shell = Container.Resolve<Shell>();
+			var shell = container.Resolve<Shell>();
+			shell.Container = container;
 
-			_shell.RegisterModelView<IStartupWindow, StartupView>();
-			_shell.RegisterModelView<ILogsWindow, LogsView>();
-			_shell.RegisterModelView<IPropertiesWindow, PropertiesView>();
-			_shell.RegisterModelView<ISourcesWindow, SourcesView>();
-			_shell.RegisterModelView<ILogDescription, LogDescriptionView>();
+			shell.RegisterModelView<IStartupWindow, StartupView>();
+			shell.RegisterModelView<ILogsWindow, LogsView>();
+			shell.RegisterModelView<IPropertiesWindow, PropertiesView>();
+			shell.RegisterModelView<ISourcesWindow, SourcesView>();
+			shell.RegisterModelView<ILogDescription, LogDescriptionView>();
 
-			Container.Resolve<OakApplication>().ServerUrl = Settings.Default.ServerUrl;
+			shell.Resolve<IOakApplication>().ServerUrl = Settings.Default.ServerUrl;
+
+			return shell;
 		}
 	}
 }

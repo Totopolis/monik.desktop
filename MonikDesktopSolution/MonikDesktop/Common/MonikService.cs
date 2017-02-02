@@ -3,79 +3,80 @@ using System.Net;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using Newtonsoft.Json;
+using Doaking.Core.Oak;
 
 namespace MonikDesktop.Common
 {
 	public class MonikService : IMonikService
 	{
-		private readonly OakApplication FApp;
+		private readonly IOakApplication _app;
 
-		public MonikService(OakApplication aApp)
+		public MonikService(IOakApplication aApp)
 		{
-			FApp = aApp;
+			_app = aApp;
 		}
 
 		public EGroup[] GetGroups()
 		{
-			var _json = GetJson("groups");
-			var _res = JsonConvert.DeserializeObject<EGroup[]>(_json);
-			return _res;
+			var json = GetJson("groups");
+			var result = JsonConvert.DeserializeObject<EGroup[]>(json);
+			return result;
 		}
 
 		public EInstance[] GetInstances()
 		{
-			var _json = GetJson("instances");
-			var _res = JsonConvert.DeserializeObject<EInstance[]>(_json);
-			return _res;
+			var json = GetJson("instances");
+			var result = JsonConvert.DeserializeObject<EInstance[]>(json);
+			return result;
 		}
 
 		public ESource[] GetSources()
 		{
-			var _json = GetJson("sources");
-			var _res = JsonConvert.DeserializeObject<ESource[]>(_json);
-			return _res;
+			var json = GetJson("sources");
+			var result = JsonConvert.DeserializeObject<ESource[]>(json);
+			return result;
 		}
 
 		public ELog_[] GetLogs(ELogRequest aRequest)
 		{
-			var _reqJson = JsonConvert.SerializeObject(aRequest);
-			var _resJson = PostJson("logs5", _reqJson);
+			var reqJson = JsonConvert.SerializeObject(aRequest);
+			var resJson = PostJson("logs5", reqJson);
 
-			var _res = JsonConvert.DeserializeObject<ELog_[]>(_resJson);
-			return _res;
+			var result = JsonConvert.DeserializeObject<ELog_[]>(resJson);
+			return result;
 		}
 
 		private string GetJson(string aMethod)
 		{
-			var _request = (HttpWebRequest) WebRequest.Create(FApp.ServerUrl + aMethod);
-			_request.Method = WebRequestMethods.Http.Get;
-			_request.Accept = "application/json";
+			var request = (HttpWebRequest) WebRequest.Create(_app.ServerUrl + aMethod);
+			request.Method = WebRequestMethods.Http.Get;
+			request.Accept = "application/json";
 
-			var _response = _request.GetResponse();
-			using (var sr = new StreamReader(_response.GetResponseStream()))
+			var response = request.GetResponse();
+			using (var sr = new StreamReader(response.GetResponseStream()))
 			{
-				var _json = sr.ReadToEnd();
-				return _json;
+				var json = sr.ReadToEnd();
+				return json;
 			}
 		}
 
 		private string PostJson(string aMethod, string aJson)
 		{
-			var _request = (HttpWebRequest) WebRequest.Create(FApp.ServerUrl + aMethod);
-			_request.Method = WebRequestMethods.Http.Post;
-			_request.Accept = "application/json";
-			_request.ContentType = "application/json";
+			var request = (HttpWebRequest) WebRequest.Create(_app.ServerUrl + aMethod);
+			request.Method = WebRequestMethods.Http.Post;
+			request.Accept = "application/json";
+			request.ContentType = "application/json";
 
-			using (var sw = new StreamWriter(_request.GetRequestStream()))
+			using (var sw = new StreamWriter(request.GetRequestStream()))
 			{
 				sw.Write(aJson);
 			}
 
-			var _response = _request.GetResponse();
-			using (var sr = new StreamReader(_response.GetResponseStream()))
+			var response = request.GetResponse();
+			using (var sr = new StreamReader(response.GetResponseStream()))
 			{
-				var _json = sr.ReadToEnd();
-				return _json;
+				var json = sr.ReadToEnd();
+				return json;
 			}
 		}
 	}
