@@ -19,7 +19,7 @@ namespace MonikDesktop.ViewModels
 		private readonly ISourcesCache _cache;
 
 		private readonly LogsModel _model;
-		 
+		
 		private IDisposable _updateExecutor;
 
 		public LogsViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)

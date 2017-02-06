@@ -6,70 +6,82 @@
              xmlns:local="clr-namespace:MonikDesktop.Views"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.Resources>
-        <CollectionViewSource Source="{Binding Path=SourceItems}" x:Key="customerView">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="GroupName" />
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
-    </UserControl.Resources>
-    <Grid>
-        <DataGrid
+	<UserControl.Resources>
+		<CollectionViewSource Source="{Binding Path=SourceItems}" x:Key="customerView">
+			<CollectionViewSource.GroupDescriptions>
+				<PropertyGroupDescription PropertyName="GroupName" />
+			</CollectionViewSource.GroupDescriptions>
+		</CollectionViewSource>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		
+		<StackPanel Orientation="Horizontal">
+			<Button Command="{Binding SelectNoneCommand}" Margin="5">Select None</Button>
+			<Button Command="{Binding SelectGroupCommand}" Margin="5">Select Group</Button>
+			<Button Margin="5">Refresh</Button>
+		</StackPanel>
+		
+		<DataGrid
+			SelectedItem="{Binding SelectedItem}"
             ItemsSource="{Binding Source={StaticResource customerView}}"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             AutoGenerateColumns="False"
             GridLinesVisibility="Horizontal"
-            HorizontalGridLinesBrush="Silver">
+            HorizontalGridLinesBrush="Silver" Grid.Row="1">
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Source" Binding="{Binding SourceName}" />
-                <DataGridTextColumn Header="Instance" Binding="{Binding InstanceName}" />
-                <DataGridCheckBoxColumn Header="Checked" Binding="{Binding Checked}" />
-            </DataGrid.Columns>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Source" Binding="{Binding SourceName}" />
+				<DataGridTextColumn Header="Instance" Binding="{Binding InstanceName}" />
+				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, UpdateSourceTrigger=PropertyChanged}" />
+			</DataGrid.Columns>
 
-            <DataGrid.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Margin" Value="0,0,0,5" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255"
+			<DataGrid.GroupStyle>
+				<GroupStyle>
+					<GroupStyle.ContainerStyle>
+						<Style TargetType="{x:Type GroupItem}">
+							<Setter Property="Margin" Value="0,0,0,5" />
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type GroupItem}">
+										<Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255"
                                                   Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
-                                            <Expander.Header>
-                                                <DockPanel>
-                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=Name}"
+											<Expander.Header>
+												<DockPanel>
+													<TextBlock FontWeight="Bold" Text="{Binding Path=Name}"
                                                                Margin="5,0,0,0" Width="100" />
-                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=ItemCount}" />
-                                                </DockPanel>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </DataGrid.GroupStyle>
+													<TextBlock FontWeight="Bold" Text="{Binding Path=ItemCount}" />
+												</DockPanel>
+											</Expander.Header>
+											<Expander.Content>
+												<ItemsPresenter />
+											</Expander.Content>
+										</Expander>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</GroupStyle.ContainerStyle>
+				</GroupStyle>
+			</DataGrid.GroupStyle>
 
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="Background" Value="White" />
+			<DataGrid.RowStyle>
+				<Style TargetType="DataGridRow">
+					<Setter Property="Foreground" Value="Black" />
+					<Setter Property="Background" Value="White" />
 
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="Pink" />
-                            <Setter Property="Foreground" Value="Black" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
-    </Grid>
+					<Style.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter Property="Background" Value="Pink" />
+							<Setter Property="Foreground" Value="Black" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.RowStyle>
+		</DataGrid>
+	</Grid>
 </UserControl>

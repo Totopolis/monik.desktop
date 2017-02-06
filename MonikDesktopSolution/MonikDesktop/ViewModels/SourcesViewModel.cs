@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows.Navigation;
 using Doaking.Core.Oak;
 using MonikDesktop.Common.Interfaces;
+using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -14,6 +17,8 @@ namespace MonikDesktop.ViewModels
 
 		private ReactiveList<short> _selectedGroups;
 		private ReactiveList<int> _selectedInstances;
+
+		private ShowModel _model = null;
 
 		public SourcesViewModel(Shell aShell, ISourcesCache aCache)
 		{
@@ -28,6 +33,9 @@ namespace MonikDesktop.ViewModels
 		}
 
 		[Reactive]
+		public SourceItem SelectedItem { get; set; }
+
+		[Reactive]
 		public ReactiveList<SourceItem> SourceItems { get; private set; }
 
 		[Reactive]
@@ -38,6 +46,48 @@ namespace MonikDesktop.ViewModels
 
 		[Reactive]
 		public ReactiveCommand CloseCommand { get; set; } = null;
+
+		[Reactive]
+		public ReactiveCommand SelectNoneCommand { get; set; }
+
+		[Reactive]
+		public ReactiveCommand SelectGroupCommand { get; set; }
+
+		[Reactive]
+		public ReactiveCommand RefreshCommand { get; set; }
+
+		private void SelectNone()
+		{
+			_selectedGroups.Clear();
+			_selectedInstances.Clear();
+
+			foreach (var it in SourceItems)
+				it.Checked = false;
+		}
+
+		private void SelectGroup()
+		{
+			if (SelectedItem == null || _selectedGroups.Contains(SelectedItem.GroupID))
+				return;
+
+			var neighbors = SourceItems
+				.Where(x => x.GroupID == SelectedItem.GroupID).ToList();
+
+			_selectedInstances.RemoveAll(neighbors.Select(x => x.InstanceID));
+
+			_selectedGroups.Add(SelectedItem.GroupID);
+
+			//using (SourceItems.SuppressChangeNotifications())
+			neighbors.ForEach(x => x.Checked = true);
+
+			this.RaisePropertyChanged("SourceItems");
+			this.RaisePropertyChanged("SelectedItem");
+		}
+
+		private void Refresh()
+		{
+			
+		}
 
 		private void FillSourcesTree()
 		{
@@ -83,6 +133,14 @@ namespace MonikDesktop.ViewModels
 
 		private void OnSelectedWindow(IShowWindow aWindow)
 		{
+			if (aWindow.Model == _model)
+				return;
+
+			_model = aWindow.Model;
+
+			SelectNoneCommand = null;
+			SelectGroupCommand = null;
+
 			SourceItems.ChangeTrackingEnabled = false;
 
 			foreach (var it in SourceItems)
@@ -100,6 +158,20 @@ namespace MonikDesktop.ViewModels
 
 			// update view
 			this.RaisePropertyChanged("SourceItems");
+
+			var canSelectNone = _model.WhenAny(
+				x => x.Instances.Count,
+				x => x.Groups.Count,
+				(ins, gr) => ins.Value > 0 || gr.Value > 0);
+
+			SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
+
+			var canSelectGroup = Observable.Merge(
+					this.WhenAny(x => x.SelectedItem, v => v.Value),
+					this.SourceItems.ItemChanged.Select(v => v.Sender))
+				.Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
+
+			SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
 		}
 
 		/// <summary>
@@ -118,6 +190,8 @@ namespace MonikDesktop.ViewModels
 				var checkedItems = SourceItems.Where(x => (x.GroupID == aItem.GroupID) && x.Checked).Select(x => x.InstanceID);
 				_selectedInstances.AddRange(checkedItems);
 				_selectedGroups.Remove(aItem.GroupID);
+
+				this.RaisePropertyChanged("SelectedItem");
 			}
 
 			if (aItem.Checked && (aItem.GroupID > 0) && !_selectedGroups.Contains(aItem.GroupID))
@@ -130,6 +204,8 @@ namespace MonikDesktop.ViewModels
 					_selectedGroups.Add(aItem.GroupID);
 					_selectedInstances.RemoveAll(allItems.Select(x => x.InstanceID));
 				}
+
+				this.RaisePropertyChanged("SelectedItem");
 			}
 		}
 	} //end of class

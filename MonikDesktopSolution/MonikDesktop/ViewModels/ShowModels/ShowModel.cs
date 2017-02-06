@@ -8,6 +8,9 @@ namespace MonikDesktop.ViewModels.ShowModels
 	{
 		protected ShowModel()
 		{
+			Groups = new ReactiveList<short> { ChangeTrackingEnabled = true };
+			Instances = new ReactiveList<int> { ChangeTrackingEnabled = true };
+
 			Groups.CountChanged.Subscribe(_ => Online = false);
 			Instances.CountChanged.Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.RefreshSec).Subscribe(_ => Online = false);
@@ -15,8 +18,11 @@ namespace MonikDesktop.ViewModels.ShowModels
 			this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
 		}
 
-		public ReactiveList<short> Groups { get; } = new ReactiveList<short> {ChangeTrackingEnabled = true};
-		public ReactiveList<int> Instances { get; } = new ReactiveList<int> {ChangeTrackingEnabled = true};
+		[Reactive]
+		public ReactiveList<short> Groups { get; set; }
+
+		[Reactive]
+		public ReactiveList<int> Instances { get; set; }
 
 		[Reactive]
 		public string Caption { get; set; } = "";

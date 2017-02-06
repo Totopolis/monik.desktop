@@ -7,21 +7,29 @@ namespace MonikDesktop.Common
 {
 	public class SourcesCache : ISourcesCache
 	{
-		private readonly List<Group> _groups;
+		private readonly IMonikService _service;
+		private List<Group> _groups;
+		private List<Source> _sources;
+		private Dictionary<int, Instance> _instances;
 
-		private readonly Dictionary<int, Instance> _instances;
-
-		private readonly List<Source> _sources;
+		private readonly Source _unknownSource;
 		private readonly Instance _unknownInstance;
 
 		public SourcesCache(IMonikService aService)
 		{
-			var unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
-			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = unknownSource};
+			_service = aService;
 
-			var sources = aService.GetSources();
-			var instances = aService.GetInstances();
-			var groups = aService.GetGroups();
+			_unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
+			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
+
+			Reload();
+		}
+
+		public void Reload()
+		{
+			var sources = _service.GetSources();
+			var instances = _service.GetInstances();
+			var groups = _service.GetGroups();
 
 			_sources = sources.Select(x => new Source
 			{
@@ -32,7 +40,7 @@ namespace MonikDesktop.Common
 			_instances = new Dictionary<int, Instance>();
 			foreach (var it in instances)
 			{
-				var src = _sources.FirstOrDefault(x => x.ID == it.SourceID) ?? unknownSource;
+				var src = _sources.FirstOrDefault(x => x.ID == it.SourceID) ?? _unknownSource;
 
 				var instance = new Instance
 				{

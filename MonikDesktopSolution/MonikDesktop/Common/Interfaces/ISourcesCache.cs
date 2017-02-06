@@ -9,5 +9,7 @@ namespace MonikDesktop.Common.Interfaces
 		Instance[] Instances { get; }
 
 		Instance GetInstance(int aInstanceId);
+
+		void Reload();
 	}
 }
