@@ -22,7 +22,7 @@
 		<StackPanel Orientation="Horizontal">
 			<Button Command="{Binding SelectNoneCommand}" Margin="5">Select None</Button>
 			<Button Command="{Binding SelectGroupCommand}" Margin="5">Select Group</Button>
-			<Button Margin="5">Refresh</Button>
+			<Button Command="{Binding RefreshCommand}" Margin="5">Refresh</Button>
 		</StackPanel>
 		
 		<DataGrid
@@ -35,9 +35,9 @@
             HorizontalGridLinesBrush="Silver" Grid.Row="1">
 
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Source" Binding="{Binding SourceName}" />
-				<DataGridTextColumn Header="Instance" Binding="{Binding InstanceName}" />
-				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, UpdateSourceTrigger=PropertyChanged}" />
+				<DataGridTextColumn Header="Source" IsReadOnly="True" Binding="{Binding SourceName}" />
+				<DataGridTextColumn Header="Instance" IsReadOnly="True" Binding="{Binding InstanceName}" />
+				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			</DataGrid.Columns>
 
 			<DataGrid.GroupStyle>

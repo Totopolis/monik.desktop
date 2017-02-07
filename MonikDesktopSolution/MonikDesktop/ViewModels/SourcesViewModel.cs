@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -25,12 +26,26 @@ namespace MonikDesktop.ViewModels
 			_cache = aCache;
 			Title = "Sources";
 
+			SourceItems = new ReactiveList<SourceItem>();
+			SourceItems
+				.ItemChanged
+				.Subscribe(x => OnSourceChanged(x.Sender));
+
 			FillSourcesTree();
 
 			aShell.WhenAnyValue(x => x.SelectedWindow)
 				.Where(v => v is IShowWindow)
 				.Subscribe(v => OnSelectedWindow(v as IShowWindow));
+
+			this.ObservableForProperty(x => x.SelectedItem)
+				.Where(v => v.Value != null)
+				.Subscribe(v => SelectedHack = v.Value);
+
+			RefreshCommand = ReactiveCommand.Create(Refresh);
 		}
+
+		[Reactive]
+		public SourceItem SelectedHack { get; set; }
 
 		[Reactive]
 		public SourceItem SelectedItem { get; set; }
@@ -67,31 +82,30 @@ namespace MonikDesktop.ViewModels
 
 		private void SelectGroup()
 		{
-			if (SelectedItem == null || _selectedGroups.Contains(SelectedItem.GroupID))
+			if (SelectedHack == null || _selectedGroups.Contains(SelectedHack.GroupID))
 				return;
 
-			var neighbors = SourceItems
-				.Where(x => x.GroupID == SelectedItem.GroupID).ToList();
-
-			_selectedInstances.RemoveAll(neighbors.Select(x => x.InstanceID));
-
-			_selectedGroups.Add(SelectedItem.GroupID);
-
-			//using (SourceItems.SuppressChangeNotifications())
-			neighbors.ForEach(x => x.Checked = true);
-
-			this.RaisePropertyChanged("SourceItems");
-			this.RaisePropertyChanged("SelectedItem");
+			SourceItems
+				.Where(x => x.GroupID == SelectedHack.GroupID)
+				.ToList()
+				.ForEach(x => x.Checked = true);
 		}
 
 		private void Refresh()
 		{
-			
+			_cache.Reload();
+
+			FillSourcesTree();
+			SyncCheckStatuses();
+
+			this.RaisePropertyChanged("SourceItems");
 		}
 
 		private void FillSourcesTree()
 		{
-			SourceItems = new ReactiveList<SourceItem>();
+			SourceItems.ChangeTrackingEnabled = false;
+
+			SourceItems.Clear();
 
 			var groups = _cache.Groups;
 			var instances = _cache.Instances;
@@ -127,8 +141,21 @@ namespace MonikDesktop.ViewModels
 				}
 
 			SourceItems.ChangeTrackingEnabled = true;
+		}
 
-			SourceItems.ItemChanged.Subscribe(x => OnSourceChanged(x.Sender));
+		private void SyncCheckStatuses()
+		{
+			SourceItems.ChangeTrackingEnabled = false;
+
+			foreach (var it in SourceItems)
+				it.Checked = false;
+
+			// fill from IShowWindow
+			foreach (var it in SourceItems)
+				if (_selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID))
+					it.Checked = true;
+
+			SourceItems.ChangeTrackingEnabled = true;
 		}
 
 		private void OnSelectedWindow(IShowWindow aWindow)
@@ -141,24 +168,15 @@ namespace MonikDesktop.ViewModels
 			SelectNoneCommand = null;
 			SelectGroupCommand = null;
 
-			SourceItems.ChangeTrackingEnabled = false;
-
-			foreach (var it in SourceItems)
-				it.Checked = false;
-
 			_selectedGroups = aWindow.Model.Groups;
 			_selectedInstances = aWindow.Model.Instances;
 
-			// fill from IShowWindow
-			foreach (var it in SourceItems)
-				if (_selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID))
-					it.Checked = true;
-
-			SourceItems.ChangeTrackingEnabled = true;
+			SyncCheckStatuses();
 
 			// update view
 			this.RaisePropertyChanged("SourceItems");
 
+			// Select None Command
 			var canSelectNone = _model.WhenAny(
 				x => x.Instances.Count,
 				x => x.Groups.Count,
@@ -166,8 +184,9 @@ namespace MonikDesktop.ViewModels
 
 			SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
 
+			// Select Group Command
 			var canSelectGroup = Observable.Merge(
-					this.WhenAny(x => x.SelectedItem, v => v.Value),
+					this.WhenAny(x => x.SelectedHack, v => v.Value),
 					this.SourceItems.ItemChanged.Select(v => v.Sender))
 				.Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
 
@@ -187,25 +206,29 @@ namespace MonikDesktop.ViewModels
 
 			if (!aItem.Checked && (aItem.GroupID > 0) && _selectedGroups.Contains(aItem.GroupID))
 			{
-				var checkedItems = SourceItems.Where(x => (x.GroupID == aItem.GroupID) && x.Checked).Select(x => x.InstanceID);
+				var checkedItems = SourceItems
+					.Where(x => (x.GroupID == aItem.GroupID) && x.Checked)
+					.Select(x => x.InstanceID);
+
 				_selectedInstances.AddRange(checkedItems);
 				_selectedGroups.Remove(aItem.GroupID);
-
-				this.RaisePropertyChanged("SelectedItem");
 			}
 
 			if (aItem.Checked && (aItem.GroupID > 0) && !_selectedGroups.Contains(aItem.GroupID))
 			{
-				var allItems = SourceItems.Where(x => x.GroupID == aItem.GroupID).ToArray();
-				var checkedItems = allItems.Where(x => x.Checked).ToArray();
+				var allItems = SourceItems
+					.Where(x => x.GroupID == aItem.GroupID)
+					.ToList();
 
-				if (allItems.Count() == checkedItems.Count())
+				var allCheckedItems = SourceItems
+					.Where(x => (x.GroupID == aItem.GroupID) && x.Checked)
+					.ToList();
+
+				if (allItems.Count == allCheckedItems.Count)
 				{
 					_selectedGroups.Add(aItem.GroupID);
 					_selectedInstances.RemoveAll(allItems.Select(x => x.InstanceID));
 				}
-
-				this.RaisePropertyChanged("SelectedItem");
 			}
 		}
 	} //end of class
