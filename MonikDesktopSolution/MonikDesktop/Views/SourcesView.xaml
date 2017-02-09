@@ -35,9 +35,9 @@
             HorizontalGridLinesBrush="Silver" Grid.Row="1">
 
 			<DataGrid.Columns>
+				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<DataGridTextColumn Header="Source" IsReadOnly="True" Binding="{Binding SourceName}" />
 				<DataGridTextColumn Header="Instance" IsReadOnly="True" Binding="{Binding InstanceName}" />
-				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			</DataGrid.Columns>
 
 			<DataGrid.GroupStyle>
