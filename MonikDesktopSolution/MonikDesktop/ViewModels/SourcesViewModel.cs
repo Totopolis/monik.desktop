@@ -27,7 +27,10 @@ namespace MonikDesktop.ViewModels
 			Title = "Sources";
 
 			SourceItems = new ReactiveList<SourceItem>();
-			SourceItems
+
+			FilteredItems = new ReactiveList<SourceItem>();
+
+			FilteredItems
 				.ItemChanged
 				.Subscribe(x => OnSourceChanged(x.Sender));
 
@@ -42,6 +45,10 @@ namespace MonikDesktop.ViewModels
 				.Subscribe(v => SelectedHack = v.Value);
 
 			RefreshCommand = ReactiveCommand.Create(Refresh);
+
+			this.ObservableForProperty(x => x.FilterText)
+				.Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
+				.Subscribe(v => Filter(v.Value));
 		}
 
 		[Reactive]
@@ -51,7 +58,13 @@ namespace MonikDesktop.ViewModels
 		public SourceItem SelectedItem { get; set; }
 
 		[Reactive]
+		public ReactiveList<SourceItem> FilteredItems { get; private set; }
+
+		[Reactive]
 		public ReactiveList<SourceItem> SourceItems { get; private set; }
+
+		[Reactive]
+		public string FilterText { get; set; }
 
 		[Reactive]
 		public string Title { get; set; }
@@ -70,6 +83,24 @@ namespace MonikDesktop.ViewModels
 
 		[Reactive]
 		public ReactiveCommand RefreshCommand { get; set; }
+
+		private void Filter(string aFilter)
+		{
+			aFilter = aFilter.ToLower();
+			FilteredItems.Clear();
+
+			if (string.IsNullOrWhiteSpace(aFilter))
+				SourceItems
+					.ToList()
+					.ForEach(x => FilteredItems.Add(x));
+			else
+				SourceItems
+					.Where(x =>
+						x.SourceName.ToLower().Contains(aFilter) ||
+						x.InstanceName.ToLower().Contains(aFilter))
+					.ToList()
+					.ForEach(x => FilteredItems.Add(x));
+		}
 
 		private void SelectNone()
 		{
@@ -103,9 +134,8 @@ namespace MonikDesktop.ViewModels
 
 		private void FillSourcesTree()
 		{
-			SourceItems.ChangeTrackingEnabled = false;
-
 			SourceItems.Clear();
+			FilteredItems.Clear();
 
 			var groups = _cache.Groups;
 			var instances = _cache.Instances;
@@ -140,7 +170,14 @@ namespace MonikDesktop.ViewModels
 					SourceItems.Add(sitem);
 				}
 
-			SourceItems.ChangeTrackingEnabled = true;
+			FilterText = "";
+
+			FilteredItems.ChangeTrackingEnabled = false;
+
+			foreach (var it in SourceItems)
+				FilteredItems.Add(it);
+
+			FilteredItems.ChangeTrackingEnabled = true;
 		}
 
 		private void SyncCheckStatuses()

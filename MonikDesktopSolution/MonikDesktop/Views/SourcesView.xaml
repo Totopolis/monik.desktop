@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
-		<CollectionViewSource Source="{Binding Path=SourceItems}" x:Key="customerView">
+		<CollectionViewSource Source="{Binding Path=FilteredItems}" x:Key="CustomerView">
 			<CollectionViewSource.GroupDescriptions>
 				<PropertyGroupDescription PropertyName="GroupName" />
 			</CollectionViewSource.GroupDescriptions>
@@ -19,15 +19,16 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 		
-		<StackPanel Orientation="Horizontal">
+		<StackPanel Orientation="Horizontal" Grid.Row="0">
 			<Button Command="{Binding SelectNoneCommand}" Margin="5">Select None</Button>
 			<Button Command="{Binding SelectGroupCommand}" Margin="5">Select Group</Button>
 			<Button Command="{Binding RefreshCommand}" Margin="5">Refresh</Button>
+			<TextBox Text="{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" Width="150"></TextBox>
 		</StackPanel>
 		
 		<DataGrid
 			SelectedItem="{Binding SelectedItem}"
-            ItemsSource="{Binding Source={StaticResource customerView}}"
+            ItemsSource="{Binding Source={StaticResource CustomerView}}"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             AutoGenerateColumns="False"
