@@ -33,7 +33,9 @@
             CanUserDeleteRows="False"
             AutoGenerateColumns="False"
             GridLinesVisibility="Horizontal"
-            HorizontalGridLinesBrush="Silver" Grid.Row="1">
+            HorizontalGridLinesBrush="Silver" 
+			Grid.Row="1"
+			local:DataGridExtensions.LastColumnFill="True">
 
 			<DataGrid.Columns>
 				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
