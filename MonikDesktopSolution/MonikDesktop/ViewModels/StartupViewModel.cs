@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 using Autofac;
 using Doaking.Core.Oak;
 using MonikDesktop.Common;
@@ -30,14 +32,16 @@ namespace MonikDesktop.ViewModels
 			var canNew = App.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
 			NewLogCommand = ReactiveCommand.Create(NewLog, canNew);
 			NewKeepAliveCommand = ReactiveCommand.Create(NewLog, canNew);
+		    ShowSpinnerCommand = ReactiveCommand.Create(ChangeSpinnerVisibility, canNew);
 		}
 
 		public IOakApplication App { get; }
 
 		public ReactiveCommand NewLogCommand { get; set; }
-		public ReactiveCommand NewKeepAliveCommand { get; set; }
+	    public ReactiveCommand NewKeepAliveCommand { get; set; }
+	    public ReactiveCommand ShowSpinnerCommand { get; set; }
 
-		[Reactive]
+        [Reactive]
 		public bool CanClose { get; set; } = false;
 
 		[Reactive]
@@ -46,21 +50,53 @@ namespace MonikDesktop.ViewModels
 		[Reactive]
 		public string Title { get; set; }
 
-		private void NewLog()
-		{
-			// TODO: check server url
+	    private async Task NewLog()
+	    {
+	        // TODO: check server url
 
-			var log = _shell.Resolve<ILogsWindow>();
-			var props = _shell.Resolve<IPropertiesWindow>();
-			var sources = _shell.Resolve<ISourcesWindow>();
-			var desc = _shell.Resolve<ILogDescription>();
+	        ShowSpinner = Visibility.Visible;
 
-			_shell.ShowDocument(log);
-			_shell.ShowTool(props);
-			_shell.ShowTool(sources);
-			_shell.ShowTool(desc);
+	        ILogsWindow       log     = null;
+	        IPropertiesWindow props   = null;
+	        ISourcesWindow    sources = null;
+	        ILogDescription   desc    = null;
 
-			_shell.SelectedWindow = log;
-		}
+	        await Task.Run(() =>
+	        {
+	            log     = _shell.Resolve<ILogsWindow>();
+	            props   = _shell.Resolve<IPropertiesWindow>();
+	            sources = _shell.Resolve<ISourcesWindow>();
+	            desc    = _shell.Resolve<ILogDescription>();
+	        });
+            
+	        _shell.ShowDocument(log);
+	        _shell.ShowTool(props);
+	        _shell.ShowTool(sources);
+	        _shell.ShowTool(desc);
+
+	        _shell.SelectedWindow = log;
+
+	        ShowSpinner = Visibility.Collapsed;
+	    }
+
+	    private async Task ChangeSpinnerVisibility()
+	    {
+	        ShowSpinner = Visibility.Visible;
+
+	        await Task.Delay(5000);
+            
+	        ShowSpinner = Visibility.Collapsed;
+
+	        //if (ShowSpinner == Visibility.Collapsed)
+	        //    ShowSpinner = Visibility.Visible;
+	        //else
+	        //{
+	        //    ShowSpinner = Visibility.Collapsed;
+	        //}
+	    }
+
+
+	    [Reactive]
+        public Visibility ShowSpinner { get; set; } = Visibility.Collapsed;
 	}
 }
