@@ -24,10 +24,14 @@
             <xctk:IntegerUpDown Value="{Binding Model.RefreshSec}" />
             <Label>Colorized</Label>
             <CheckBox IsChecked="{Binding Model.Colorized}" />
+            <Label>GroupDoublingLogs</Label>
+            <CheckBox IsChecked="{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" />
             <Label>Caption</Label>
             <TextBox Text="{Binding Model.Caption}" Height="20" />
             <Label>Datetime format</Label>
             <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}" />
+            <Label>Duplicated Datetime format</Label>
+            <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}" />
         </StackPanel>
     </Grid>
 </UserControl>

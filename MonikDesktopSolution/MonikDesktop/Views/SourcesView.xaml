@@ -15,7 +15,7 @@
 	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="40"/>
+		    <RowDefinition Height="40"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 		
@@ -25,9 +25,14 @@
 			<Button Command="{Binding RefreshCommand}" Margin="5">Refresh</Button>
 			<TextBox Text="{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" Width="150"></TextBox>
 		</StackPanel>
-		
-		<DataGrid
-			SelectedItem="{Binding SelectedItem}"
+
+        <DataGrid
+            VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+            VirtualizingPanel.IsVirtualizing="True"
+            VirtualizingPanel.IsContainerVirtualizable="True" 
+            VirtualizingPanel.ScrollUnit="Item"
+            EnableRowVirtualization="True"
+            SelectedItem="{Binding SelectedItem}"
             ItemsSource="{Binding Source={StaticResource CustomerView}}"
             CanUserAddRows="False"
             CanUserDeleteRows="False"

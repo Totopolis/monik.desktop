@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Navigation;
 using Doaking.Core.Oak;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
@@ -19,7 +16,7 @@ namespace MonikDesktop.ViewModels
 		private ReactiveList<short> _selectedGroups;
 		private ReactiveList<int> _selectedInstances;
 
-		private ShowModel _model = null;
+		private ShowModel _model;
 
 		public SourcesViewModel(Shell aShell, ISourcesCache aCache)
 		{
@@ -89,17 +86,13 @@ namespace MonikDesktop.ViewModels
 			aFilter = aFilter.ToLower();
 			FilteredItems.Clear();
 
-			if (string.IsNullOrWhiteSpace(aFilter))
-				SourceItems
-					.ToList()
-					.ForEach(x => FilteredItems.Add(x));
-			else
-				SourceItems
-					.Where(x =>
-						x.SourceName.ToLower().Contains(aFilter) ||
-						x.InstanceName.ToLower().Contains(aFilter))
-					.ToList()
-					.ForEach(x => FilteredItems.Add(x));
+		    if (string.IsNullOrWhiteSpace(aFilter))
+		        FilteredItems.AddRange(SourceItems);
+		    else
+		        FilteredItems.AddRange(SourceItems
+		            .Where(x =>
+		                x.SourceName.ToLower().Contains(aFilter) ||
+		                x.InstanceName.ToLower().Contains(aFilter)));
 		}
 
 		private void SelectNone()
@@ -113,13 +106,11 @@ namespace MonikDesktop.ViewModels
 
 		private void SelectGroup()
 		{
-			if (SelectedHack == null || _selectedGroups.Contains(SelectedHack.GroupID))
+		    if (SelectedHack == null || _selectedGroups.Contains(SelectedHack.GroupID))
 				return;
 
-			SourceItems
-				.Where(x => x.GroupID == SelectedHack.GroupID)
-				.ToList()
-				.ForEach(x => x.Checked = true);
+		    foreach (var x in SourceItems.Where(x => x.GroupID == SelectedHack.GroupID).ToList())
+		        x.Checked = true;
 		}
 
 		private void Refresh()
@@ -140,42 +131,31 @@ namespace MonikDesktop.ViewModels
 			var groups = _cache.Groups;
 			var instances = _cache.Instances;
 
-			foreach (var gr in groups)
-				foreach (var inst in gr.Instances)
-				{
-					var sitem = new SourceItem
-					{
-						GroupID = gr.ID,
-						GroupName = gr.Name,
-						SourceName = inst.Source.Name,
-						InstanceName = inst.Name,
-						InstanceID = inst.ID
-					};
-
-					SourceItems.Add(sitem);
-				}
-
-			foreach (var inst in instances)
-				if (SourceItems.Count(x => x.InstanceID == inst.ID) == 0)
-				{
-					var sitem = new SourceItem
-					{
-						GroupID = 0,
-						GroupName = "[NOGROUP]",
-						SourceName = inst.Source.Name,
-						InstanceName = inst.Name,
-						InstanceID = inst.ID
-					};
-
-					SourceItems.Add(sitem);
-				}
-
-			FilterText = "";
+            SourceItems.AddRange(groups.SelectMany(gr => gr.Instances,
+                (gr, inst) => new SourceItem
+                {
+                    GroupID = gr.ID,
+                    GroupName = gr.Name,
+                    SourceName = inst.Source.Name,
+                    InstanceName = inst.Name,
+                    InstanceID = inst.ID
+                }));
+            
+		    SourceItems.AddRange(instances.Where(inst => SourceItems.All(x => x.InstanceID != inst.ID))
+		        .Select(inst => new SourceItem
+		        {
+		            GroupID = 0,
+		            GroupName = "[NOGROUP]",
+		            SourceName = inst.Source.Name,
+		            InstanceName = inst.Name,
+		            InstanceID = inst.ID
+		        }));
+            
+            FilterText = "";
 
 			FilteredItems.ChangeTrackingEnabled = false;
-
-			foreach (var it in SourceItems)
-				FilteredItems.Add(it);
+            
+            FilteredItems.AddRange(SourceItems);
 
 			FilteredItems.ChangeTrackingEnabled = true;
 		}
@@ -188,8 +168,7 @@ namespace MonikDesktop.ViewModels
 				it.Checked = false;
 
 			// fill from IShowWindow
-			foreach (var it in SourceItems)
-				if (_selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID))
+			foreach (var it in SourceItems.Where(it=>_selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID)).ToList())
 					it.Checked = true;
 
 			SourceItems.ChangeTrackingEnabled = true;
@@ -222,9 +201,8 @@ namespace MonikDesktop.ViewModels
 			SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
 
 			// Select Group Command
-			var canSelectGroup = Observable.Merge(
-					this.WhenAny(x => x.SelectedHack, v => v.Value),
-					this.SourceItems.ItemChanged.Select(v => v.Sender))
+			var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
+			    .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
 				.Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
 
 			SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);

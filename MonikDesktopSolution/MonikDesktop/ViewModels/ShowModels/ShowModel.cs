@@ -36,7 +36,13 @@ namespace MonikDesktop.ViewModels.ShowModels
 		[Reactive]
 		public bool Colorized { get; set; } = true;
 
-		[Reactive]
+        [Reactive]
 		public string DateTimeFormat { get; set; } = "HH:mm:ss";
+
+	    [Reactive]
+	    public bool GroupDuplicatingItems { get; set; } = true;
+
+        [Reactive]
+		public string DuplicatedDateTimeFormat { get; set; } = "HH:mm:**";
 	}
 }

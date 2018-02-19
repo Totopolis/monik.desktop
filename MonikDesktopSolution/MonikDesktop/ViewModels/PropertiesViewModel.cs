@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 using Doaking.Core.Oak;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
@@ -35,9 +36,17 @@ namespace MonikDesktop.ViewModels
 
 		public IList<LevelType> LevelTypes => Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList();
 
-		public IList<string> DatetimeFormats => new[] {"HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "dd.MM HH:mm:ss"};
-
-		[Reactive]
+	    public IList<string> DatetimeFormats => new[]
+	    {
+	        "HH:mm:ss",
+	        "HH:mm:**",
+	        "dd.MM.yyyy HH:mm:ss",
+	        "dd.MM.yyyy HH:mm:**",
+	        "dd.MM HH:mm:ss",
+	        "dd.MM HH:mm:**"
+	    };
+        
+	    [Reactive]
 		public string Title { get; set; }
 
 		[Reactive]

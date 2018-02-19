@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -116,12 +117,12 @@ namespace MonikDesktop.ViewModels
 		{
 			var req = new ELogRequest
 			{
-				LastID = LastId,
-				Level = _model.Level == LevelType.None ? null : (byte?) _model.Level,
+				LastID         = LastId,
+				Level          = _model.Level == LevelType.None ? null : (byte?) _model.Level,
 				SeverityCutoff = _model.SeverityCutoff == SeverityCutoffType.None ? null : (byte?) _model.SeverityCutoff,
-				Top = _model.Top == TopType.None ? null : (byte?) _model.Top,
-				Groups = _model.Groups.ToArray(),
-				Instances = _model.Instances.ToArray()
+				Top            = _model.Top == TopType.None ? null : (byte?) _model.Top,
+				Groups         = _model.Groups.ToArray(),
+				Instances      = _model.Instances.ToArray()
 			};
 
 			ELog_[] response;
@@ -132,27 +133,61 @@ namespace MonikDesktop.ViewModels
 			}
 			catch
 			{
-				return new[] {new LogItem {Body = "INTERNAL ERROR"}};
+			    return new[] {new LogItem {Body = "INTERNAL ERROR", Created = DateTime.Now}};
 			}
 
 			if (response.Length > 0)
 				LastId = response.Max(x => x.ID);
 
-			var result = response.Select(x =>
-				new LogItem
-				{
-					ID = x.ID,
-					Created = x.Created.ToLocalTime(),
-					CreatedStr = x.Created.ToLocalTime().ToString(Model.DateTimeFormat),
-					Received = x.Received.ToLocalTime(),
-					ReceivedStr = x.Received.ToLocalTime().ToString(Model.DateTimeFormat),
-					Level = x.Level,
-					Severity = x.Severity,
-					Instance = _cache.GetInstance(x.InstanceID),
-					Body = x.Body.Replace(Environment.NewLine, "")
-				});
+		    IEnumerable<ELog_> groupedRequest;
+		    if (Model.GroupDuplicatingItems)
+		        groupedRequest = GroupDuplicatingLogs(response).OrderBy(x => x.ID);
+		    else
+		        groupedRequest = response;
+
+		    var result = groupedRequest.Select(x =>
+			{
+			    var created = x.Created.ToLocalTime();
+			    return new LogItem
+			    {
+			        ID          = x.ID,
+			        Created     = created,
+			        CreatedStr  = created.ToString(x.Doubled?Model.DuplicatedDateTimeFormat : Model.DateTimeFormat),
+			        Received    = x.Received.ToLocalTime(),
+			        ReceivedStr = x.Received.ToLocalTime().ToString(Model.DateTimeFormat),
+			        Level       = x.Level,
+			        Severity    = x.Severity,
+			        Instance    = _cache.GetInstance(x.InstanceID),
+			        Body        = x.Body.Replace(Environment.NewLine, "")
+			    };
+			});
 
 			return result.ToArray();
 		}
-	}
+        
+	    private IEnumerable<ELog_> GroupDuplicatingLogs(ELog_[] response)
+	    {
+	        var result = response?.GroupBy(r => new { r.InstanceID, r.Body, r.Severity, r.Level }).SelectMany(g =>
+	        {
+	            var min = g.Min(r => r.Created);
+	            var firstIn5Sec = g.GroupBy(r =>
+	                {
+	                    var totalSeconds = (r.Created - min).TotalSeconds;
+	                    var rez = totalSeconds - totalSeconds % _model.RefreshSec;
+
+	                    return rez;
+	                })
+	                .Select(inner =>
+	                {
+	                    var eLog = inner.First();
+	                    if (inner.Count() > 1)
+	                        eLog.Doubled = true;
+	                    return eLog;
+	                }).ToArray();
+
+	            return firstIn5Sec;
+	        });
+	        return result;
+	    }
+    }
 }

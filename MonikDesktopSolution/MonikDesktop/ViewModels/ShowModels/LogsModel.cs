@@ -29,8 +29,8 @@ namespace MonikDesktop.ViewModels.ShowModels
 
 		[Reactive]
 		public SeverityCutoffType SeverityCutoff { get; set; } = SeverityCutoffType.Info;
-
-		[Reactive]
+        
+        [Reactive]
 		public LevelType Level { get; set; } = LevelType.None;
 
 		[Reactive]
