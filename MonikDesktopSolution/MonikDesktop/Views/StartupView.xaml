@@ -18,7 +18,7 @@
             <Label>Actions</Label>
             <Button Command="{Binding NewLogCommand}">Create Logs</Button>
             <Separator />
-            <Button Command="{Binding ShowSpinnerCommand}">Create KeepAlive</Button>
+            <Button Command="{Binding NewKeepAliveCommand}">Create KeepAlive</Button>
         </StackPanel>
         <Grid Background="Gray" Opacity="0.75" Visibility="{Binding Path=ShowSpinner}">
             <fa:ImageAwesome Icon ="Cog" Spin="True" Height="48" Width="48" SpinDuration ="4" />

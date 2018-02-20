@@ -30,8 +30,10 @@
             <TextBox Text="{Binding Model.Caption}" Height="20" />
             <Label>Datetime format</Label>
             <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}" />
-            <Label>Duplicated Datetime format</Label>
-            <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}" />
+            <Label Visibility="{Binding Model.DuplicatedSettingsVisibility}">Duplicated Datetime format</Label>
+            <ComboBox Visibility="{Binding Model.DuplicatedSettingsVisibility}" ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}" />
+            <Label>Keep Alive Warning period (sec.)</Label>
+            <xctk:IntegerUpDown Value="{Binding Model.KeepAliveWarningPeriod}" />
         </StackPanel>
     </Grid>
 </UserControl>

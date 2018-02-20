@@ -99,7 +99,7 @@ namespace MonikDesktop.ViewModels
 				.Select(_ => Unit.Default)
 				.InvokeCommand(UpdateCommand);
 
-			Model.Online = true;
+		    _model.Online = true;
 		}
 
 		private void OnStop()
@@ -140,7 +140,7 @@ namespace MonikDesktop.ViewModels
 				LastId = response.Max(x => x.ID);
 
 		    IEnumerable<ELog_> groupedRequest;
-		    if (Model.GroupDuplicatingItems)
+		    if (_model.GroupDuplicatingItems)
 		        groupedRequest = GroupDuplicatingLogs(response).OrderBy(x => x.ID);
 		    else
 		        groupedRequest = response;
@@ -152,9 +152,9 @@ namespace MonikDesktop.ViewModels
 			    {
 			        ID          = x.ID,
 			        Created     = created,
-			        CreatedStr  = created.ToString(x.Doubled?Model.DuplicatedDateTimeFormat : Model.DateTimeFormat),
+			        CreatedStr  = created.ToString(x.Doubled? _model.DuplicatedDateTimeFormat : _model.DateTimeFormat),
 			        Received    = x.Received.ToLocalTime(),
-			        ReceivedStr = x.Received.ToLocalTime().ToString(Model.DateTimeFormat),
+			        ReceivedStr = x.Received.ToLocalTime().ToString(_model.DateTimeFormat),
 			        Level       = x.Level,
 			        Severity    = x.Severity,
 			        Instance    = _cache.GetInstance(x.InstanceID),

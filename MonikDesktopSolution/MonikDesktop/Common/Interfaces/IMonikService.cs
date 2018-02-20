@@ -8,5 +8,6 @@ namespace MonikDesktop.Common.Interfaces
 		EInstance[] GetInstances();
 		EGroup[] GetGroups();
 		ELog_[] GetLogs(ELogRequest aRequest);
-	}
+	    EKeepAlive_[] GetKeepAlives(EKeepAliveRequest aRequest);
+    }
 }

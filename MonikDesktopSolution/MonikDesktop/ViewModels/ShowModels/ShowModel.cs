@@ -38,11 +38,5 @@ namespace MonikDesktop.ViewModels.ShowModels
 
         [Reactive]
 		public string DateTimeFormat { get; set; } = "HH:mm:ss";
-
-	    [Reactive]
-	    public bool GroupDuplicatingItems { get; set; } = true;
-
-        [Reactive]
-		public string DuplicatedDateTimeFormat { get; set; } = "HH:mm:**";
 	}
 }

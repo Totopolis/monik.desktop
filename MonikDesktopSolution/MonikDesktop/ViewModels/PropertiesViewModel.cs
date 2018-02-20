@@ -54,7 +54,7 @@ namespace MonikDesktop.ViewModels
 
 		[Reactive]
 		public ReactiveCommand CloseCommand { get; set; } = null;
-
+        
 		private void OnSelectedWindow(IShowWindow aWindow)
 		{
 			Model = aWindow?.Model;

@@ -31,7 +31,7 @@ namespace MonikDesktop.ViewModels
 
 			var canNew = App.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
 			NewLogCommand = ReactiveCommand.Create(NewLog, canNew);
-			NewKeepAliveCommand = ReactiveCommand.Create(NewLog, canNew);
+			NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
 		    ShowSpinnerCommand = ReactiveCommand.Create(ChangeSpinnerVisibility, canNew);
 		}
 
@@ -79,20 +79,37 @@ namespace MonikDesktop.ViewModels
 	        ShowSpinner = Visibility.Collapsed;
 	    }
 
-	    private async Task ChangeSpinnerVisibility()
+	    private async Task NewKeepAlive()
 	    {
+	        // TODO: check server url
+
 	        ShowSpinner = Visibility.Visible;
 
-	        await Task.Delay(5000);
-            
-	        ShowSpinner = Visibility.Collapsed;
+	        IKeepAliveWindow  keepAlive = null;
+	        IPropertiesWindow props     = null;
+	        ISourcesWindow    sources   = null;
+	        ILogDescription   desc      = null;
 
-	        //if (ShowSpinner == Visibility.Collapsed)
-	        //    ShowSpinner = Visibility.Visible;
-	        //else
-	        //{
-	        //    ShowSpinner = Visibility.Collapsed;
-	        //}
+	        await Task.Run(() =>
+	        {
+	            keepAlive = _shell.Resolve<IKeepAliveWindow>();
+	            props     = _shell.Resolve<IPropertiesWindow>();
+	            sources   = _shell.Resolve<ISourcesWindow>();
+	            desc      = _shell.Resolve<ILogDescription>();
+	        });
+            
+	        _shell.ShowDocument(keepAlive);
+	        _shell.ShowTool(props);
+	        _shell.ShowTool(sources);
+	        _shell.ShowTool(desc);
+
+	        _shell.SelectedWindow = keepAlive;
+
+	        ShowSpinner = Visibility.Collapsed;
+	    }
+
+	    private async Task ChangeSpinnerVisibility()
+	    {
 	    }
 
 

@@ -168,7 +168,10 @@
     <Compile Include="Common\Enums\LevelType.cs" />
     <Compile Include="Common\Enums\SeverityCutoffType.cs" />
     <Compile Include="Common\Enums\TopType.cs" />
+    <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
+    <Compile Include="Common\ModelsApi\EKeepAlive_.cs" />
     <Compile Include="Common\ModelsApp\Group.cs" />
+    <Compile Include="Common\ModelsApp\KeepALiveItem.cs" />
     <Compile Include="Common\ModelsApp\LogItem.cs" />
     <Compile Include="Common\ModelsApp\Instance.cs" />
     <Compile Include="Common\ModelsApi\EGroup.cs" />
@@ -179,6 +182,7 @@
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
+    <Compile Include="ViewModels\KeepAliveViewModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
     <Compile Include="ViewModels\SourceItem.cs" />
@@ -187,6 +191,9 @@
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\LogDescriptionView.xaml.cs">
       <DependentUpon>LogDescriptionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\KeepAliveView.xaml.cs">
+      <DependentUpon>KeepAliveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LogsView.xaml.cs">
       <DependentUpon>LogsView.xaml</DependentUpon>
@@ -211,6 +218,10 @@
     <Page Include="Views\LogDescriptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\KeepAliveView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LogsView.xaml">
       <SubType>Designer</SubType>

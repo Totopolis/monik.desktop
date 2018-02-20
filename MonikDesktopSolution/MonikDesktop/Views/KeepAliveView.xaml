@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="MonikDesktop.Views.KeepAliveView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MonikDesktop.Views"
+             xmlns:vm="clr-namespace:MonikDesktop.ViewModels"
+             xmlns:converters="clr-namespace:MonikDesktop.Common.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:SeverityToNameConverter x:Key="SeverityToName" />
+        <converters:LevelToNameConverter x:Key="LevelToName" />
+    </UserControl.Resources>
+
+    <Grid>
+        <DataGrid
+            x:Name="MainGrid"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            AutoGenerateColumns="False"
+            RowHeight="20"
+            HorizontalGridLinesBrush="Silver"
+            VerticalGridLinesBrush="Silver"
+            GridLinesVisibility="Horizontal"
+            Foreground="Black"
+            SelectedItem="{Binding Model.SelectedItem}"
+            ItemsSource="{Binding KeepALiveList}">
+
+            <!--<DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding StatusIsOk}" Value="false">
+                            <Setter Property="Background" Value= "#FFFF5959" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StatusIsOk}" Value="true">
+                            <Setter Property="Background" Value="LightGreen" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>-->
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Source" Binding="{Binding Instance.Source.Name}" Width="Auto" />
+                <DataGridTextColumn Header="Instance" Binding="{Binding Instance.Name}" Width="Auto" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Setters>
+                                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding StatusIsOk}" Value="false">
+                                    <Setter Property="Background" Value= "#FFFF5959" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding StatusIsOk}" Value="true">
+                                    <Setter Property="Background" Value="LightGreen" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Created" Binding="{Binding CreatedStr}" Width="Auto">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Setters>
+                                <Setter Property="TextBlock.TextAlignment" Value="Right" />
+                            </Style.Setters>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

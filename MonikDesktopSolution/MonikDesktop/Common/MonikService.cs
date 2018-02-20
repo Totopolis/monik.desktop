@@ -44,9 +44,18 @@ namespace MonikDesktop.Common
 
 			var result = JsonConvert.DeserializeObject<ELog_[]>(resJson);
 			return result;
-		}
+	    }
 
-		private string GetJson(string aMethod)
+	    public EKeepAlive_[] GetKeepAlives(EKeepAliveRequest aRequest)
+	    {
+	        var reqJson = JsonConvert.SerializeObject(aRequest);
+	        var resJson = PostJson("keepalive2", reqJson);
+
+	        var result = JsonConvert.DeserializeObject<EKeepAlive_[]>(resJson);
+	        return result;
+	    }
+
+        private string GetJson(string aMethod)
 		{
 			var request = (HttpWebRequest) WebRequest.Create(_app.ServerUrl + aMethod);
 			request.Method = WebRequestMethods.Http.Get;
