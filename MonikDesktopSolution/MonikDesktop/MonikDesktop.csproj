@@ -195,6 +195,9 @@
     <Compile Include="Views\KeepAliveView.xaml.cs">
       <DependentUpon>KeepAliveView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SampleData.xaml.cs">
+      <DependentUpon>SampleData.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LogsView.xaml.cs">
       <DependentUpon>LogsView.xaml</DependentUpon>
     </Compile>
@@ -220,6 +223,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\KeepAliveView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SampleData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
