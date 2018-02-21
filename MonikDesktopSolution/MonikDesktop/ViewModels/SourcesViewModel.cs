@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 using Doaking.Core.Oak;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
@@ -16,7 +17,7 @@ namespace MonikDesktop.ViewModels
 		private ReactiveList<short> _selectedGroups;
 		private ReactiveList<int> _selectedInstances;
 
-		private ShowModel _model;
+		private LogsModel _model;
 
 		public SourcesViewModel(Shell aShell, ISourcesCache aCache)
 		{
@@ -36,7 +37,7 @@ namespace MonikDesktop.ViewModels
 			aShell.WhenAnyValue(x => x.SelectedWindow)
 				.Where(v => v is IShowWindow)
 				.Subscribe(v => OnSelectedWindow(v as IShowWindow));
-
+            
 			this.ObservableForProperty(x => x.SelectedItem)
 				.Where(v => v.Value != null)
 				.Subscribe(v => SelectedHack = v.Value);
@@ -48,40 +49,20 @@ namespace MonikDesktop.ViewModels
 				.Subscribe(v => Filter(v.Value));
 		}
 
-		[Reactive]
-		public SourceItem SelectedHack { get; set; }
+		[Reactive] public SourceItem               SelectedHack       { get; set; }
+		[Reactive] public SourceItem               SelectedItem       { get; set; }
+		[Reactive] public ReactiveList<SourceItem> FilteredItems      { get; private set; }
+	    [Reactive] public ReactiveList<SourceItem> SourceItems        { get; private set; }
+		[Reactive] public string                   FilterText         { get; set; }
+		[Reactive] public string                   Title              { get; set; }
+		[Reactive] public bool                     CanClose           { get; set; } = false;
+	    [Reactive] public ReactiveCommand          CloseCommand       { get; set; } = null;
+		[Reactive] public ReactiveCommand          SelectNoneCommand  { get; set; }
+		[Reactive] public ReactiveCommand          SelectGroupCommand { get; set; }
+		[Reactive] public ReactiveCommand          RefreshCommand     { get; set; }
+	    [Reactive] public bool                     WindowIsEbabled    { get; set; } = true;
 
-		[Reactive]
-		public SourceItem SelectedItem { get; set; }
-
-		[Reactive]
-		public ReactiveList<SourceItem> FilteredItems { get; private set; }
-
-		[Reactive]
-		public ReactiveList<SourceItem> SourceItems { get; private set; }
-
-		[Reactive]
-		public string FilterText { get; set; }
-
-		[Reactive]
-		public string Title { get; set; }
-
-		[Reactive]
-		public bool CanClose { get; set; } = false;
-
-		[Reactive]
-		public ReactiveCommand CloseCommand { get; set; } = null;
-
-		[Reactive]
-		public ReactiveCommand SelectNoneCommand { get; set; }
-
-		[Reactive]
-		public ReactiveCommand SelectGroupCommand { get; set; }
-
-		[Reactive]
-		public ReactiveCommand RefreshCommand { get; set; }
-
-		private void Filter(string aFilter)
+        private void Filter(string aFilter)
 		{
 			aFilter = aFilter.ToLower();
 			FilteredItems.Clear();
@@ -176,16 +157,26 @@ namespace MonikDesktop.ViewModels
 
 		private void OnSelectedWindow(IShowWindow aWindow)
 		{
-			if (aWindow.Model == _model)
+		    var logsWindow = aWindow as ILogsWindow;
+
+		    if (logsWindow == null)
+		    {
+		        WindowIsEbabled = false;
+		        return;
+		    }
+
+		    WindowIsEbabled = true;
+
+            if (aWindow.Model == _model)
 				return;
 
-			_model = aWindow.Model;
+			_model = (LogsModel) logsWindow.Model;
 
 			SelectNoneCommand = null;
 			SelectGroupCommand = null;
 
-			_selectedGroups = aWindow.Model.Groups;
-			_selectedInstances = aWindow.Model.Instances;
+			_selectedGroups = _model.Groups;
+			_selectedInstances = _model.Instances;
 
 			SyncCheckStatuses();
 
@@ -207,7 +198,7 @@ namespace MonikDesktop.ViewModels
 
 			SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
 		}
-
+        
 		/// <summary>
 		///     Manage instance and group lists. Join to groups if need.
 		///     aItem have new Checked state.

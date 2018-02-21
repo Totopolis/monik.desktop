@@ -46,18 +46,28 @@ namespace MonikDesktop.ViewModels
 	        "dd.MM HH:mm:**"
 	    };
         
-	    [Reactive]
-		public string Title { get; set; }
+	    [Reactive] public string          Title                 { get; set; }
+        [Reactive] public bool            CanClose              { get; set; } = false;
+        [Reactive] public ReactiveCommand CloseCommand          { get; set; } = null;
+        [Reactive] public bool            WindowIsEbabled       { get; set; } = true;
+        [Reactive] public Visibility      LogsVisibility        { get; set; } = Visibility.Collapsed;
+        [Reactive] public Visibility      KeepAlivesVisibility  { get; set; } = Visibility.Collapsed;
 
-		[Reactive]
-		public bool CanClose { get; set; } = false;
+        private void OnSelectedWindow(IShowWindow aWindow)
+        {
+            if (aWindow is ILogsWindow)
+            {
+                LogsVisibility       = Visibility.Visible;
+                KeepAlivesVisibility = Visibility.Collapsed;
+            }
 
-		[Reactive]
-		public ReactiveCommand CloseCommand { get; set; } = null;
-        
-		private void OnSelectedWindow(IShowWindow aWindow)
-		{
-			Model = aWindow?.Model;
+            if (aWindow is IKeepAliveWindow)
+            {
+                LogsVisibility       = Visibility.Collapsed;
+                KeepAlivesVisibility = Visibility.Visible;
+            }
+
+            Model = aWindow.Model;
 			ShowWindow = aWindow;
 		}
 	}

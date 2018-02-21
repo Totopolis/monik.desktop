@@ -86,6 +86,12 @@ namespace Doaking.Core.Oak
 			layoutAnchorable.Content = view;
 
 			_leftPane.Children.Add(layoutAnchorable);
+
+		    aWindow.WhenAnyValue(x => x.WindowIsEbabled).Subscribe(v =>
+		    {
+		        layoutAnchorable.IsEnabled = v;
+		    });
+
 		}
 
 		public void ShowDocument(IDockingWindow aWondow)

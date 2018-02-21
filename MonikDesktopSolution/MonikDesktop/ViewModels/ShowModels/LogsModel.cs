@@ -20,7 +20,15 @@ namespace MonikDesktop.ViewModels.ShowModels
 
 		public LogsModel()
 		{
-			this.ObservableForProperty(x => x.Level)                        .Subscribe(_ => Online = false);
+		    Groups = new ReactiveList<short> { ChangeTrackingEnabled = true };
+		    Instances = new ReactiveList<int> { ChangeTrackingEnabled = true };
+
+		    Groups.CountChanged.Subscribe(_ => Online = false);
+		    Instances.CountChanged.Subscribe(_ => Online = false);
+
+            this.ObservableForProperty(x => x.Colorized).Subscribe(_ => Online = false);
+
+            this.ObservableForProperty(x => x.Level)                        .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.Top)                          .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.SeverityCutoff)               .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.GroupDuplicatingItems)        .Subscribe(_ =>
@@ -32,7 +40,16 @@ namespace MonikDesktop.ViewModels.ShowModels
 			this.ObservableForProperty(x => x.DuplicatedSettingsVisibility) .Subscribe(_ => Online = false);
 		}
 
-		[Reactive]
+	    [Reactive]
+	    public ReactiveList<short> Groups { get; set; }
+
+	    [Reactive]
+	    public ReactiveList<int> Instances { get; set; }
+
+	    [Reactive]
+	    public bool Colorized { get; set; } = true;
+
+        [Reactive]
 		public TopType Top { get; set; } = TopType.Top50;
 
 		[Reactive]

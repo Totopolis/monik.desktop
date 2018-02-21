@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows;
 using Doaking.Core.Oak;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
@@ -79,16 +80,12 @@ namespace MonikDesktop.ViewModels
 		public ReactiveCommand StartCommand { get; set; }
 		public ReactiveCommand StopCommand { get; set; }
 
-		[Reactive]
-		public string Title { get; set; }
+		[Reactive] public string          Title            { get; set; }
+        [Reactive] public bool            CanClose         { get; set; } = true;
+        [Reactive] public ReactiveCommand CloseCommand     { get; set; } = null;
+	    [Reactive] public bool            WindowIsEbabled  { get; set; } = true;
 
-		[Reactive]
-		public bool CanClose { get; set; } = true;
-
-		[Reactive]
-		public ReactiveCommand CloseCommand { get; set; } = null;
-
-		private void OnStart()
+        private void OnStart()
 		{
 			LastId = null;
 			LogsList.Clear();

@@ -13,27 +13,37 @@
             <Button Command="{Binding Path=ShowWindow.StartCommand}" Content="Start" Margin="5" />
             <Button Command="{Binding Path=ShowWindow.StopCommand}" Content="Stop" Margin="5" />
 
-            <Label>Level filter</Label>
-            <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}" />
-            <Label>Severity Cutoff</Label>
-            <ComboBox ItemsSource="{Binding SeverityCutoffTypes}"
-                      SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}" />
-            <Label>Top</Label>
-            <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}" />
-            <Label>Refresh period (sec.)</Label>
-            <xctk:IntegerUpDown Value="{Binding Model.RefreshSec}" />
-            <Label>Colorized</Label>
-            <CheckBox IsChecked="{Binding Model.Colorized}" />
-            <Label>GroupDoublingLogs</Label>
-            <CheckBox IsChecked="{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" />
             <Label>Caption</Label>
             <TextBox Text="{Binding Model.Caption}" Height="20" />
+            <Label>Refresh period (sec.)</Label>
+            <xctk:IntegerUpDown Value="{Binding Model.RefreshSec}" />
+
+            <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding LogsVisibility}">
+                <Label>Level filter</Label>
+                <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}" />
+                <Label>Severity Cutoff</Label>
+                <ComboBox ItemsSource="{Binding SeverityCutoffTypes}"
+                      SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}" />
+                <Label>Top</Label>
+                <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}" />
+                <Label>Colorized</Label>
+                <CheckBox IsChecked="{Binding Model.Colorized}" />
+                <Label>GroupDoublingLogs</Label>
+                <CheckBox IsChecked="{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" />
+            </StackPanel>
+
             <Label>Datetime format</Label>
             <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}" />
-            <Label Visibility="{Binding Model.DuplicatedSettingsVisibility}">Duplicated Datetime format</Label>
-            <ComboBox Visibility="{Binding Model.DuplicatedSettingsVisibility}" ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}" />
-            <Label>Keep Alive Warning period (sec.)</Label>
-            <xctk:IntegerUpDown Value="{Binding Model.KeepAliveWarningPeriod}" />
+
+            <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding LogsVisibility}">
+                <Label Visibility="{Binding Model.DuplicatedSettingsVisibility}">Duplicated Datetime format</Label>
+                <ComboBox Visibility="{Binding Model.DuplicatedSettingsVisibility}" ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding KeepAlivesVisibility}">
+                <Label>Keep Alive Warning period (sec.)</Label>
+                <xctk:IntegerUpDown Value="{Binding Model.KeepAliveWarningPeriod}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>
