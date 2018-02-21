@@ -31,6 +31,7 @@
             VirtualizingPanel.IsVirtualizing="True"
             VirtualizingPanel.IsContainerVirtualizable="True" 
             VirtualizingPanel.ScrollUnit="Item"
+            ScrollViewer.CanContentScroll ="True"
             EnableRowVirtualization="True"
             SelectedItem="{Binding SelectedItem}"
             ItemsSource="{Binding Source={StaticResource CustomerView}}"
@@ -42,7 +43,7 @@
 			Grid.Row="1"
 			local:DataGridExtensions.LastColumnFill="True">
 
-			<DataGrid.Columns>
+            <DataGrid.Columns>
 				<DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<DataGridTextColumn Header="Source" IsReadOnly="True" Binding="{Binding SourceName}" />
 				<DataGridTextColumn Header="Instance" IsReadOnly="True" Binding="{Binding InstanceName}" />
@@ -56,7 +57,7 @@
 							<Setter Property="Template">
 								<Setter.Value>
 									<ControlTemplate TargetType="{x:Type GroupItem}">
-										<Expander IsExpanded="False" Background="#FF112255" BorderBrush="#FF002255"
+										<Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255"
                                                   Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
 											<Expander.Header>
 												<DockPanel>
