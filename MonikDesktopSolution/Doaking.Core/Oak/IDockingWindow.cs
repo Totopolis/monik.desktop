@@ -8,6 +8,6 @@ namespace Doaking.Core.Oak
 		string          Title            { get; set; }
 		bool            CanClose         { get; set; }
 		ReactiveCommand CloseCommand     { get; set; }
-	    bool            WindowIsEbabled  { get; set; }
+	    bool            WindowIsEnabled  { get; set; }
     }
 }

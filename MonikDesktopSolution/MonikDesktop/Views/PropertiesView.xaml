@@ -21,13 +21,16 @@
             <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding LogsVisibility}">
                 <Label>Level filter</Label>
                 <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}" />
+
                 <Label>Severity Cutoff</Label>
-                <ComboBox ItemsSource="{Binding SeverityCutoffTypes}"
-                      SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}" />
+                <ComboBox ItemsSource="{Binding SeverityCutoffTypes}" SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}" />
+
                 <Label>Top</Label>
                 <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}" />
+                
                 <Label>Colorized</Label>
                 <CheckBox IsChecked="{Binding Model.Colorized}" />
+                
                 <Label>GroupDoublingLogs</Label>
                 <CheckBox IsChecked="{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" />
             </StackPanel>
@@ -43,6 +46,14 @@
             <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding KeepAlivesVisibility}">
                 <Label>Keep Alive Warning period (sec.)</Label>
                 <xctk:IntegerUpDown Value="{Binding Model.KeepAliveWarningPeriod}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding MetricsVisibility}">
+                <Label>Metrics Mode</Label>
+                <ComboBox ItemsSource="{Binding MetricTerminalModes}" SelectedValue="{Binding Model.MetricTerminalMode, Mode=TwoWay}" />
+
+                <Label>Metric aggregating window width in 5 minutes</Label>
+                <xctk:IntegerUpDown Value="{Binding Model.Window5MinWidth}" />
             </StackPanel>
         </StackPanel>
     </Grid>

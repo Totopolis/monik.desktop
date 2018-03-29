@@ -87,7 +87,7 @@ namespace Doaking.Core.Oak
 
 			_leftPane.Children.Add(layoutAnchorable);
 
-		    aWindow.WhenAnyValue(x => x.WindowIsEbabled).Subscribe(v =>
+		    aWindow.WhenAnyValue(x => x.WindowIsEnabled).Subscribe(v =>
 		    {
 		        layoutAnchorable.IsEnabled = v;
 		    });

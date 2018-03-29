@@ -28,16 +28,16 @@ namespace MonikDesktop.ViewModels
 
 	        if (logsWindow == null)
 	        {
-	            WindowIsEbabled = false;
+	            WindowIsEnabled = false;
 	            return;
 	        }
 
-	        WindowIsEbabled = true;
+	        WindowIsEnabled = true;
 	    }
 
 	    [Reactive] public bool            CanClose        { get; set; } = false;
         [Reactive] public ReactiveCommand CloseCommand    { get; set; } = null;
-	    [Reactive] public bool            WindowIsEbabled { get; set; } = true;
+	    [Reactive] public bool            WindowIsEnabled { get; set; } = true;
         [Reactive] public LogItem         SelectedItem    { get; set; } = null;
         [Reactive] public string          Title           { get; set; }
 	} //end of class

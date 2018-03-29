@@ -24,7 +24,7 @@
             VerticalGridLinesBrush="Silver"
             GridLinesVisibility="Horizontal"
             Foreground="Black"
-            d:DataContext="{d:DesignData Source=SampleData.xaml, IsDesignTimeCreatable=True}"
+            d:DataContext="{d:DesignData Source=KeepAliveSampleData.xaml, IsDesignTimeCreatable=True}"
             ItemsSource="{Binding KeepALiveList}">
 
             <DataGrid.Columns>

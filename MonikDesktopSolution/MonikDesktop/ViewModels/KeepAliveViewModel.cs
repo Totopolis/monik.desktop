@@ -15,136 +15,142 @@ using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.ViewModels
 {
-	public class KeepAliveViewModel : ReactiveObject, IKeepAliveWindow
-	{
-		private readonly IMonikService _service;
-		private readonly ISourcesCache _cache;
+    public class KeepAliveViewModel : ReactiveObject, IKeepAliveWindow
+    {
+        private readonly IMonikService _service;
+        private readonly ISourcesCache _cache;
 
-		private readonly KeepAliveModel _model;
-		
-		private IDisposable _updateExecutor;
+        private readonly KeepAliveModel _model;
 
-		public KeepAliveViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
-		{
-			_service = aService;
-			_cache = aCache;
+        private IDisposable _updateExecutor;
 
-			KeepALiveList = new ReactiveList<KeepALiveItem>();
-			_model = new KeepAliveModel { Caption = "KeepAlives"};
+        public KeepAliveViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
+        {
+            _service = aService;
+            _cache   = aCache;
 
-			_model.WhenAnyValue(x => x.Caption, x => x.Online)
-				.Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
+            KeepALiveList = new ReactiveList<KeepALiveItem>();
+            _model        = new KeepAliveModel {Caption = "KeepAlives"};
 
-			var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
-			StartCommand = ReactiveCommand.Create(OnStart, canStart);
+            _model.WhenAnyValue(x => x.Caption, x => x.Online)
+               .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
-			var canStop = _model.WhenAny(x => x.Online, x => x.Value);
-			StopCommand = ReactiveCommand.Create(OnStop, canStop);
+            var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
+            StartCommand = ReactiveCommand.Create(OnStart, canStart);
 
-			UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
-			UpdateCommand.Subscribe(results =>
-			{
+            var canStop = _model.WhenAny(x => x.Online, x => x.Value);
+            StopCommand = ReactiveCommand.Create(OnStop, canStop);
+
+            UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
+
+            UpdateCommand.Subscribe(results =>
+            {
                 KeepALiveList.Clear();
-			    KeepALiveList.AddRange(results);
-			});
 
-			UpdateCommand.ThrownExceptions
-				.Subscribe(ex =>
-				{
-					// TODO: handle
-				});
-		}
+                //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
+                //https://github.com/reactiveui/ReactiveUI/issues/1354
+                foreach (var item in results)
+                    KeepALiveList.Add(item);
+            });
 
-		// TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
-		public ReactiveList<KeepALiveItem> KeepALiveList { get; set; }
-		public ReactiveCommand<Unit, KeepALiveItem[]> UpdateCommand { get; set; }
+            UpdateCommand.ThrownExceptions
+               .Subscribe(ex =>
+                {
+                    // TODO: handle
+                });
+        }
 
-		public long? LastId { get; private set; }
+        // TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
+        public ReactiveList<KeepALiveItem>            KeepALiveList { get; set; }
+        public ReactiveCommand<Unit, KeepALiveItem[]> UpdateCommand { get; set; }
 
-		public ShowModel Model => _model;
+        public long? LastId { get; private set; }
 
-		public ReactiveCommand StartCommand { get; set; }
-		public ReactiveCommand StopCommand { get; set; }
+        public ShowModel Model => _model;
 
-		[Reactive] public string          Title            { get; set; }
-        [Reactive] public bool            CanClose         { get; set; } = true;
-        [Reactive] public ReactiveCommand CloseCommand     { get; set; } = null;
-	    [Reactive] public bool            WindowIsEbabled  { get; set; } = true;
+        public ReactiveCommand StartCommand { get; set; }
+        public ReactiveCommand StopCommand  { get; set; }
+        public ReactiveCommand CloseCommand { get; set; } = null;
 
-	    private void OnStart()
-		{
-			LastId = null;
-			KeepALiveList.Clear();
 
-			var interval = TimeSpan.FromSeconds(_model.RefreshSec);
-			_updateExecutor = Observable
-				.Timer(interval, interval)
-				.Select(_ => Unit.Default)
-				.InvokeCommand(UpdateCommand);
+        [Reactive] public string Title           { get; set; }
+        [Reactive] public bool   CanClose        { get; set; } = true;
+        [Reactive] public bool   WindowIsEnabled { get; set; } = true;
 
-			Model.Online = true;
-		}
+        private void OnStart()
+        {
+            LastId = null;
+            KeepALiveList.Clear();
 
-		private void OnStop()
-		{
-			if (_updateExecutor == null)
-				return;
+            var interval = TimeSpan.FromSeconds(_model.RefreshSec);
 
-			_updateExecutor.Dispose();
-			_updateExecutor = null;
+            _updateExecutor = Observable
+               .Timer(interval, interval)
+               .Select(_ => Unit.Default)
+               .InvokeCommand(UpdateCommand);
 
-			_model.Online = false;
-		}
+            Model.Online = true;
+        }
 
-		private KeepALiveItem[] OnUpdate()
-		{
-			var req = new EKeepAliveRequest();
+        private void OnStop()
+        {
+            if (_updateExecutor == null)
+                return;
 
-			EKeepAlive_[] response;
+            _updateExecutor.Dispose();
+            _updateExecutor = null;
 
-			try
-			{
-				response = _service.GetKeepAlives(req);
-			}
-			catch
-			{
-			    return new[]
-			    {
-			        new KeepALiveItem
-			        {
-			            Instance = new Instance
-			            {
-			                ID = -1,
-			                Name = "INTERNAL",
-			                Source = new Source {ID = -1, Name = "ERROR"}
-			            },
-			            Created = DateTime.Now
-			        }
-			    };
-			}
+            _model.Online = false;
+        }
 
-			if (response.Length > 0)
-				LastId = response.Max(x => x.ID);
+        private KeepALiveItem[] OnUpdate()
+        {
+            var req = new EKeepAliveRequest();
 
-		    response = response.
-		        GroupBy(x => _cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key).
-		        SelectMany(g => g.OrderBy(x => _cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
+            EKeepAlive_[] response;
+
+            try
+            {
+                response = _service.GetKeepAlives(req);
+            }
+            catch
+            {
+                return new[]
+                {
+                    new KeepALiveItem
+                    {
+                        Instance = new Instance
+                        {
+                            ID     = -1,
+                            Name   = "INTERNAL",
+                            Source = new Source {ID = -1, Name = "ERROR"}
+                        },
+                        Created = DateTime.Now
+                    }
+                };
+            }
+
+            if (response.Length > 0)
+                LastId = response.Max(x => x.ID);
+
+            response = response.GroupBy(x => _cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key).SelectMany(g => g.OrderBy(x => _cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
 
             var result = response.Select(x =>
-			{
-			    var created = x.Created.ToLocalTime();
-			    var statusIsOk = (DateTime.Now - x.Created.ToLocalTime()).TotalSeconds < _model.KeepAliveWarningPeriod;
-			    return new KeepALiveItem
+            {
+                var created    = x.Created.ToLocalTime();
+                var statusIsOk = (DateTime.Now - x.Created.ToLocalTime()).TotalSeconds < _model.KeepAliveWarningPeriod;
+
+                return new KeepALiveItem
                 {
                     Created    = created,
                     CreatedStr = created.ToString(_model.DateTimeFormat),
-			        Instance   = _cache.GetInstance(x.InstanceID),
+                    Instance   = _cache.GetInstance(x.InstanceID),
                     StatusIsOk = statusIsOk,
-                    Status     = statusIsOk?"OK": "ERROR"
+                    Status     = statusIsOk ? "OK" : "ERROR"
                 };
-			});
+            });
 
-			return result.ToArray();
-		}
+            return result.ToArray();
+        }
     }
 }

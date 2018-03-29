@@ -83,7 +83,7 @@ namespace MonikDesktop.ViewModels
 		[Reactive] public string          Title            { get; set; }
         [Reactive] public bool            CanClose         { get; set; } = true;
         [Reactive] public ReactiveCommand CloseCommand     { get; set; } = null;
-	    [Reactive] public bool            WindowIsEbabled  { get; set; } = true;
+	    [Reactive] public bool            WindowIsEnabled  { get; set; } = true;
 
         private void OnStart()
 		{
