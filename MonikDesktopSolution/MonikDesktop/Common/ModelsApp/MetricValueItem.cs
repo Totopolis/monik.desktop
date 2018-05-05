@@ -5,10 +5,10 @@ namespace MonikDesktop.Common.ModelsApp
 {
     public class MetricValueItem
     {
-        public MetricDescription Description    { get; set; }
-        public long              Value          { get; set; }
-        public DateTime          Created        { get; set; }
-        public int               AggValuesCount { get; set; }
+        public MetricDescription Description { get; set; }
+        public double Value { get; set; }
+        public DateTime Interval { get; set; }
+        public int AggValuesCount { get; set; }
 
         public void AggValue()
         {

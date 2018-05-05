@@ -51,14 +51,14 @@ namespace MonikDesktop.Common
 
 	    public List<EMetricValue> GetCurrentMetricValues()
 	    {
-	        var json   = GetJson("currentMetrics");
+	        var json   = GetJson("metrics/currents");
 	        var result = JsonConvert.DeserializeObject<List<EMetricValue>>(json);
 	        return result;
         }
 
 	    public IEnumerable<EMetricDescription> GetMetricDescriptions()
 	    {
-	        var json   = GetJson("metricDescriptions");
+	        var json   = GetJson("metrics");
 	        var result = JsonConvert.DeserializeObject<List<EMetricDescription>>(json);
 	        return result;
         }
@@ -72,9 +72,9 @@ namespace MonikDesktop.Common
 	        return result;
         }
 
-	    public EMetricValue GetCurrentMetricValue(int descriptionId)
+	    public EMetricValue GetCurrentMetricValue(int metricId)
 	    {
-	        var json   = GetJson($"currentMetric/{descriptionId}");
+	        var json   = GetJson($"metrics/{metricId}/current");
 	        var result = JsonConvert.DeserializeObject<EMetricValue>(json);
 	        return result;
         }

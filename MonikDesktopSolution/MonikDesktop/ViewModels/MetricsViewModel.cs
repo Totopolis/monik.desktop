@@ -28,20 +28,20 @@ namespace MonikDesktop.ViewModels
         private Dictionary<int, MetricDescription> _metricDescriptions = new Dictionary<int, MetricDescription>();
 
         private IDisposable _updateExecutor;
-        private DateTime    _timeWindowBegin;
-        private DateTime    _timeWindowPop;
-        private int         _windowPop;
-        private Dispatcher  _dispatcher;
+        private DateTime _timeWindowBegin;
+        private DateTime _timeWindowPop;
+        private int _windowPop;
+        private Dispatcher _dispatcher;
 
         public MetricsViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
         {
             _service = aService;
-            _cache   = aCache;
+            _cache = aCache;
 
             _dispatcher = Dispatcher.CurrentDispatcher;
 
             MetricValuesList = new ReactiveList<MetricValueItem>();
-            _model           = new MetricsModel {Caption = "Metrics"};
+            _model = new MetricsModel { Caption = "Metrics" };
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -56,7 +56,7 @@ namespace MonikDesktop.ViewModels
 
 
             var mapper = Mappers.Xy<MetricValueItem>()
-               .X(item => item.Created.Ticks)
+               .X(item => item.Interval.Ticks)
                .Y(item => item.Value);
 
             //lets save the mapper globally.
@@ -65,7 +65,7 @@ namespace MonikDesktop.ViewModels
             SeriesCollection = new ChartValues<MetricValueItem>();
 
             //lets set how to display the X Labels
-            DateTimeFormatter = value => new DateTime((long) value).ToString("t");
+            DateTimeFormatter = value => new DateTime((long)value).ToString("t");
 
             AxisUnit = TimeSpan.TicksPerSecond;
             AxisStep = _model.MetricSecInterval * _model.WindowIntervalWidth * TimeSpan.TicksPerSecond;
@@ -91,9 +91,9 @@ namespace MonikDesktop.ViewModels
                     //SeriesCollection.Clear();
                     SeriesCollection.Add(results.Last());
 
-                    AxisMax = results.Last().Created.Ticks  / TimeSpan.TicksPerSecond;
-                    AxisMin = results.First().Created.Ticks / TimeSpan.TicksPerSecond;
-                    
+                    AxisMax = results.Last().Interval.Ticks / TimeSpan.TicksPerSecond;
+                    AxisMin = results.First().Interval.Ticks / TimeSpan.TicksPerSecond;
+
                 }
             });
 
@@ -105,22 +105,22 @@ namespace MonikDesktop.ViewModels
         }
 
         // TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
-        public ReactiveList<MetricValueItem>                       MetricValuesList { get; set; }
-        public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand    { get; set; }
-        public ReactiveCommand                                     StartCommand     { get; set; }
-        public ReactiveCommand                                     StopCommand      { get; set; }
-        public ReactiveCommand                                     CloseCommand     { get; set; } = null;
+        public ReactiveList<MetricValueItem> MetricValuesList { get; set; }
+        public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand { get; set; }
+        public ReactiveCommand StartCommand { get; set; }
+        public ReactiveCommand StopCommand { get; set; }
+        public ReactiveCommand CloseCommand { get; set; } = null;
 
         public ChartValues<MetricValueItem> SeriesCollection { get; set; }
 
         public ShowModel Model => _model;
 
-        [Reactive] public string          Title           { get; set; }
-        [Reactive] public bool            CanClose        { get; set; } = true;
-        [Reactive] public bool            WindowIsEnabled { get; set; } = true;
-        [Reactive] public MetricValueItem SelectedMetric  { get; set; }
-        [Reactive] public long            AxisUnit        { get; set; }
-        [Reactive] public long            AxisStep        { get; set; }
+        [Reactive] public string Title { get; set; }
+        [Reactive] public bool CanClose { get; set; } = true;
+        [Reactive] public bool WindowIsEnabled { get; set; } = true;
+        [Reactive] public MetricValueItem SelectedMetric { get; set; }
+        [Reactive] public long AxisUnit { get; set; }
+        [Reactive] public long AxisStep { get; set; }
 
         //TODO Find why changes of these properties are not updated at View
         [Reactive] public long AxisMin { get; set; }
@@ -136,7 +136,7 @@ namespace MonikDesktop.ViewModels
 
             if (_model.MetricTerminalMode == MetricTerminalMode.Diagramm)
             {
-                foreach (var md in _metricDescriptions.Values.Select(d => new MetricValueItem() {Description = d}))
+                foreach (var md in _metricDescriptions.Values.Select(d => new MetricValueItem() { Description = d }))
                     MetricValuesList.Add(md);
 
                 SelectedMetric = MetricValuesList.FirstOrDefault();
@@ -152,11 +152,11 @@ namespace MonikDesktop.ViewModels
 
 
                 _timeWindowBegin = DateTime.UtcNow.Date +
-                                   TimeSpan.FromSeconds((int) DateTime.UtcNow.TimeOfDay.TotalSeconds /
+                                   TimeSpan.FromSeconds((int)DateTime.UtcNow.TimeOfDay.TotalSeconds /
                                                         (_model.WindowIntervalWidth * _model.MetricSecInterval) *
                                                         (_model.WindowIntervalWidth * _model.MetricSecInterval));
 
-                _windowPop     = (int) (DateTime.UtcNow - _timeWindowBegin).TotalSeconds / _model.MetricSecInterval;
+                _windowPop = (int)(DateTime.UtcNow - _timeWindowBegin).TotalSeconds / _model.MetricSecInterval;
                 _timeWindowPop = _timeWindowBegin + TimeSpan.FromSeconds(_windowPop * _model.MetricSecInterval);
             }
 
@@ -198,12 +198,12 @@ namespace MonikDesktop.ViewModels
 
             return eMetricDescriptions
                .Select(eMd => new MetricDescription()
-                {
-                    Id       = (int) eMd.Id,
-                    Name     = eMd.Name,
-                    Instance = _cache.GetInstance(eMd.InstanceId),
-                    Type     = eMd.Type,
-                })
+               {
+                   Id = (int)eMd.Id,
+                   Name = eMd.Name,
+                   Instance = _cache.GetInstance(eMd.InstanceId),
+                   Type = (MetricType)eMd.Aggregation,
+               })
                .OrderBy(md => md.Instance.Source.Name)
                .ThenBy(md => md.Instance.Name)
                .ThenBy(md => md.Name)
@@ -233,11 +233,11 @@ namespace MonikDesktop.ViewModels
 
                         response = _service.GetCurrentMetricValues()
                            .Select(x => new MetricValueItem
-                            {
-                                Description = _metricDescriptions[x.MetricId],
-                                Value       = x.Value,
-                                Created     = x.Created.ToLocalTime()
-                            });
+                           {
+                               Description = _metricDescriptions[x.MetricId],
+                               Value = x.Value,
+                               Interval = x.Interval.ToLocalTime()
+                           });
 
                         break;
 
@@ -245,13 +245,13 @@ namespace MonikDesktop.ViewModels
 
                         response = _metricDescriptions.Select(md =>
                             {
-                                var tmp = _service.GetHistoryMetricValues(new EHistoryMetricsRequest() {MetricId = md.Key, Count = _model.WindowIntervalWidth});
+                                var tmp = _service.GetHistoryMetricValues(new EHistoryMetricsRequest() { MetricId = md.Key, Count = _model.WindowIntervalWidth });
 
                                 var rez = new MetricValueItem()
                                 {
-                                    Description    = md.Value,
-                                    Value          = tmp.Sum(t => t.Value),
-                                    Created        = tmp.Last()?.Created.ToLocalTime() ?? DateTime.Now,
+                                    Description = md.Value,
+                                    Value = tmp.Sum(t => t.Value),
+                                    Interval = tmp.Last()?.Interval.ToLocalTime() ?? DateTime.Now,
                                     AggValuesCount = tmp.Count
                                 };
 
@@ -275,14 +275,14 @@ namespace MonikDesktop.ViewModels
                             if (_windowPop >= _model.WindowIntervalWidth)
                             {
                                 _timeWindowBegin = _timeWindowPop;
-                                _windowPop       = 0;
+                                _windowPop = 0;
                             }
                         }
 
                         var history = _service.GetHistoryMetricValues(new EHistoryMetricsRequest()
                         {
                             MetricId = SelectedMetric.Description.Id,
-                            Count    = _model.WindowIntervalWidth * _model.MetricAggWindowsDepth + _windowPop
+                            Count = _model.WindowIntervalWidth * _model.MetricAggWindowsDepth + _windowPop
                         });
 
                         history.Reverse();
@@ -291,25 +291,25 @@ namespace MonikDesktop.ViewModels
 
                         var currMetricItem = new MetricValueItem()
                         {
-                            Created        = current.Created.ToLocalTime(),
-                            Description    = SelectedMetric.Description,
-                            Value          = current.Value + history.Take(_windowPop).Sum(h => h.Value),
-                            AggValuesCount = _windowPop    + 1
+                            Interval = current.Interval.ToLocalTime(),
+                            Description = SelectedMetric.Description,
+                            Value = current.Value + history.Take(_windowPop).Sum(h => h.Value),
+                            AggValuesCount = _windowPop + 1
                         };
 
                         var historyMetricItems = history.Skip(_windowPop)
-                           .Select((h, index) => new {h, index})
+                           .Select((h, index) => new { h, index })
                            .GroupBy(x => x.index / _model.WindowIntervalWidth)
                            .Select(g => new MetricValueItem()
-                            {
-                                Created        = g.First().h.Created.ToLocalTime(),
-                                Description    = SelectedMetric.Description,
-                                Value          = g.Sum(m => m.h.Value),
-                                AggValuesCount = g.Count()
-                            });
+                           {
+                               Interval = g.First().h.Interval.ToLocalTime(),
+                               Description = SelectedMetric.Description,
+                               Value = g.Sum(m => m.h.Value),
+                               AggValuesCount = g.Count()
+                           });
 
-                        response = new List<MetricValueItem>() {currMetricItem};
-                        ((List<MetricValueItem>) response).AddRange(historyMetricItems);
+                        response = new List<MetricValueItem>() { currMetricItem };
+                        ((List<MetricValueItem>)response).AddRange(historyMetricItems);
 
                         foreach (var item in response)
                             item.AggValue();

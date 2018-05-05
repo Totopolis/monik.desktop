@@ -52,7 +52,7 @@ namespace SampleDatas
                 }
             };
 
-        public MetricsModel Model => new MetricsModel() {MetricDiagrammVisibility = Visibility.Visible};
+        public MetricsModel Model => new MetricsModel() { MetricDiagrammVisibility = Visibility.Visible };
 
         public ChartValues<MetricValueItem> SeriesCollection { get; } = new ChartValues<MetricValueItem>()
         {
@@ -72,7 +72,7 @@ namespace SampleDatas
                     Type = MetricType.Gauge
                 },
                 Value = 50,
-                Created = DateTime.Now
+                Interval = DateTime.Now
             },
             new MetricValueItem()
             {
@@ -90,7 +90,7 @@ namespace SampleDatas
                     Type = MetricType.Gauge
                 },
                 Value = 100,
-                Created = DateTime.Now.AddMinutes(-5)
+                Interval = DateTime.Now.AddMinutes(-5)
             },
             new MetricValueItem()
             {
@@ -108,19 +108,18 @@ namespace SampleDatas
                     Type = MetricType.Gauge
                 },
                 Value = 90,
-                Created = DateTime.Now.AddMinutes(-10)
+                Interval = DateTime.Now.AddMinutes(-10)
             },
         };
 
-
         public long AxisUnit { get; set; } = TimeSpan.TicksPerSecond;
         public long AxisStep { get; set; } = TimeSpan.FromSeconds(1).Ticks;
-        public long AxisMin  => SeriesCollection.First().Created.AddSeconds(-1).Ticks;
-        public long AxisMax  => SeriesCollection.Last().Created.AddSeconds(1).Ticks;
+        public long AxisMin => SeriesCollection.First().Interval.AddSeconds(-1).Ticks;
+        public long AxisMax => SeriesCollection.Last().Interval.AddSeconds(1).Ticks;
 
         public Func<double, string> DateTimeFormatter
         {
-            get { return value => new DateTime((long) value).ToString("mm:ss"); }
+            get { return value => new DateTime((long)value).ToString("mm:ss"); }
         }
     }
 }
