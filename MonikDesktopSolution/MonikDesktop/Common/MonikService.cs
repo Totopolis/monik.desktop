@@ -56,7 +56,14 @@ namespace MonikDesktop.Common
 	        return result;
         }
 
-	    public IEnumerable<EMetricDescription> GetMetricDescriptions()
+        public List<EWindowValue> GetWindowMetricValues()
+        {
+            var json = GetJson("metrics/windows");
+            var result = JsonConvert.DeserializeObject<List<EWindowValue>>(json);
+            return result;
+        }
+
+        public IEnumerable<EMetricDescription> GetMetricDescriptions()
 	    {
 	        var json   = GetJson("metrics");
 	        var result = JsonConvert.DeserializeObject<List<EMetricDescription>>(json);

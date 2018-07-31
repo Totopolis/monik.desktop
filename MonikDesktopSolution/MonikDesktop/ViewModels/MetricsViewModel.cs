@@ -235,7 +235,7 @@ namespace MonikDesktop.ViewModels
                            .Select(x => new MetricValueItem
                            {
                                Description = _metricDescriptions[x.MetricId],
-                               Value = x.Value,
+                               Value = Math.Round(x.Value, 2),
                                Interval = x.Interval.ToLocalTime()
                            });
 
@@ -243,23 +243,12 @@ namespace MonikDesktop.ViewModels
 
                     case MetricTerminalMode.TimeWindow:
 
-                        response = _metricDescriptions.Select(md =>
+                        response = _service.GetWindowMetricValues()
+                            .Select(x => new MetricValueItem
                             {
-                                var tmp = _service.GetHistoryMetricValues(new EHistoryMetricsRequest() { MetricId = md.Key, Count = _model.WindowIntervalWidth });
-
-                                var rez = new MetricValueItem()
-                                {
-                                    Description = md.Value,
-                                    Value = tmp.Sum(t => t.Value),
-                                    Interval = tmp.Last()?.Interval.ToLocalTime() ?? DateTime.Now,
-                                    AggValuesCount = tmp.Count
-                                };
-
-                                rez.AggValue();
-
-                                return rez;
-                            })
-                           .ToList();
+                                Description = _metricDescriptions[x.MetricId],
+                                Value = Math.Round(x.Value, 2)
+                            });
 
                         break;
 
