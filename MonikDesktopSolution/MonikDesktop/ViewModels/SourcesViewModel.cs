@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
-using Doaking.Core.Oak;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class SourcesViewModel : ReactiveObject, ISourcesWindow
+    public class SourcesViewModel : ViewModelBase, ISourcesViewModel
     {
         private readonly ISourcesCache _cache;
 
@@ -20,7 +19,7 @@ namespace MonikDesktop.ViewModels
 
         private LogsModel  _model;
 
-        public SourcesViewModel(Shell aShell, ISourcesCache aCache)
+        public SourcesViewModel(ISourcesCache aCache)
         {
             _cache = aCache;
             Title  = "Sources";
@@ -35,9 +34,9 @@ namespace MonikDesktop.ViewModels
 
             FillSourcesTree();
 
-            aShell.WhenAnyValue(x => x.SelectedWindow)
-               .Where(v => v is IShowWindow)
-               .Subscribe(v => OnSelectedWindow(v as IShowWindow));
+            //aShell.WhenAnyValue(x => x.SelectedWindow)
+            //   .Where(v => v is IShowWindow)
+            //   .Subscribe(v => OnSelectedWindow(v as IShowWindow));
 
             this.ObservableForProperty(x => x.SelectedItem)
                .Where(v => v.Value != null)
@@ -61,7 +60,6 @@ namespace MonikDesktop.ViewModels
         [Reactive]public SourceItem SelectedHack { get; set; }
         [Reactive] public SourceItem SelectedItem { get; set; }
         [Reactive] public string FilterText { get; set; }
-        [Reactive] public string Title { get; set; }
         [Reactive] public bool CanClose { get; set; } = false;
         [Reactive] public bool WindowIsEnabled { get; set; } = true;
 
@@ -177,9 +175,9 @@ namespace MonikDesktop.ViewModels
             SourceItems.ChangeTrackingEnabled = true;
         }
 
-        private void OnSelectedWindow(IShowWindow aWindow)
+        private void OnSelectedWindow(IShowViewModel aWindow)
         {
-            var logsWindow = aWindow as ILogsWindow;
+            var logsWindow = aWindow as ILogsView;
 
             if (logsWindow == null)
             {
@@ -192,7 +190,7 @@ namespace MonikDesktop.ViewModels
             if (aWindow.Model == _model)
                 return;
 
-            _model = (LogsModel) logsWindow.Model;
+            _model = (LogsModel) logsWindow.ViewModel;
 
             SelectNoneCommand  = null;
             SelectGroupCommand = null;

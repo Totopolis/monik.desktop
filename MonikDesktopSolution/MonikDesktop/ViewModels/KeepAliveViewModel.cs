@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows;
-using Doaking.Core.Oak;
-using MonikDesktop.Common.Enums;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class KeepAliveViewModel : ReactiveObject, IKeepAliveWindow
+    public class KeepAliveViewModel : ViewModelBase, IKeepAliveViewModel
     {
         private readonly IMonikService _service;
         private readonly ISourcesCache _cache;
@@ -24,7 +21,7 @@ namespace MonikDesktop.ViewModels
 
         private IDisposable _updateExecutor;
 
-        public KeepAliveViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
+        public KeepAliveViewModel(IMonikService aService, ISourcesCache aCache)
         {
             _service = aService;
             _cache   = aCache;
@@ -73,7 +70,6 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand CloseCommand { get; set; } = null;
 
 
-        [Reactive] public string Title           { get; set; }
         [Reactive] public bool   CanClose        { get; set; } = true;
         [Reactive] public bool   WindowIsEnabled { get; set; } = true;
 

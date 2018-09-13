@@ -1,13 +1,14 @@
-﻿using System.Windows;
-using Doaking.Core;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
+using System.Windows;
+using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
 
 namespace MonikDesktop
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
 	{
 		public App()
 		{
@@ -17,14 +18,15 @@ namespace MonikDesktop
 		{
 			base.OnStartup(e);
 
-			var shell = Bootstrap.Init();
+		    var shell = UiStarter.Start<MainWindow>(
+		        new Bootstrap(),
+		        new UiShowStartWindowOptions
+		        {
+		            Title = "Kanban.Desktop",
+		            ToolPaneWidth = 100
+		        });
 
-			OakWindow window = new OakWindow(shell);
-
-			var startup = shell.Resolve<IStartupWindow>();
-			shell.ShowDocument(startup);
-
-			window.Show();
+            shell.ShowView<IStartupView>();
 		}
 	}
 }

@@ -177,19 +177,28 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="Common\AppModel.cs" />
     <Compile Include="Common\Converters\LevelToNameConverter.cs" />
-    <Compile Include="Common\Interfaces\IMetricsWindow.cs" />
-    <Compile Include="Common\Interfaces\IKeepAliveWindow.cs" />
-    <Compile Include="Common\Interfaces\ILogDescription.cs" />
-    <Compile Include="Common\Interfaces\ILogsWindow.cs" />
-    <Compile Include="Common\Interfaces\IPropertiesWindow.cs" />
-    <Compile Include="Common\Interfaces\IShowWindow.cs" />
+    <Compile Include="Common\Interfaces\IAppModel.cs" />
+    <Compile Include="Common\Interfaces\IKeepAliveViewModel.cs" />
+    <Compile Include="Common\Interfaces\ILogDescriptionViewModel.cs" />
+    <Compile Include="Common\Interfaces\ILogsViewModel.cs" />
+    <Compile Include="Common\Interfaces\IMetricsView.cs" />
+    <Compile Include="Common\Interfaces\IKeepAliveView.cs" />
+    <Compile Include="Common\Interfaces\ILogDescriptionView.cs" />
+    <Compile Include="Common\Interfaces\ILogsView.cs" />
+    <Compile Include="Common\Interfaces\IMetricsViewModel.cs" />
+    <Compile Include="Common\Interfaces\IPropertiesView.cs" />
+    <Compile Include="Common\Interfaces\IPropertiesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
-    <Compile Include="Common\Interfaces\ISourcesWindow.cs" />
-    <Compile Include="Common\Interfaces\IStartupWindow.cs" />
+    <Compile Include="Common\Interfaces\ISourcesView.cs" />
+    <Compile Include="Common\Interfaces\ISourcesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IStartupView.cs" />
     <Compile Include="Common\Enums\LevelType.cs" />
     <Compile Include="Common\Enums\SeverityCutoffType.cs" />
     <Compile Include="Common\Enums\TopType.cs" />
+    <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
     <Compile Include="Common\ModelsApi\EHistoryMetricsRequest.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
     <Compile Include="Common\ModelsApi\EMetricValue.cs" />
@@ -249,7 +258,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\OakApplication.cs" />
     <Compile Include="Common\Interfaces\IMonikService.cs" />
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />

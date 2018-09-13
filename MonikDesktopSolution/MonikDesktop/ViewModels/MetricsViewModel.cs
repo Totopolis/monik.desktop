@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using Doaking.Core.Oak;
-using LiveCharts;
+﻿using LiveCharts;
 using LiveCharts.Configurations;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
@@ -15,10 +6,16 @@ using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class MetricsViewModel : ReactiveObject, IMetricsWindow
+    public class MetricsViewModel : ViewModelBase, IMetricsViewModel
     {
         private readonly IMonikService _service;
         private readonly ISourcesCache _cache;
@@ -31,14 +28,11 @@ namespace MonikDesktop.ViewModels
         private DateTime _timeWindowBegin;
         private DateTime _timeWindowPop;
         private int _windowPop;
-        private Dispatcher _dispatcher;
 
-        public MetricsViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
+        public MetricsViewModel(IMonikService aService, ISourcesCache aCache)
         {
             _service = aService;
             _cache = aCache;
-
-            _dispatcher = Dispatcher.CurrentDispatcher;
 
             MetricValuesList = new ReactiveList<MetricValueItem>();
             _model = new MetricsModel { Caption = "Metrics" };
@@ -115,7 +109,6 @@ namespace MonikDesktop.ViewModels
 
         public ShowModel Model => _model;
 
-        [Reactive] public string Title { get; set; }
         [Reactive] public bool CanClose { get; set; } = true;
         [Reactive] public bool WindowIsEnabled { get; set; } = true;
         [Reactive] public MetricValueItem SelectedMetric { get; set; }

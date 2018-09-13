@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using MonikDesktop.Common.ModelsApi;
-using MonikDesktop.Common.ModelsApp;
+﻿using MonikDesktop.Common.ModelsApi;
+using System.Collections.Generic;
 
 namespace MonikDesktop.Common.Interfaces
 {

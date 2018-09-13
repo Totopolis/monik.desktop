@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
-using Doaking.Core.Oak;
-using MonikDesktop.Common.Enums;
+﻿using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Windows;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class PropertiesViewModel : ReactiveObject, IPropertiesWindow
+    public class PropertiesViewModel : ViewModelBase, IPropertiesViewModel
     {
-        public PropertiesViewModel(Shell aShell)
+        public PropertiesViewModel()
         {
             Title = "Properties";
 
-            aShell.WhenAnyValue(x => x.SelectedWindow)
-               .Where(v => v is IShowWindow)
-               .Subscribe(v => OnSelectedWindow(v as IShowWindow));
+            //aShell.WhenAnyValue(x => x.SelectedWindow)
+            //   .Where(v => v is IShowWindow)
+            //   .Subscribe(v => OnSelectedWindow(v as IShowWindow));
         }
 
         [Reactive] public ShowModel   Model      { get; private set; }
-        [Reactive] public IShowWindow ShowWindow { get; private set; }
+        [Reactive] public IShowViewModel ShowWindow { get; private set; }
 
         public IList<TopType>            TopTypes            => Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList();
         public IList<SeverityCutoffType> SeverityCutoffTypes => Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList();
@@ -42,7 +42,6 @@ namespace MonikDesktop.ViewModels
                 "dd.MM HH:mm:**"
             };
 
-        [Reactive] public string     Title                { get; set; }
         [Reactive] public bool       CanClose             { get; set; } = false;
         [Reactive] public bool       WindowIsEnabled      { get; set; } = true;
         [Reactive] public Visibility LogsVisibility       { get; set; } = Visibility.Collapsed;
@@ -51,21 +50,21 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand CloseCommand { get; set; } = null;
 
-        private void OnSelectedWindow(IShowWindow aWindow)
+        private void OnSelectedWindow(IShowViewModel aWindow)
         {
             switch (aWindow)
             {
-                case ILogsWindow _:
+                case ILogsView _:
                     LogsVisibility       = Visibility.Visible;
                     KeepAlivesVisibility = Visibility.Collapsed;
                     MetricsVisibility    = Visibility.Collapsed;
                     break;
-                case IKeepAliveWindow _:
+                case IKeepAliveView _:
                     LogsVisibility       = Visibility.Collapsed;
                     KeepAlivesVisibility = Visibility.Visible;
                     MetricsVisibility    = Visibility.Collapsed;
                     break;
-                case IMetricsWindow _:
+                case IMetricsView _:
                     LogsVisibility       = Visibility.Collapsed;
                     KeepAlivesVisibility = Visibility.Collapsed;
                     MetricsVisibility    = Visibility.Visible;

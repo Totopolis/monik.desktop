@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows;
-using Doaking.Core.Oak;
+﻿using Autofac;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
@@ -12,10 +6,17 @@ using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using Ui.Wpf.Common;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-	public class LogsViewModel : ReactiveObject, ILogsWindow
+    public class LogsViewModel : ViewModelBase, ILogsViewModel
 	{
 		private readonly IMonikService _service;
 		private readonly ISourcesCache _cache;
@@ -24,7 +25,7 @@ namespace MonikDesktop.ViewModels
 		
 		private IDisposable _updateExecutor;
 
-		public LogsViewModel(Shell aShell, IMonikService aService, ISourcesCache aCache)
+		public LogsViewModel(IShell aShell, IMonikService aService, ISourcesCache aCache)
 		{
 			_service = aService;
 			_cache = aCache;
@@ -57,7 +58,7 @@ namespace MonikDesktop.ViewModels
 			_model.ObservableForProperty(x => x.SelectedItem)
 				.Subscribe(v =>
 				{
-					var desc = aShell.Resolve<ILogDescription>();
+					var desc = aShell.Container.Resolve<ILogDescriptionViewModel>();
 					desc.SelectedItem = v.Value;
 				});
 
@@ -80,7 +81,6 @@ namespace MonikDesktop.ViewModels
 		public ReactiveCommand StartCommand { get; set; }
 		public ReactiveCommand StopCommand { get; set; }
 
-		[Reactive] public string          Title            { get; set; }
         [Reactive] public bool            CanClose         { get; set; } = true;
         [Reactive] public ReactiveCommand CloseCommand     { get; set; } = null;
 	    [Reactive] public bool            WindowIsEnabled  { get; set; } = true;

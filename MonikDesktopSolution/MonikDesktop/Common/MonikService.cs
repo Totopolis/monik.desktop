@@ -1,22 +1,19 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using Newtonsoft.Json;
-using Doaking.Core.Oak;
-using MonikDesktop.Common.ModelsApp;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace MonikDesktop.Common
 {
-	public class MonikService : IMonikService
+    public class MonikService : IMonikService
 	{
-		private readonly IOakApplication _app;
+		private readonly IAppModel _app;
 
-		public MonikService(IOakApplication aApp)
+		public MonikService(IAppModel app)
 		{
-			_app = aApp;
+			_app = app;
 		}
 
 		public EGroup[] GetGroups()

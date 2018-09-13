@@ -1,20 +1,34 @@
-﻿using System;
+﻿using MonikDesktop.Common.Interfaces;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Ui.Wpf.Common.ShowOptions;
+using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.Views
 {
-	/// <summary>
-	///     Interaction logic for SourcesView.xaml
-	/// </summary>
-	public partial class SourcesView : UserControl
+    /// <summary>
+    ///     Interaction logic for SourcesView.xaml
+    /// </summary>
+    public partial class SourcesView : ISourcesView
 	{
-		public SourcesView()
+		public SourcesView(ISourcesViewModel viewModel)
 		{
 			InitializeComponent();
-		}
-	}
+
+	        ViewModel = viewModel;
+	        DataContext = viewModel;
+	    }
+
+	    public IViewModel ViewModel { get; set; }
+
+	    public void Configure(UiShowOptions options)
+	    {
+	        ViewModel.Title = options.Title;
+	    }
+
+    }
 
 	// Behavior usage: <DataGrid DataGridExtensions.LastColumnFill="True"/>
 	public class DataGridExtensions

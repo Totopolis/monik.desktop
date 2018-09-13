@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonikDesktop", "MonikDesktop\MonikDesktop.csproj", "{62F6C3E1-4EF1-4BE8-A4BB-568CE898A9D6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doaking.Core", "Doaking.Core\Doaking.Core.csproj", "{C58128C6-C465-416F-8C15-74945A2ED0F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +15,11 @@ Global
 		{62F6C3E1-4EF1-4BE8-A4BB-568CE898A9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62F6C3E1-4EF1-4BE8-A4BB-568CE898A9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62F6C3E1-4EF1-4BE8-A4BB-568CE898A9D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C58128C6-C465-416F-8C15-74945A2ED0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C58128C6-C465-416F-8C15-74945A2ED0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C58128C6-C465-416F-8C15-74945A2ED0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C58128C6-C465-416F-8C15-74945A2ED0F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {762A42EF-4058-4ACF-9E65-FABBC09B25A7}
 	EndGlobalSection
 EndGlobal
