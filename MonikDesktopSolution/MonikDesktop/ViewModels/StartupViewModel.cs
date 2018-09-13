@@ -12,12 +12,17 @@ namespace MonikDesktop.ViewModels
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
         private readonly IShell _shell;
+        private bool _toolsShown;
 
-        public StartupViewModel(IAppModel app, IShell shell)
+        public StartupViewModel(IShell shell, IAppModel app, IDockWindow main)
         {
             _shell = shell;
             
             Title = "App settings";
+            App = app;
+
+            app.WhenAnyValue(x => x.Title)
+                .Subscribe(x => main.Title = x);
 
             app.ObservableForProperty(x => x.ServerUrl)
                .Subscribe(v =>
@@ -48,11 +53,8 @@ namespace MonikDesktop.ViewModels
             ShowSpinner = Visibility.Visible;
 
             _shell.ShowView<ILogsView>();
-            _shell.ShowTool<IPropertiesView>();
-            _shell.ShowTool<ISourcesView>();
-            _shell.ShowTool<ILogDescriptionView>();
 
-//            _shell.SelectedWindow = log;
+            ShowTools();
 
             ShowSpinner = Visibility.Collapsed;
         }
@@ -64,11 +66,8 @@ namespace MonikDesktop.ViewModels
             ShowSpinner = Visibility.Visible;
 
             _shell.ShowView<IKeepAliveView>();
-            _shell.ShowTool<IPropertiesView>();
-            _shell.ShowTool<ISourcesView>();
-            _shell.ShowTool<ILogDescriptionView>();
 
-//            _shell.SelectedWindow = keepAlive;
+            ShowTools();
 
             ShowSpinner = Visibility.Collapsed;
         }
@@ -80,14 +79,23 @@ namespace MonikDesktop.ViewModels
             ShowSpinner = Visibility.Visible;
 
             _shell.ShowView<IMetricsView>();
-            _shell.ShowTool<IPropertiesView>();
-            _shell.ShowTool<ISourcesView>();
-            _shell.ShowTool<ILogDescriptionView>();
 
-//            _shell.SelectedWindow = metrics;
-
+            ShowTools();
 
             ShowSpinner = Visibility.Collapsed;
         }
+
+        private void ShowTools()
+        {
+            if (_toolsShown)
+                return;
+
+            _toolsShown = true;
+            _shell.ShowTool<IPropertiesView>();
+            _shell.ShowTool<ISourcesView>();
+            _shell.ShowTool<ILogDescriptionView>();
+        }
+
+        public IAppModel App { get; }
     }
 }

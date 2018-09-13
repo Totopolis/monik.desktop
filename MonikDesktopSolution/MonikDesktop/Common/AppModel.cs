@@ -6,7 +6,7 @@ namespace MonikDesktop.Common
 {
     public class AppModel : ReactiveObject, IAppModel
     {
-        [Reactive]
-        public string ServerUrl { get; set; }
+        [Reactive] public string ServerUrl { get; set; } = "";
+        [Reactive] public string Title { get; set; } = "Monik Desktop";
     }
 }

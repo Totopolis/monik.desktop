@@ -4,5 +4,6 @@ namespace MonikDesktop.Common.Interfaces
 {
     public interface IStartupViewModel : IViewModel
     {
+        IAppModel App { get; }
     }
 }
