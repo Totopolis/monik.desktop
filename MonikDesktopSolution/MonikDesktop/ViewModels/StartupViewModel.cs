@@ -3,6 +3,7 @@ using MonikDesktop.Properties;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
@@ -12,11 +13,13 @@ namespace MonikDesktop.ViewModels
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
         private readonly IShell _shell;
-        private bool _toolsShown;
+        private readonly ISourcesCache _cache;
+        private bool _isInitialized;
 
-        public StartupViewModel(IShell shell, IAppModel app, IDockWindow main)
+        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app, IDockWindow main)
         {
             _shell = shell;
+            _cache = cache;
             
             Title = "App settings";
             App = app;
@@ -46,51 +49,46 @@ namespace MonikDesktop.ViewModels
         [Reactive] public bool       WindowIsEnabled { get; set; } = true;
         [Reactive] public Visibility ShowSpinner     { get; set; } = Visibility.Collapsed;
 
-        private void NewLog()
+        private async Task Initialize()
         {
-            // TODO: check server url
+            _isInitialized = true;
 
             ShowSpinner = Visibility.Visible;
+
+            // TODO: check server url
+            await Task.Run(() => _cache.Reload());
+
+            ShowTools();
+
+            ShowSpinner = Visibility.Collapsed;
+        }
+
+        private async Task NewLog()
+        {
+            if (!_isInitialized)
+                await Initialize();
 
             _shell.ShowView<ILogsView>();
-
-            ShowTools();
-
-            ShowSpinner = Visibility.Collapsed;
         }
 
-        private void NewKeepAlive()
+        private async Task NewKeepAlive()
         {
-            // TODO: check server url
-
-            ShowSpinner = Visibility.Visible;
+            if (!_isInitialized)
+                await Initialize();
 
             _shell.ShowView<IKeepAliveView>();
-
-            ShowTools();
-
-            ShowSpinner = Visibility.Collapsed;
         }
 
-        private void NewMetrics()
+        private async Task NewMetrics()
         {
-            // TODO: check server url
-
-            ShowSpinner = Visibility.Visible;
+            if (!_isInitialized)
+                await Initialize();
 
             _shell.ShowView<IMetricsView>();
-
-            ShowTools();
-
-            ShowSpinner = Visibility.Collapsed;
         }
 
         private void ShowTools()
         {
-            if (_toolsShown)
-                return;
-
-            _toolsShown = true;
             _shell.ShowTool<IPropertiesView>();
             _shell.ShowTool<ISourcesView>();
             _shell.ShowTool<ILogDescriptionView>();

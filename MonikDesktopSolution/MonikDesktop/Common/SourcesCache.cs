@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MonikDesktop.Common
 {
-	public class SourcesCache : ISourcesCache
+    public class SourcesCache : ISourcesCache
 	{
 		private readonly IMonikService _service;
 	    private List<Group> _groups = new List<Group>();
@@ -22,9 +21,6 @@ namespace MonikDesktop.Common
 
 			_unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
-
-		    //Task.Run(()=>Reload());
-		    Reload();
 		}
 
 		public void Reload()
