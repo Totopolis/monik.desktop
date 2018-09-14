@@ -1,10 +1,8 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -45,20 +43,18 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
 
-        [Reactive] public Visibility ShowSpinner     { get; set; } = Visibility.Collapsed;
-
         private async Task Initialize()
         {
             _isInitialized = true;
 
-            ShowSpinner = Visibility.Visible;
+            IsBusy = true;
 
             // TODO: check server url
             await Task.Run(() => _cache.Reload());
 
             ShowTools();
 
-            ShowSpinner = Visibility.Collapsed;
+            IsBusy = false;
         }
 
         private async Task NewLog()

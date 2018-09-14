@@ -12,7 +12,10 @@
       <Separator/>
       <Button Command="{Binding NewMetricsCommand}">Create Metrics</Button>
     </StackPanel>
-    <Grid Background="Gray" Opacity="0.75" Visibility="{Binding Path=ShowSpinner}">
+    <Grid Background="Gray" Opacity="0.75">
+      <Grid.Visibility>
+        <Binding Path="IsBusy" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+      </Grid.Visibility>
       <ns0:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
     </Grid>
   </Grid>

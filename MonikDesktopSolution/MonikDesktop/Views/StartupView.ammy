@@ -36,7 +36,8 @@ UserControl "MonikDesktop.Views.StartupView" {
     Grid {
       Background: "Gray"
       Opacity: "0.75"
-      Visibility: "{Binding Path=ShowSpinner}"
+      Visibility: bind IsBusy
+                  convert (bool isBusy) => isBusy ? Visibility.Visible : Visibility.Collapsed 
       ImageAwesome {
         Icon: "Cog"
         Spin: "True"
