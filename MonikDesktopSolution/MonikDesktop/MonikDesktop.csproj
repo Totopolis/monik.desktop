@@ -68,6 +68,9 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AmmySidekick, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7c1296d24569a67d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ammy.WPF.1.2.94\lib\net40\AmmySidekick.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
@@ -229,31 +232,31 @@
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\MetricsSampleData.xaml.cs">
-      <DependentUpon>MetricsSampleData.xaml</DependentUpon>
+      <DependentUpon>MetricsSampleData.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\MetricsView.xaml.cs">
-      <DependentUpon>MetricsView.xaml</DependentUpon>
+      <DependentUpon>MetricsView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\LogDescriptionView.xaml.cs">
-      <DependentUpon>LogDescriptionView.xaml</DependentUpon>
+      <DependentUpon>LogDescriptionView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\KeepAliveView.xaml.cs">
-      <DependentUpon>KeepAliveView.xaml</DependentUpon>
+      <DependentUpon>KeepAliveView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\KeepAliveSampleData.xaml.cs">
-      <DependentUpon>KeepAliveSampleData.xaml</DependentUpon>
+      <DependentUpon>KeepAliveSampleData.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\LogsView.xaml.cs">
-      <DependentUpon>LogsView.xaml</DependentUpon>
+      <DependentUpon>LogsView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\PropertiesView.xaml.cs">
-      <DependentUpon>PropertiesView.xaml</DependentUpon>
+      <DependentUpon>PropertiesView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\SourcesView.xaml.cs">
-      <DependentUpon>SourcesView.xaml</DependentUpon>
+      <DependentUpon>SourcesView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\StartupView.xaml.cs">
-      <DependentUpon>StartupView.xaml</DependentUpon>
+      <DependentUpon>StartupView.ammy</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -262,42 +265,43 @@
     <Compile Include="Common\Interfaces\IMonikService.cs" />
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
-    <Page Include="Views\MetricsSampleData.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\MetricsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\LogDescriptionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\KeepAliveView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\KeepAliveSampleData.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\LogsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PropertiesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SourcesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\StartupView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <None Include="lib.ammy" />
+    <None Include="Views\MetricsSampleData.ammy" />
+    <None Include="Views\MetricsSampleData.g.xaml">
+      <DependentUpon>MetricsSampleData.ammy</DependentUpon>
+    </None>
+    <None Include="Views\MetricsView.ammy" />
+    <None Include="Views\MetricsView.g.xaml">
+      <DependentUpon>MetricsView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\LogDescriptionView.ammy" />
+    <None Include="Views\LogDescriptionView.g.xaml">
+      <DependentUpon>LogDescriptionView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\KeepAliveView.ammy" />
+    <None Include="Views\KeepAliveView.g.xaml">
+      <DependentUpon>KeepAliveView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\KeepAliveSampleData.ammy" />
+    <None Include="Views\KeepAliveSampleData.g.xaml">
+      <DependentUpon>KeepAliveSampleData.ammy</DependentUpon>
+    </None>
+    <None Include="Views\LogsView.ammy" />
+    <None Include="Views\LogsView.g.xaml">
+      <DependentUpon>LogsView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\PropertiesView.ammy" />
+    <None Include="Views\PropertiesView.g.xaml">
+      <DependentUpon>PropertiesView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\SourcesView.ammy" />
+    <None Include="Views\SourcesView.g.xaml">
+      <DependentUpon>SourcesView.ammy</DependentUpon>
+    </None>
+    <None Include="Views\StartupView.ammy" />
+    <None Include="Views\StartupView.g.xaml">
+      <DependentUpon>StartupView.ammy</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewModels\LogsViewModel.cs" />
@@ -354,7 +358,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.3.0.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.0.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Ammy.1.2.94\build\Ammy.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Ammy.1.2.94\build\Ammy.targets'))" />
   </Target>
+  <Import Project="..\packages\Ammy.1.2.94\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.94\build\Ammy.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,0 +1,49 @@
+using MonikDesktop.ViewModels;
+using MonikDesktop.Common.Interfaces;
+using FontAwesome.WPF;
+
+UserControl "MonikDesktop.Views.StartupView" {
+  Grid {
+    StackPanel {
+      Orientation: "Vertical"
+      Margin: "3"
+      Label {
+        "Window header"
+      }
+      TextBox { Text: "{Binding Path=App.Title}" }
+      Label {
+        "Server Url"
+      }
+      TextBox { Text: "{Binding Path=App.ServerUrl}" }
+      Label {
+        "Actions"
+      }
+      Button {
+        Command: "{Binding NewLogCommand}"
+        "Create Logs"
+      }
+      Separator { }
+      Button {
+        Command: "{Binding NewKeepAliveCommand}"
+        "Create KeepAlive"
+      }
+      Separator { }
+      Button {
+        Command: "{Binding NewMetricsCommand}"
+        "Create Metrics"
+      }
+    }
+    Grid {
+      Background: "Gray"
+      Opacity: "0.75"
+      Visibility: "{Binding Path=ShowSpinner}"
+      ImageAwesome {
+        Icon: "Cog"
+        Spin: "True"
+        Height: "48"
+        Width: "48"
+        SpinDuration: "4"
+      }
+    }
+  }
+}

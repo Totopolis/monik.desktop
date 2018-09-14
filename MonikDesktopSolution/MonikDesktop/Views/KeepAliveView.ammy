@@ -1,0 +1,73 @@
+using MonikDesktop.ViewModels;
+using MonikDesktop.Common.Converters;
+
+UserControl "MonikDesktop.Views.KeepAliveView" {
+  Resources: [
+    SeverityToNameConverter Key="SeverityToName" { }
+    LevelToNameConverter Key="LevelToName" { }
+  ]
+  Grid {
+    DataGrid "MainGrid" {
+      CanUserAddRows: "False"
+      CanUserDeleteRows: "False"
+      AutoGenerateColumns: "False"
+      RowHeight: "20"
+      HorizontalGridLinesBrush: "Silver"
+      VerticalGridLinesBrush: "Silver"
+      GridLinesVisibility: "Horizontal"
+      Foreground: "Black"
+      ItemsSource: "{Binding KeepALiveList}"
+      Columns: [
+        DataGridTextColumn {
+          Header: "Source"
+          Binding: "{Binding Instance.Source.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Instance"
+          Binding: "{Binding Instance.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Status"
+          Binding: "{Binding Status}"
+          Width: "Auto"
+          CellStyle: Style {
+            TargetType: DataGridCell
+            Triggers: [
+              DataTrigger {
+                Binding: "{Binding StatusIsOk}"
+                Value: "false"
+                Setter { Property: "Background",  Value: "#FFFF5959" }
+              }
+              DataTrigger {
+                Binding: "{Binding StatusIsOk}"
+                Value: "true"
+                Setter { Property: "Background",  Value: "LightGreen" }
+              }
+            ]
+          }
+          ElementStyle: Style {
+            TargetType: TextBlock
+            Setters: [
+              Setter { Property: "TextBlock.TextAlignment",  Value: "Center" }
+              Setter { Property: "VerticalAlignment",  Value: "Center" }
+            ]
+          }
+        }
+        DataGridTextColumn {
+          Header: "Created"
+          Binding: "{Binding CreatedStr}"
+          Width: "Auto"
+          ElementStyle: Style {
+            TargetType: TextBlock
+            Setters: [
+              Setter { Property: "HorizontalAlignment",  Value: "Right" }
+              Setter { Property: "VerticalAlignment",  Value: "Center" }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

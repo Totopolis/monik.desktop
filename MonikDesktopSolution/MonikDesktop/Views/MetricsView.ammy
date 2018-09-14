@@ -1,0 +1,76 @@
+using MonikDesktop.ViewModels;
+using LiveCharts.Wpf;
+
+UserControl "MonikDesktop.Views.MetricsView" {
+  Grid {
+    ColumnDefinitions: [
+      ColumnDefinition { Width: "*",  MaxWidth: "400" }
+      ColumnDefinition { Width: "*" }
+    ]
+    DataGrid "MainGrid" {
+      CanUserAddRows: "False"
+      CanUserDeleteRows: "False"
+      AutoGenerateColumns: "False"
+      RowHeight: "20"
+      HorizontalGridLinesBrush: "Silver"
+      VerticalGridLinesBrush: "Silver"
+      GridLinesVisibility: "Horizontal"
+      Foreground: "Black"
+      SelectedItem: "{Binding SelectedMetric}"
+      ItemsSource: "{Binding MetricValuesList}"
+      Grid.Column: "0"
+      Columns: [
+        DataGridTextColumn {
+          Header: "Source"
+          Binding: "{Binding Description.Instance.Source.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Instance"
+          Binding: "{Binding Description.Instance.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Name"
+          Binding: "{Binding Description.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Type"
+          Binding: "{Binding Description.Type}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Value"
+          Binding: "{Binding Value}"
+          Width: "Auto"
+          Visibility: "{Binding Model.MetricValuesVisibility}"
+          ElementStyle: Style {
+            TargetType: TextBlock
+            Setters: [
+              Setter { Property: "HorizontalAlignment",  Value: "Right" }
+              Setter { Property: "VerticalAlignment",  Value: "Center" }
+            ]
+          }
+        }
+      ]
+    }
+    CartesianChart {
+      Grid.Column: "1"
+      Background: "White"
+      LegendLocation: "None"
+      DisableAnimations: "True"
+      Hoverable: "False"
+      DataTooltip: "{x:Null}"
+      Visibility: "{Binding Model.MetricDiagrammVisibility}"
+      Series: ColumnSeries { Values: "{Binding SeriesCollection}" }
+      AxisX: Axis {
+        LabelFormatter: "{Binding DateTimeFormatter}"
+        MaxValue: "{Binding AxisMax}"
+        MinValue: "{Binding AxisMin}"
+        Unit: "{Binding AxisUnit}"
+        Separator: LiveCharts.Wpf.Separator { Step: "{Binding AxisStep}" }
+      }
+    }
+  }
+}

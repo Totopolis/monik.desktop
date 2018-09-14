@@ -1,0 +1,93 @@
+using Xceed.Wpf.Toolkit;
+
+UserControl "MonikDesktop.Views.PropertiesView" {
+  Grid {
+    StackPanel {
+      Orientation: "Vertical"
+      Margin: "3"
+      Button {
+        Command: "{Binding Path=ShowWindow.StartCommand}"
+        Content: "Start"
+        Margin: "5"
+      }
+      Button {
+        Command: "{Binding Path=ShowWindow.StopCommand}"
+        Content: "Stop"
+        Margin: "5"
+      }
+      Label {
+        "Caption"
+      }
+      TextBox { Text: "{Binding Model.Caption}",  Height: "20" }
+      Label {
+        "Refresh period (sec.)"
+      }
+      IntegerUpDown { Value: "{Binding Model.RefreshSec}" }
+      StackPanel {
+        Orientation: "Vertical"
+        Margin: "0"
+        Visibility: "{Binding LogsVisibility}"
+        Label {
+          "Level filter"
+        }
+        ComboBox { ItemsSource: "{Binding LevelTypes}",  SelectedValue: "{Binding Model.Level, Mode=TwoWay}" }
+        Label {
+          "Severity Cutoff"
+        }
+        ComboBox { ItemsSource: "{Binding SeverityCutoffTypes}",  SelectedValue: "{Binding Model.SeverityCutoff, Mode=TwoWay}" }
+        Label {
+          "Top"
+        }
+        ComboBox { ItemsSource: "{Binding TopTypes}",  SelectedValue: "{Binding Model.Top, Mode=TwoWay}" }
+        Label {
+          "Colorized"
+        }
+        CheckBox { IsChecked: "{Binding Model.Colorized}" }
+        Label {
+          "GroupDoublingLogs"
+        }
+        CheckBox { IsChecked: "{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" }
+      }
+      Label {
+        "Datetime format"
+      }
+      ComboBox { ItemsSource: "{Binding DatetimeFormats}",  SelectedValue: "{Binding Model.DateTimeFormat}" }
+      StackPanel {
+        Orientation: "Vertical"
+        Margin: "0"
+        Visibility: "{Binding LogsVisibility}"
+        Label {
+          Visibility: "{Binding Model.DuplicatedSettingsVisibility}"
+          "Duplicated Datetime format"
+        }
+        ComboBox {
+          Visibility: "{Binding Model.DuplicatedSettingsVisibility}"
+          ItemsSource: "{Binding DatetimeFormats}"
+          SelectedValue: "{Binding Model.DuplicatedDateTimeFormat}"
+        }
+      }
+      StackPanel {
+        Orientation: "Vertical"
+        Margin: "0"
+        Visibility: "{Binding KeepAlivesVisibility}"
+        Label {
+          "Keep Alive Warning period (sec.)"
+        }
+        IntegerUpDown { Value: "{Binding Model.KeepAliveWarningPeriod}" }
+      }
+      StackPanel {
+        Orientation: "Vertical"
+        Margin: "0"
+        Visibility: "{Binding MetricsVisibility}"
+        Label {
+          "Metrics Mode"
+        }
+        ComboBox { ItemsSource: "{Binding MetricTerminalModes}",  SelectedValue: "{Binding Model.MetricTerminalMode, Mode=TwoWay}" }
+        Label {
+          "Metric aggregating window width in 5 minutes"
+        }
+        IntegerUpDown { Value: "{Binding Model.Window5MinWidth}" }
+      }
+    }
+  }
+}

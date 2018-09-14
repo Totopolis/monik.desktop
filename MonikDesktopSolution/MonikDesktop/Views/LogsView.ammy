@@ -1,0 +1,82 @@
+using MonikDesktop.ViewModels;
+using MonikDesktop.Common.Converters;
+
+UserControl "MonikDesktop.Views.LogsView" {
+  Resources: [
+    SeverityToNameConverter Key="SeverityToName" { }
+    LevelToNameConverter Key="LevelToName" { }
+  ]
+  Grid {
+    DataGrid "MainGrid" {
+      CanUserAddRows: "False"
+      CanUserDeleteRows: "False"
+      AutoGenerateColumns: "False"
+      RowHeight: "20"
+      HorizontalGridLinesBrush: "Silver"
+      VerticalGridLinesBrush: "Silver"
+      GridLinesVisibility: "Horizontal"
+      Foreground: "Black"
+      SelectedItem: "{Binding Model.SelectedItem}"
+      ItemsSource: "{Binding LogsList}"
+      RowStyle: Style {
+        TargetType: DataGridRow
+        Triggers: [
+          DataTrigger {
+            Binding: "{Binding Severity}"
+            Value: "10"
+            Setter { Property: "Foreground",  Value: "White" }
+            Setter { Property: "Background",  Value: "#FFFF5959" }
+          }
+          DataTrigger {
+            Binding: "{Binding Severity}"
+            Value: "20"
+            Setter { Property: "Background",  Value: "#FFFFFF64" }
+          }
+          Trigger {
+            Property: "IsSelected"
+            Value: "True"
+            Setter { Property: "Background",  Value: "Pink" }
+            Setter { Property: "Foreground",  Value: "Black" }
+          }
+        ]
+      }
+      Columns: [
+        DataGridTextColumn {
+          Header: "ID"
+          Binding: "{Binding ID}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Created"
+          Binding: "{Binding CreatedStr}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Source"
+          Binding: "{Binding Instance.Source.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Instance"
+          Binding: "{Binding Instance.Name}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Level"
+          Binding: "{Binding Path=Level, Converter={StaticResource LevelToName}}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Severity"
+          Binding: "{Binding Path=Severity, Converter={StaticResource SeverityToName}}"
+          Width: "Auto"
+        }
+        DataGridTextColumn {
+          Header: "Message"
+          Binding: "{Binding Body}"
+          Width: "*"
+        }
+      ]
+    }
+  }
+}

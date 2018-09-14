@@ -1,0 +1,19 @@
+<UserControl x:Class="MonikDesktop.Views.StartupView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns1:Ammy.Register="/MonikDesktop;component/Views/StartupView.g.xaml">
+  <Grid>
+    <StackPanel Orientation="Vertical" Margin="3">
+      <Label>Window header</Label>
+      <TextBox Text="{Binding Path=App.Title}"/>
+      <Label>Server Url</Label>
+      <TextBox Text="{Binding Path=App.ServerUrl}"/>
+      <Label>Actions</Label>
+      <Button Command="{Binding NewLogCommand}">Create Logs</Button>
+      <Separator/>
+      <Button Command="{Binding NewKeepAliveCommand}">Create KeepAlive</Button>
+      <Separator/>
+      <Button Command="{Binding NewMetricsCommand}">Create Metrics</Button>
+    </StackPanel>
+    <Grid Background="Gray" Opacity="0.75" Visibility="{Binding Path=ShowSpinner}">
+      <ns0:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
+    </Grid>
+  </Grid>
+</UserControl>

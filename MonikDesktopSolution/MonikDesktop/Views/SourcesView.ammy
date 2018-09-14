@@ -1,0 +1,106 @@
+UserControl "MonikDesktop.Views.SourcesView" {
+  Resources: CollectionViewSource Key="CustomerView" {
+    Source: "{Binding Path=FilteredItems}"
+    GroupDescriptions: PropertyGroupDescription { PropertyName: "GroupName" }
+  }
+  Grid {
+    RowDefinitions: [
+      RowDefinition { Height: "40" }
+      RowDefinition { }
+    ]
+    StackPanel {
+      Orientation: "Horizontal"
+      Grid.Row: "0"
+      Button {
+        Command: "{Binding SelectNoneCommand}"
+        Margin: "5"
+        "Select None"
+      }
+      Button {
+        Command: "{Binding SelectGroupCommand}"
+        Margin: "5"
+        "Select Group"
+      }
+      Button {
+        Command: "{Binding RefreshCommand}"
+        Margin: "5"
+        "Refresh"
+      }
+      TextBox {
+        Text: "{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        Margin: "5"
+        Width: "150"
+      }
+    }
+    DataGrid {
+      VirtualizingPanel.IsVirtualizingWhenGrouping: "True"
+      VirtualizingPanel.IsVirtualizing: "True"
+      VirtualizingPanel.IsContainerVirtualizable: "True"
+      VirtualizingPanel.ScrollUnit: "Item"
+      ScrollViewer.CanContentScroll: "True"
+      EnableRowVirtualization: "True"
+      SelectedItem: "{Binding SelectedItem}"
+      ItemsSource: "{Binding Source={StaticResource CustomerView}}"
+      CanUserAddRows: "False"
+      CanUserDeleteRows: "False"
+      AutoGenerateColumns: "False"
+      GridLinesVisibility: "Horizontal"
+      HorizontalGridLinesBrush: "Silver"
+      Grid.Row: "1"
+      DataGridExtensions.LastColumnFill: "True"
+      Columns: [
+        DataGridCheckBoxColumn { Header: "Checked",  Binding: "{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" }
+        DataGridTextColumn {
+          Header: "Source"
+          IsReadOnly: "True"
+          Binding: "{Binding SourceName}"
+        }
+        DataGridTextColumn {
+          Header: "Instance"
+          IsReadOnly: "True"
+          Binding: "{Binding InstanceName}"
+        }
+      ]
+      GroupStyle: GroupStyle {
+        ContainerStyle: Style {
+          TargetType: GroupItem
+          Setter { Property: "Margin",  Value: "0,0,0,5" }
+          Setter {
+            Property: "Template"
+            Value: ControlTemplate {
+              TargetType: GroupItem
+              Expander {
+                IsExpanded: "True"
+                Background: "#FF112255"
+                BorderBrush: "#FF002255"
+                Foreground: "#FFEEEEEE"
+                BorderThickness: "1,1,1,5"
+                Header: DockPanel {
+                  TextBlock {
+                    FontWeight: "Bold"
+                    Text: "{Binding Path=Name}"
+                    Margin: "5,0,0,0"
+                    Width: "100"
+                  }
+                  TextBlock { FontWeight: "Bold",  Text: "{Binding Path=ItemCount}" }
+                }
+                Content: ItemsPresenter { }
+              }
+            }
+          }
+        }
+      }
+      RowStyle: Style {
+        TargetType: "DataGridRow"
+        Setter { Property: "Foreground",  Value: "Black" }
+        Setter { Property: "Background",  Value: "White" }
+        Triggers: Trigger {
+          Property: "IsSelected"
+          Value: "True"
+          Setter { Property: "Background",  Value: "Pink" }
+          Setter { Property: "Foreground",  Value: "Black" }
+        }
+      }
+    }
+  }
+}
