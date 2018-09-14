@@ -3,7 +3,6 @@ using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Linq;
 using System.Reactive;
@@ -67,11 +66,6 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand StartCommand { get; set; }
         public ReactiveCommand StopCommand  { get; set; }
-        public ReactiveCommand CloseCommand { get; set; } = null;
-
-
-        [Reactive] public bool   CanClose        { get; set; } = true;
-        [Reactive] public bool   WindowIsEnabled { get; set; } = true;
 
         private void OnStart()
         {

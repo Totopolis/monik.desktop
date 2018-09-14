@@ -20,6 +20,8 @@ namespace MonikDesktop
 
 			builder.RegisterType<MonikService>().As<IMonikService>();
 			builder.RegisterType<SourcesCache>().As<ISourcesCache>().SingleInstance();
+
+            // ViewModels
 			builder.RegisterType<LogsViewModel>().As<ILogsViewModel>();
 			builder.RegisterType<KeepAliveViewModel>().As<IKeepAliveViewModel>();
 			builder.RegisterType<MetricsViewModel>().As<IMetricsViewModel>();
@@ -28,6 +30,7 @@ namespace MonikDesktop
 			builder.RegisterType<StartupViewModel>().As<IStartupViewModel>().SingleInstance();
 			builder.RegisterType<LogDescriptionViewModel>().As<ILogDescriptionViewModel>().SingleInstance();
 
+            // Views
 		    builder.RegisterType<StartupView>().As<IStartupView>();
 		    builder.RegisterType<LogsView>().As<ILogsView>();
 		    builder.RegisterType<KeepAliveView>().As<IKeepAliveView>();

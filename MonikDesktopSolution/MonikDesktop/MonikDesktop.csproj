@@ -146,8 +146,8 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Ui.Wpf.Common, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ui.Wpf.Common.1.0.4\lib\net462\Ui.Wpf.Common.dll</HintPath>
+    <Reference Include="Ui.Wpf.Common, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ui.Wpf.Common.1.0.9\lib\net462\Ui.Wpf.Common.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -190,6 +190,7 @@
     <Compile Include="Common\Interfaces\IMetricsViewModel.cs" />
     <Compile Include="Common\Interfaces\IPropertiesView.cs" />
     <Compile Include="Common\Interfaces\IPropertiesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IShowView.cs" />
     <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
     <Compile Include="Common\Interfaces\ISourcesView.cs" />

@@ -18,8 +18,9 @@ namespace MonikDesktop.Views
 	    }
 
 	    public IViewModel ViewModel { get; set; }
+	    public IShowViewModel ShowViewModel => ViewModel as IShowViewModel;
 
-	    public void Configure(UiShowOptions options)
+        public void Configure(UiShowOptions options)
 	    {
 	        ViewModel.Title = options.Title;
 	    }

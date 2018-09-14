@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -19,7 +20,7 @@ namespace MonikDesktop.ViewModels
 
         private LogsModel  _model;
 
-        public SourcesViewModel(ISourcesCache aCache)
+        public SourcesViewModel(IShell shell, ISourcesCache aCache)
         {
             _cache = aCache;
             Title  = "Sources";
@@ -34,9 +35,9 @@ namespace MonikDesktop.ViewModels
 
             FillSourcesTree();
 
-            //aShell.WhenAnyValue(x => x.SelectedWindow)
-            //   .Where(v => v is IShowWindow)
-            //   .Subscribe(v => OnSelectedWindow(v as IShowWindow));
+            shell.WhenAnyValue(x => x.SelectedView)
+               .Where(v => v is IShowView)
+               .Subscribe(v => OnSelectedWindow(v as IShowView));
 
             this.ObservableForProperty(x => x.SelectedItem)
                .Where(v => v.Value != null)
@@ -49,7 +50,6 @@ namespace MonikDesktop.ViewModels
                .Subscribe(v => Filter(v.Value));
         }
 
-        public ReactiveCommand CloseCommand       { get; set; } = null;
         public ReactiveCommand SelectNoneCommand  { get; set; }
         public ReactiveCommand SelectGroupCommand { get; set; }
         public ReactiveCommand RefreshCommand     { get; set; }
@@ -60,8 +60,6 @@ namespace MonikDesktop.ViewModels
         [Reactive]public SourceItem SelectedHack { get; set; }
         [Reactive] public SourceItem SelectedItem { get; set; }
         [Reactive] public string FilterText { get; set; }
-        [Reactive] public bool CanClose { get; set; } = false;
-        [Reactive] public bool WindowIsEnabled { get; set; } = true;
 
         private void Filter(string aFilter)
         {
@@ -175,22 +173,14 @@ namespace MonikDesktop.ViewModels
             SourceItems.ChangeTrackingEnabled = true;
         }
 
-        private void OnSelectedWindow(IShowViewModel aWindow)
+        private void OnSelectedWindow(IShowView aWindow)
         {
-            var logsWindow = aWindow as ILogsView;
+            IsEnabled = aWindow is ILogsView;
 
-            if (logsWindow == null)
-            {
-                WindowIsEnabled = false;
-                return;
-            }
-
-            WindowIsEnabled = true;
-
-            if (aWindow.Model == _model)
+            if (!IsEnabled || aWindow.ShowViewModel.Model == _model)
                 return;
 
-            _model = (LogsModel) logsWindow.ViewModel;
+            _model = (LogsModel)aWindow.ShowViewModel.Model;
 
             SelectNoneCommand  = null;
             SelectGroupCommand = null;

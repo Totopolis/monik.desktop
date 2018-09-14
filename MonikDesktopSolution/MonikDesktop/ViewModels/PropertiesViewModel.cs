@@ -8,19 +8,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
     public class PropertiesViewModel : ViewModelBase, IPropertiesViewModel
     {
-        public PropertiesViewModel()
+        public PropertiesViewModel(IShell shell)
         {
             Title = "Properties";
 
-            //aShell.WhenAnyValue(x => x.SelectedWindow)
-            //   .Where(v => v is IShowWindow)
-            //   .Subscribe(v => OnSelectedWindow(v as IShowWindow));
+            shell.WhenAnyValue(x => x.SelectedView)
+               .Where(v => v is IShowView)
+               .Subscribe(v => OnSelectedWindow(v as IShowView));
         }
 
         [Reactive] public ShowModel   Model      { get; private set; }
@@ -42,15 +43,11 @@ namespace MonikDesktop.ViewModels
                 "dd.MM HH:mm:**"
             };
 
-        [Reactive] public bool       CanClose             { get; set; } = false;
-        [Reactive] public bool       WindowIsEnabled      { get; set; } = true;
         [Reactive] public Visibility LogsVisibility       { get; set; } = Visibility.Collapsed;
         [Reactive] public Visibility KeepAlivesVisibility { get; set; } = Visibility.Collapsed;
         [Reactive] public Visibility MetricsVisibility    { get; set; } = Visibility.Collapsed;
 
-        public ReactiveCommand CloseCommand { get; set; } = null;
-
-        private void OnSelectedWindow(IShowViewModel aWindow)
+        private void OnSelectedWindow(IShowView aWindow)
         {
             switch (aWindow)
             {
@@ -71,8 +68,8 @@ namespace MonikDesktop.ViewModels
                     break;
             }
 
-            Model      = aWindow.Model;
-            ShowWindow = aWindow;
+            Model      = aWindow.ShowViewModel.Model;
+            ShowWindow = aWindow.ShowViewModel;
         }
     }
 }

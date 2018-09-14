@@ -1,8 +1,6 @@
-﻿using Ui.Wpf.Common.ViewModels;
-
-namespace MonikDesktop.Common.Interfaces
+﻿namespace MonikDesktop.Common.Interfaces
 {
-    public interface IKeepAliveViewModel : IViewModel
+    public interface IKeepAliveViewModel : IShowViewModel
     {
     }
 }

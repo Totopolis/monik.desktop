@@ -103,14 +103,11 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand { get; set; }
         public ReactiveCommand StartCommand { get; set; }
         public ReactiveCommand StopCommand { get; set; }
-        public ReactiveCommand CloseCommand { get; set; } = null;
 
         public ChartValues<MetricValueItem> SeriesCollection { get; set; }
 
         public ShowModel Model => _model;
 
-        [Reactive] public bool CanClose { get; set; } = true;
-        [Reactive] public bool WindowIsEnabled { get; set; } = true;
         [Reactive] public MetricValueItem SelectedMetric { get; set; }
         [Reactive] public long AxisUnit { get; set; }
         [Reactive] public long AxisStep { get; set; }

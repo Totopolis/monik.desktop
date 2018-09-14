@@ -22,6 +22,7 @@ namespace MonikDesktop.ViewModels
             _cache = cache;
             
             Title = "App settings";
+            CanClose = false;
             App = app;
 
             app.WhenAnyValue(x => x.Title)
@@ -43,10 +44,7 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand NewLogCommand       { get; set; }
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
-        public ReactiveCommand CloseCommand        { get; set; } = null;
 
-        [Reactive] public bool       CanClose        { get; set; } = false;
-        [Reactive] public bool       WindowIsEnabled { get; set; } = true;
         [Reactive] public Visibility ShowSpinner     { get; set; } = Visibility.Collapsed;
 
         private async Task Initialize()
