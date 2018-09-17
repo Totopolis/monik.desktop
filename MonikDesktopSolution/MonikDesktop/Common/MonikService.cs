@@ -1,6 +1,7 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -94,7 +95,7 @@ namespace MonikDesktop.Common
 
         private string GetJson(string aMethod)
 		{
-			var request = (HttpWebRequest) WebRequest.Create(_app.ServerUrl + aMethod);
+		    var request = CreateRequest(aMethod);
 			request.Method = WebRequestMethods.Http.Get;
 			request.Accept = "application/json";
 
@@ -108,7 +109,7 @@ namespace MonikDesktop.Common
 
 		private string PostJson(string aMethod, string aJson)
 		{
-			var request = (HttpWebRequest) WebRequest.Create(_app.ServerUrl + aMethod);
+		    var request = CreateRequest(aMethod);
 			request.Method = WebRequestMethods.Http.Post;
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
@@ -125,5 +126,11 @@ namespace MonikDesktop.Common
 				return json;
 			}
 		}
-	}
+
+	    private HttpWebRequest CreateRequest(string aMethod)
+	    {
+	        var uri = new Uri(_app.ServerUrl, aMethod);
+	        return (HttpWebRequest) WebRequest.Create(uri);
+	    }
+    }
 }

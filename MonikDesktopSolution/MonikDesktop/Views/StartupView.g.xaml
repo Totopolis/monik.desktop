@@ -35,7 +35,7 @@
           <Binding Path="App.ServerUrl"/>
         </ComboBox.SelectedValue>
         <ComboBox.Text>
-          <Binding Path="UpdateServerUrl" UpdateSourceTrigger="LostFocus" Mode="OneWayToSource"/>
+          <Binding Path="UpdateServerUrl" UpdateSourceTrigger="LostFocus" Mode="OneWayToSource" ValidatesOnExceptions="True"/>
         </ComboBox.Text>
       </ComboBox>
       <Label>Actions</Label>

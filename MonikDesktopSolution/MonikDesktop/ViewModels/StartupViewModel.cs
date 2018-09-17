@@ -12,7 +12,7 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
-        public ReactiveList<string> ServerUrls { get; } = new ReactiveList<string>();
+        public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
 
         private readonly IShell _shell;
@@ -31,7 +31,12 @@ namespace MonikDesktop.ViewModels
             this.WhenAnyValue(x => x.AppTitle)
                 .Subscribe(x => shell.Title = x);
 
-            var urls = Settings.Default.ServerUrl.Split(';');
+            var urls = Settings.Default.ServerUrl
+                .Split(';')
+                .Select(x => Uri.TryCreate(x, UriKind.Absolute, out var result) ? result : null as Uri)
+                .Where(x => x != null)
+                .ToArray();
+
             ServerUrls.AddRange(urls);
             app.ServerUrl = urls.FirstOrDefault();
 
@@ -41,12 +46,12 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
-            var canNew = app.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
+            var canNew = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
             NewLogCommand       = ReactiveCommand.Create(NewLog,       canNew);
             NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
             NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   canNew);
 
-            RemoveUrlCommand    = ReactiveCommand.Create<string>(RemoveUrl);
+            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(RemoveUrl);
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
@@ -59,28 +64,29 @@ namespace MonikDesktop.ViewModels
         {
             set
             {
-                if (App.ServerUrl != null)
+                // will throw if Uri is incorrect
+                // and will be made red by ValidatesOnExceptions
+                var val = new Uri(value);
+
+                if (App.ServerUrl != null && App.ServerUrl == val)
                 {
                     // move to the top
                     var index = ServerUrls.IndexOf(App.ServerUrl);
                     if (index != 0)
                     {
                         using (ServerUrls.SuppressChangeNotifications())
-                        {
-                            ServerUrls.RemoveAt(index);
-                            ServerUrls.Insert(0, App.ServerUrl);
-                        }
+                            (ServerUrls[index], ServerUrls[0]) = (ServerUrls[0], ServerUrls[index]);
                     }
                 }
-                else if (!string.IsNullOrEmpty(value))
+                else
                 {
-                    ServerUrls.Insert(0, value);
-                    App.ServerUrl = value;
+                    ServerUrls.Insert(0, val);
+                    App.ServerUrl = val;
                 }
             }
         }
 
-        public void RemoveUrl(string url)
+        public void RemoveUrl(Uri url)
         {
             ServerUrls.Remove(url);
         }
@@ -91,7 +97,6 @@ namespace MonikDesktop.ViewModels
 
             IsBusy = true;
 
-            // TODO: check server url
             await Task.Run(() => _cache.Reload());
 
             ShowTools();

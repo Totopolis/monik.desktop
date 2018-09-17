@@ -41,8 +41,9 @@ UserControl "MonikDesktop.Views.StartupView"
         Text: bind UpdateServerUrl
               set
               [
-                UpdateSourceTrigger: LostFocus,
+                UpdateSourceTrigger: LostFocus
                 Mode: OneWayToSource
+                ValidatesOnExceptions: true
               ]
       }
       Label { "Actions" }
