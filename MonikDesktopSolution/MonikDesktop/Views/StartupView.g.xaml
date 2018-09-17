@@ -2,15 +2,60 @@
   <Grid>
     <StackPanel Orientation="Vertical" Margin="3">
       <Label>Window header</Label>
-      <TextBox Text="{Binding Path=App.Title}"/>
+      <TextBox>
+        <TextBox.Text>
+          <Binding Path="AppTitle"/>
+        </TextBox.Text>
+      </TextBox>
       <Label>Server Url</Label>
-      <TextBox Text="{Binding Path=App.ServerUrl}"/>
+      <ComboBox IsEditable="True" SelectedIndex="0">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <Button>Remove
+                <Button.Command>
+                  <Binding Path="DataContext.RemoveUrlCommand" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}"/>
+                </Button.Command>
+                <Button.CommandParameter>
+                  <Binding/>
+                </Button.CommandParameter>
+              </Button>
+              <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock.Text>
+                  <Binding/>
+                </TextBlock.Text>
+              </TextBlock>
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+        <ComboBox.ItemsSource>
+          <Binding Path="ServerUrls"/>
+        </ComboBox.ItemsSource>
+        <ComboBox.SelectedValue>
+          <Binding Path="App.ServerUrl"/>
+        </ComboBox.SelectedValue>
+        <ComboBox.Text>
+          <Binding Path="UpdateServerUrl" UpdateSourceTrigger="LostFocus" Mode="OneWayToSource"/>
+        </ComboBox.Text>
+      </ComboBox>
       <Label>Actions</Label>
-      <Button Command="{Binding NewLogCommand}">Create Logs</Button>
+      <Button>
+        <Button.Command>
+          <Binding Path="NewLogCommand"/>
+        </Button.Command>Create Logs
+      </Button>
       <Separator/>
-      <Button Command="{Binding NewKeepAliveCommand}">Create KeepAlive</Button>
+      <Button>
+        <Button.Command>
+          <Binding Path="NewKeepAliveCommand"/>
+        </Button.Command>Create KeepAlive
+      </Button>
       <Separator/>
-      <Button Command="{Binding NewMetricsCommand}">Create Metrics</Button>
+      <Button>
+        <Button.Command>
+          <Binding Path="NewMetricsCommand"/>
+        </Button.Command>Create Metrics
+      </Button>
     </StackPanel>
     <Grid Background="Gray" Opacity="0.75">
       <Grid.Visibility>

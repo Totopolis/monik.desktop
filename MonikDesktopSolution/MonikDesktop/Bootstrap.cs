@@ -1,14 +1,13 @@
 ﻿using Autofac;
 using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
-using MonikDesktop.Properties;
 using MonikDesktop.ViewModels;
 using MonikDesktop.Views;
 using Ui.Wpf.Common;
 
 namespace MonikDesktop
 {
-	public class Bootstrap : IBootstraper
+    public class Bootstrap : IBootstraper
     {
 		public IShell Init()
 		{
@@ -43,8 +42,6 @@ namespace MonikDesktop
 
 			var shell = container.Resolve<IShell>();
 			shell.Container = container;
-
-			container.Resolve<IAppModel>().ServerUrl = Settings.Default.ServerUrl;
 
 			return shell;
 		}

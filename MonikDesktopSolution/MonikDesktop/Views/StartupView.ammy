@@ -2,43 +2,76 @@ using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
 using FontAwesome.WPF;
 
-UserControl "MonikDesktop.Views.StartupView" {
-  Grid {
-    StackPanel {
-      Orientation: "Vertical"
+UserControl "MonikDesktop.Views.StartupView"
+{
+  Grid
+  {
+    StackPanel
+    {
+      Orientation: Vertical
       Margin: "3"
-      Label {
-        "Window header"
+      Label { "Window header" }
+      TextBox { Text: bind AppTitle }
+      Label { "Server Url" }
+      ComboBox
+      {
+        IsEditable: true
+        ItemTemplate: DataTemplate
+        {
+          StackPanel
+          {
+            Orientation: Horizontal
+            Button
+            {
+              "Remove"
+              Command: bind DataContext.RemoveUrlCommand from $ancestor<UserControl>
+              CommandParameter: bind
+            }
+            TextBlock
+            {
+              Margin: "10,0,0,0"
+              VerticalAlignment: Center
+              Text: bind
+            }
+          }
+        }
+        ItemsSource: bind ServerUrls
+        SelectedValue: bind App.ServerUrl
+        SelectedIndex: 0
+        Text: bind UpdateServerUrl
+              set
+              [
+                UpdateSourceTrigger: LostFocus,
+                Mode: OneWayToSource
+              ]
       }
-      TextBox { Text: "{Binding Path=App.Title}" }
-      Label {
-        "Server Url"
-      }
-      TextBox { Text: "{Binding Path=App.ServerUrl}" }
-      Label {
-        "Actions"
-      }
-      Button {
-        Command: "{Binding NewLogCommand}"
+      Label { "Actions" }
+      Button
+      {
+        Command: bind NewLogCommand
         "Create Logs"
       }
-      Separator { }
-      Button {
-        Command: "{Binding NewKeepAliveCommand}"
+      Separator {  }
+      Button
+      {
+        Command: bind NewKeepAliveCommand
         "Create KeepAlive"
       }
-      Separator { }
-      Button {
-        Command: "{Binding NewMetricsCommand}"
+      Separator {  }
+      Button
+      {
+        Command: bind NewMetricsCommand
         "Create Metrics"
       }
     }
-    Grid {
+    Grid
+    {
       Background: "Gray"
       Opacity: "0.75"
       Visibility: bind IsBusy
-                  convert (bool isBusy) => isBusy ? Visibility.Visible : Visibility.Collapsed 
-      ImageAwesome {
+                  convert (bool isBusy) => isBusy ? Visibility.Visible : Visibility.Collapsed
+      ImageAwesome
+      {
         Icon: "Cog"
         Spin: "True"
         Height: "48"

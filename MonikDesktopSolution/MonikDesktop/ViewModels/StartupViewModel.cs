@@ -1,7 +1,9 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
@@ -10,11 +12,14 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
+        public ReactiveList<string> ServerUrls { get; } = new ReactiveList<string>();
+        [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
+
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
         private bool _isInitialized;
 
-        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app, IDockWindow main)
+        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app)
         {
             _shell = shell;
             _cache = cache;
@@ -23,25 +28,62 @@ namespace MonikDesktop.ViewModels
             CanClose = false;
             App = app;
 
-            app.WhenAnyValue(x => x.Title)
-                .Subscribe(x => main.Title = x);
+            this.WhenAnyValue(x => x.AppTitle)
+                .Subscribe(x => shell.Title = x);
 
-            app.ObservableForProperty(x => x.ServerUrl)
-               .Subscribe(v =>
-                {
-                    Settings.Default.ServerUrl = v.Value;
-                    Settings.Default.Save();
-                });
+            var urls = Settings.Default.ServerUrl.Split(';');
+            ServerUrls.AddRange(urls);
+            app.ServerUrl = urls.FirstOrDefault();
+
+            ServerUrls.Changed.Subscribe(x =>
+            {
+                Settings.Default.ServerUrl = string.Join(";", ServerUrls);
+                Settings.Default.Save();
+            });
 
             var canNew = app.WhenAny(x => x.ServerUrl, x => !string.IsNullOrWhiteSpace(x.Value));
             NewLogCommand       = ReactiveCommand.Create(NewLog,       canNew);
             NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
             NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   canNew);
+
+            RemoveUrlCommand    = ReactiveCommand.Create<string>(RemoveUrl);
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
+
+        public ReactiveCommand RemoveUrlCommand    { get; set; }
+
+        public string UpdateServerUrl
+        {
+            set
+            {
+                if (App.ServerUrl != null)
+                {
+                    // move to the top
+                    var index = ServerUrls.IndexOf(App.ServerUrl);
+                    if (index != 0)
+                    {
+                        using (ServerUrls.SuppressChangeNotifications())
+                        {
+                            ServerUrls.RemoveAt(index);
+                            ServerUrls.Insert(0, App.ServerUrl);
+                        }
+                    }
+                }
+                else if (!string.IsNullOrEmpty(value))
+                {
+                    ServerUrls.Insert(0, value);
+                    App.ServerUrl = value;
+                }
+            }
+        }
+
+        public void RemoveUrl(string url)
+        {
+            ServerUrls.Remove(url);
+        }
 
         private async Task Initialize()
         {
