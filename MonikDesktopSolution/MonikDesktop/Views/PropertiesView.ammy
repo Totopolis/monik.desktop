@@ -1,92 +1,127 @@
 using Xceed.Wpf.Toolkit;
 
-UserControl "MonikDesktop.Views.PropertiesView" {
-  Grid {
-    StackPanel {
+UserControl "MonikDesktop.Views.PropertiesView"
+{
+  Grid
+  {
+    StackPanel
+    {
       Orientation: "Vertical"
       Margin: "3"
-      Button {
-        Command: "{Binding Path=ShowWindow.StartCommand}"
-        Content: "Start"
+      Button
+      {
+        Command: bind ShowWindow.StartCommand
         Margin: "5"
+        "Start"
       }
-      Button {
-        Command: "{Binding Path=ShowWindow.StopCommand}"
-        Content: "Stop"
+      Button
+      {
+        Command: bind ShowWindow.StopCommand
         Margin: "5"
+        "Stop"
       }
-      Label {
-        "Caption"
+      Label { "Caption" }
+      TextBox
+      {
+        Text: bind Model.Caption
+        Height: "20"
       }
-      TextBox { Text: "{Binding Model.Caption}",  Height: "20" }
-      Label {
-        "Refresh period (sec.)"
+      Label { "Refresh period (sec.)" }
+      IntegerUpDown
+      {
+        Value: bind Model.RefreshSec
       }
-      IntegerUpDown { Value: "{Binding Model.RefreshSec}" }
-      StackPanel {
+      StackPanel
+      {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: "{Binding LogsVisibility}"
-        Label {
-          "Level filter"
+        Visibility: bind LogsVisibility
+        Label { "Level filter" }
+        ComboBox
+        {
+          ItemsSource: bind LevelTypes
+          SelectedValue: bind Model.Level
+                         set [ Mode: TwoWay ]
         }
-        ComboBox { ItemsSource: "{Binding LevelTypes}",  SelectedValue: "{Binding Model.Level, Mode=TwoWay}" }
-        Label {
-          "Severity Cutoff"
+        Label { "Severity Cutoff" }
+        ComboBox
+        {
+          ItemsSource: bind SeverityCutoffTypes
+          SelectedValue: bind Model.SeverityCutoff
+                         set [ Mode: TwoWay ]
         }
-        ComboBox { ItemsSource: "{Binding SeverityCutoffTypes}",  SelectedValue: "{Binding Model.SeverityCutoff, Mode=TwoWay}" }
-        Label {
-          "Top"
+        Label { "Top" }
+        ComboBox
+        {
+          ItemsSource: bind TopTypes
+          SelectedValue: bind Model.Top
+                         set [ Mode: TwoWay ]
         }
-        ComboBox { ItemsSource: "{Binding TopTypes}",  SelectedValue: "{Binding Model.Top, Mode=TwoWay}" }
-        Label {
-          "Colorized"
+        Label { "Colorized" }
+        CheckBox
+        {
+          IsChecked: bind Model.Colorized
         }
-        CheckBox { IsChecked: "{Binding Model.Colorized}" }
-        Label {
-          "GroupDoublingLogs"
+        Label { "GroupDoublingLogs" }
+        CheckBox
+        {
+          IsChecked: bind Model.GroupDuplicatingItems
+                     set [ Mode: TwoWay ]
         }
-        CheckBox { IsChecked: "{Binding Model.GroupDuplicatingItems, Mode=TwoWay}" }
       }
-      Label {
-        "Datetime format"
+      Label { "Datetime format" }
+      ComboBox
+      {
+        ItemsSource: bind DatetimeFormats
+        SelectedValue: bind Model.DateTimeFormat
       }
-      ComboBox { ItemsSource: "{Binding DatetimeFormats}",  SelectedValue: "{Binding Model.DateTimeFormat}" }
-      StackPanel {
+      StackPanel
+      {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: "{Binding LogsVisibility}"
-        Label {
-          Visibility: "{Binding Model.DuplicatedSettingsVisibility}"
+        Visibility: bind LogsVisibility
+        Label
+        {
+          Visibility: bind Model.DuplicatedSettingsVisibility
           "Duplicated Datetime format"
         }
-        ComboBox {
-          Visibility: "{Binding Model.DuplicatedSettingsVisibility}"
-          ItemsSource: "{Binding DatetimeFormats}"
-          SelectedValue: "{Binding Model.DuplicatedDateTimeFormat}"
+        ComboBox
+        {
+          Visibility: bind Model.DuplicatedSettingsVisibility
+          ItemsSource: bind DatetimeFormats
+          SelectedValue: bind Model.DuplicatedDateTimeFormat
         }
       }
-      StackPanel {
+      StackPanel
+      {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: "{Binding KeepAlivesVisibility}"
-        Label {
-          "Keep Alive Warning period (sec.)"
+        Visibility: bind KeepAlivesVisibility
+        Label { "Keep Alive Warning period (sec.)" }
+        IntegerUpDown
+        {
+          Value: bind Model.KeepAliveWarningPeriod
         }
-        IntegerUpDown { Value: "{Binding Model.KeepAliveWarningPeriod}" }
       }
-      StackPanel {
+      StackPanel
+      {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: "{Binding MetricsVisibility}"
-        Label {
-          "Metrics Mode"
+        Visibility: bind MetricsVisibility
+        Label { "Metrics Mode" }
+        ComboBox
+        {
+          ItemsSource: bind MetricTerminalModes
+          SelectedValue: bind Model.MetricTerminalMode
+                         set [ Mode: TwoWay ]
         }
-        ComboBox { ItemsSource: "{Binding MetricTerminalModes}",  SelectedValue: "{Binding Model.MetricTerminalMode, Mode=TwoWay}" }
-        Label {
-          "Metric aggregating window width in 5 minutes"
+        Label { "Metric window depth in hours" }
+        IntegerUpDown
+        {
+          Value: bind Model.MetricWindowDepth
+          Minimum: 1
+          Maximum: 333
         }
-        IntegerUpDown { Value: "{Binding Model.Window5MinWidth}" }
       }
     }
   }

@@ -15,7 +15,7 @@ namespace MonikDesktop.Common.Interfaces
         List<EWindowValue> GetWindowMetricValues();
 
         IEnumerable<EMetricDescription> GetMetricDescriptions();
-        List<EMetricValue> GetHistoryMetricValues(EHistoryMetricsRequest aRequest);
-        EMetricValue GetCurrentMetricValue(int descriptionId);
+        EMetricHistory GetMetricHistory(int metricId, int amount);
+        EMetricValue GetCurrentMetricValue(int metricId);
     }
 }

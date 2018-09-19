@@ -1,39 +1,132 @@
 <UserControl x:Class="MonikDesktop.Views.PropertiesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns1:Ammy.Register="/MonikDesktop;component/Views/PropertiesView.g.xaml">
   <Grid>
     <StackPanel Orientation="Vertical" Margin="3">
-      <Button Command="{Binding Path=ShowWindow.StartCommand}" Content="Start" Margin="5"/>
-      <Button Command="{Binding Path=ShowWindow.StopCommand}" Content="Stop" Margin="5"/>
+      <Button Margin="5">
+        <Button.Command>
+          <Binding Path="ShowWindow.StartCommand"/>
+        </Button.Command>Start
+      </Button>
+      <Button Margin="5">
+        <Button.Command>
+          <Binding Path="ShowWindow.StopCommand"/>
+        </Button.Command>Stop
+      </Button>
       <Label>Caption</Label>
-      <TextBox Text="{Binding Model.Caption}" Height="20"/>
+      <TextBox Height="20">
+        <TextBox.Text>
+          <Binding Path="Model.Caption"/>
+        </TextBox.Text>
+      </TextBox>
       <Label>Refresh period (sec.)</Label>
-      <ns0:IntegerUpDown Value="{Binding Model.RefreshSec}"/>
-      <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding LogsVisibility}">
+      <ns0:IntegerUpDown>
+        <ns0:IntegerUpDown.Value>
+          <Binding Path="Model.RefreshSec"/>
+        </ns0:IntegerUpDown.Value>
+      </ns0:IntegerUpDown>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="LogsVisibility"/>
+        </StackPanel.Visibility>
         <Label>Level filter</Label>
-        <ComboBox ItemsSource="{Binding LevelTypes}" SelectedValue="{Binding Model.Level, Mode=TwoWay}"/>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="LevelTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.Level" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
         <Label>Severity Cutoff</Label>
-        <ComboBox ItemsSource="{Binding SeverityCutoffTypes}" SelectedValue="{Binding Model.SeverityCutoff, Mode=TwoWay}"/>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="SeverityCutoffTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.SeverityCutoff" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
         <Label>Top</Label>
-        <ComboBox ItemsSource="{Binding TopTypes}" SelectedValue="{Binding Model.Top, Mode=TwoWay}"/>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="TopTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.Top" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
         <Label>Colorized</Label>
-        <CheckBox IsChecked="{Binding Model.Colorized}"/>
+        <CheckBox>
+          <CheckBox.IsChecked>
+            <Binding Path="Model.Colorized"/>
+          </CheckBox.IsChecked>
+        </CheckBox>
         <Label>GroupDoublingLogs</Label>
-        <CheckBox IsChecked="{Binding Model.GroupDuplicatingItems, Mode=TwoWay}"/>
+        <CheckBox>
+          <CheckBox.IsChecked>
+            <Binding Path="Model.GroupDuplicatingItems" Mode="TwoWay"/>
+          </CheckBox.IsChecked>
+        </CheckBox>
       </StackPanel>
       <Label>Datetime format</Label>
-      <ComboBox ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DateTimeFormat}"/>
-      <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding LogsVisibility}">
-        <Label Visibility="{Binding Model.DuplicatedSettingsVisibility}">Duplicated Datetime format</Label>
-        <ComboBox Visibility="{Binding Model.DuplicatedSettingsVisibility}" ItemsSource="{Binding DatetimeFormats}" SelectedValue="{Binding Model.DuplicatedDateTimeFormat}"/>
+      <ComboBox>
+        <ComboBox.ItemsSource>
+          <Binding Path="DatetimeFormats"/>
+        </ComboBox.ItemsSource>
+        <ComboBox.SelectedValue>
+          <Binding Path="Model.DateTimeFormat"/>
+        </ComboBox.SelectedValue>
+      </ComboBox>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="LogsVisibility"/>
+        </StackPanel.Visibility>
+        <Label>
+          <Label.Visibility>
+            <Binding Path="Model.DuplicatedSettingsVisibility"/>
+          </Label.Visibility>Duplicated Datetime format
+        </Label>
+        <ComboBox>
+          <ComboBox.Visibility>
+            <Binding Path="Model.DuplicatedSettingsVisibility"/>
+          </ComboBox.Visibility>
+          <ComboBox.ItemsSource>
+            <Binding Path="DatetimeFormats"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.DuplicatedDateTimeFormat"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
       </StackPanel>
-      <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding KeepAlivesVisibility}">
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="KeepAlivesVisibility"/>
+        </StackPanel.Visibility>
         <Label>Keep Alive Warning period (sec.)</Label>
-        <ns0:IntegerUpDown Value="{Binding Model.KeepAliveWarningPeriod}"/>
+        <ns0:IntegerUpDown>
+          <ns0:IntegerUpDown.Value>
+            <Binding Path="Model.KeepAliveWarningPeriod"/>
+          </ns0:IntegerUpDown.Value>
+        </ns0:IntegerUpDown>
       </StackPanel>
-      <StackPanel Orientation="Vertical" Margin="0" Visibility="{Binding MetricsVisibility}">
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="MetricsVisibility"/>
+        </StackPanel.Visibility>
         <Label>Metrics Mode</Label>
-        <ComboBox ItemsSource="{Binding MetricTerminalModes}" SelectedValue="{Binding Model.MetricTerminalMode, Mode=TwoWay}"/>
-        <Label>Metric aggregating window width in 5 minutes</Label>
-        <ns0:IntegerUpDown Value="{Binding Model.Window5MinWidth}"/>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="MetricTerminalModes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.MetricTerminalMode" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+        <Label>Metric window depth in hours</Label>
+        <ns0:IntegerUpDown Minimum="1" Maximum="333">
+          <ns0:IntegerUpDown.Value>
+            <Binding Path="Model.MetricWindowDepth"/>
+          </ns0:IntegerUpDown.Value>
+        </ns0:IntegerUpDown>
       </StackPanel>
     </StackPanel>
   </Grid>

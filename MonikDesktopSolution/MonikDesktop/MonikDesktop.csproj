@@ -203,11 +203,12 @@
     <Compile Include="Common\Enums\SeverityCutoffType.cs" />
     <Compile Include="Common\Enums\TopType.cs" />
     <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
-    <Compile Include="Common\ModelsApi\EHistoryMetricsRequest.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
+    <Compile Include="Common\ModelsApi\EMetricHistory.cs" />
     <Compile Include="Common\ModelsApi\EMetricValue.cs" />
     <Compile Include="Common\ModelsApi\EKeepAlive_.cs" />
     <Compile Include="Common\ModelsApi\EMetricDescription.cs" />
+    <Compile Include="Common\ModelsApi\EWindowValue.cs" />
     <Compile Include="Common\ModelsApp\Group.cs" />
     <Compile Include="Common\ModelsApp\MetricDescription.cs" />
     <Compile Include="Common\ModelsApp\MetricValueItem.cs" />
@@ -231,6 +232,9 @@
     <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
+    <Compile Include="Views\MetricsChartTooltipView.ammy.cs">
+      <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\MetricsSampleData.xaml.cs">
       <DependentUpon>MetricsSampleData.ammy</DependentUpon>
     </Compile>
@@ -266,6 +270,7 @@
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
     <None Include="lib.ammy" />
+    <None Include="Views\MetricsChartTooltipView.ammy" />
     <None Include="Views\MetricsSampleData.ammy" />
     <None Include="Views\MetricsView.ammy" />
     <None Include="Views\LogDescriptionView.ammy" />
@@ -324,6 +329,11 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\MetricsChartTooltipView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\MetricsSampleData.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

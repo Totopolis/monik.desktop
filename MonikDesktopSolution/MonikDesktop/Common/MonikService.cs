@@ -68,12 +68,10 @@ namespace MonikDesktop.Common
 	        return result;
         }
 
-	    public List<EMetricValue> GetHistoryMetricValues(EHistoryMetricsRequest aRequest)
+	    public EMetricHistory GetMetricHistory(int metricId, int amount)
 	    {
-	        var reqJson = JsonConvert.SerializeObject(aRequest);
-	        var resJson = PostJson("metricHistory", reqJson);
-
-	        var result = JsonConvert.DeserializeObject<List<EMetricValue>>(resJson);
+	        var json = GetJson($"metrics/{metricId}/history?Amount={amount}");
+	        var result = JsonConvert.DeserializeObject<EMetricHistory>(json);
 	        return result;
         }
 

@@ -1,50 +1,53 @@
 using MonikDesktop.ViewModels;
+using MonikDesktop.Common.ModelsApp;
 using LiveCharts.Wpf;
 
 UserControl "MonikDesktop.Views.MetricsView" {
   Grid {
-    ColumnDefinitions: [
-      ColumnDefinition { Width: "*",  MaxWidth: "400" }
+    ColumnDefinitions:
+    [
+      ColumnDefinition { Width: Auto }
       ColumnDefinition { Width: "*" }
     ]
     DataGrid "MainGrid" {
-      CanUserAddRows: "False"
-      CanUserDeleteRows: "False"
-      AutoGenerateColumns: "False"
-      RowHeight: "20"
-      HorizontalGridLinesBrush: "Silver"
-      VerticalGridLinesBrush: "Silver"
-      GridLinesVisibility: "Horizontal"
-      Foreground: "Black"
-      SelectedItem: "{Binding SelectedMetric}"
-      ItemsSource: "{Binding MetricValuesList}"
-      Grid.Column: "0"
+      CanUserAddRows: false
+      CanUserDeleteRows: false
+      AutoGenerateColumns: false
+      IsReadOnly: true
+      RowHeight: 20
+      HorizontalGridLinesBrush: Silver
+      VerticalGridLinesBrush: Silver
+      GridLinesVisibility: Horizontal
+      Foreground: Black
+      SelectedItem: bind SelectedMetric
+      ItemsSource: bind MetricValuesList
+      Grid.Column: 0
       Columns: [
         DataGridTextColumn {
           Header: "Source"
-          Binding: "{Binding Description.Instance.Source.Name}"
-          Width: "Auto"
+          Binding: bind "Description.Instance.Source.Name"
+          Width: Auto
         }
         DataGridTextColumn {
           Header: "Instance"
-          Binding: "{Binding Description.Instance.Name}"
-          Width: "Auto"
+          Binding: bind "Description.Instance.Name"
+          Width: Auto
         }
         DataGridTextColumn {
           Header: "Name"
-          Binding: "{Binding Description.Name}"
-          Width: "Auto"
+          Binding: bind Description.Name
+          Width: Auto
         }
         DataGridTextColumn {
           Header: "Type"
-          Binding: "{Binding Description.Type}"
-          Width: "Auto"
+          Binding: bind Description.Type
+          Width: Auto
         }
         DataGridTextColumn {
           Header: "Value"
-          Binding: "{Binding Value}"
-          Width: "Auto"
-          Visibility: "{Binding Model.MetricValuesVisibility}"
+          Binding: bind Value
+          Width: Auto
+          Visibility: bind Model.MetricValuesVisibility
           ElementStyle: Style {
             TargetType: TextBlock
             Setters: [
@@ -56,21 +59,20 @@ UserControl "MonikDesktop.Views.MetricsView" {
       ]
     }
     CartesianChart {
-      Grid.Column: "1"
-      Background: "White"
-      LegendLocation: "None"
-      DisableAnimations: "True"
-      Hoverable: "False"
-      DataTooltip: "{x:Null}"
-      Visibility: "{Binding Model.MetricDiagrammVisibility}"
-      Series: ColumnSeries { Values: "{Binding SeriesCollection}" }
-      AxisX: Axis {
-        LabelFormatter: "{Binding DateTimeFormatter}"
-        MaxValue: "{Binding AxisMax}"
-        MinValue: "{Binding AxisMin}"
-        Unit: "{Binding AxisUnit}"
-        Separator: LiveCharts.Wpf.Separator { Step: "{Binding AxisStep}" }
+      Grid.Column: 1
+      Background: White
+      LegendLocation: None
+      DataTooltip: MonikDesktop.Views.MetricsChartTooltipView {}
+      DisableAnimations: true
+      Hoverable: false
+      Visibility: bind Model.MetricDiagrammVisibility
+      Series: ColumnSeries
+      {
+        MaxColumnWidth: double.PositiveInfinity
+        ColumnPadding: bind SeriesColumnPadding
+        Values: bind SeriesCollection
       }
+      AxisX: Axis { LabelFormatter: bind DateTimeFormatter }
     }
   }
 }
