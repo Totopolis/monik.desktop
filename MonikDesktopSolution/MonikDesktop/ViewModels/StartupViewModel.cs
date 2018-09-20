@@ -18,6 +18,7 @@ namespace MonikDesktop.ViewModels
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
         private bool _isInitialized;
+        private bool _isToolsShown;
 
         public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app)
         {
@@ -51,12 +52,16 @@ namespace MonikDesktop.ViewModels
             NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
             NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   canNew);
 
-            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(RemoveUrl);
+            RemoveInstancesCommand = ReactiveCommand.Create(RemoveInstances, canNew);
+
+            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
+
+        public ReactiveCommand RemoveInstancesCommand { get; set; }
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
 
@@ -86,11 +91,6 @@ namespace MonikDesktop.ViewModels
             }
         }
 
-        public void RemoveUrl(Uri url)
-        {
-            ServerUrls.Remove(url);
-        }
-
         private async Task Initialize()
         {
             _isInitialized = true;
@@ -98,8 +98,6 @@ namespace MonikDesktop.ViewModels
             IsBusy = true;
 
             await Task.Run(() => _cache.Reload());
-
-            ShowTools();
 
             IsBusy = false;
         }
@@ -110,6 +108,7 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<ILogsView>();
+            ShowTools();
         }
 
         private async Task NewKeepAlive()
@@ -118,6 +117,7 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<IKeepAliveView>();
+            ShowTools();
         }
 
         private async Task NewMetrics()
@@ -126,13 +126,26 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<IMetricsView>();
+            ShowTools();
         }
 
         private void ShowTools()
         {
+            if (_isToolsShown)
+                return;
+
+            _isToolsShown = true;
             _shell.ShowTool<IPropertiesView>();
             _shell.ShowTool<ISourcesView>();
             _shell.ShowTool<ILogDescriptionView>();
+        }
+
+        private async Task RemoveInstances()
+        {
+            if (!_isInitialized)
+                await Initialize();
+
+            _shell.ShowView<IRemoveInstancesView>();
         }
 
         public IAppModel App { get; }

@@ -40,7 +40,6 @@ UserControl "MonikDesktop.Views.StartupView"
         }
         ItemsSource: bind ServerUrls
         SelectedValue: bind App.ServerUrl
-        SelectedIndex: 0
         Text: bind UpdateServerUrl
               set
               [
@@ -52,20 +51,27 @@ UserControl "MonikDesktop.Views.StartupView"
       Label { "Actions" }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewLogCommand
         "Create Logs"
       }
-      Separator {  }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewKeepAliveCommand
         "Create KeepAlive"
       }
-      Separator {  }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewMetricsCommand
         "Create Metrics"
+      }
+      Label { "Management" }
+      Button
+      {
+        Command: bind RemoveInstancesCommand
+        "Remove instances"
       }
     }
     Grid

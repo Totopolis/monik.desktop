@@ -193,6 +193,8 @@
     <Compile Include="Common\Interfaces\IMetricsViewModel.cs" />
     <Compile Include="Common\Interfaces\IPropertiesView.cs" />
     <Compile Include="Common\Interfaces\IPropertiesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IRemoveInstancesView.cs" />
+    <Compile Include="Common\Interfaces\IRemoveInstancesViewModel.cs" />
     <Compile Include="Common\Interfaces\IShowView.cs" />
     <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
@@ -225,6 +227,7 @@
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\KeepAliveViewModel.cs" />
+    <Compile Include="ViewModels\RemoveInstancesViewModel.cs" />
     <Compile Include="ViewModels\ShowModels\MetricsModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
@@ -257,6 +260,9 @@
     <Compile Include="Views\PropertiesView.xaml.cs">
       <DependentUpon>PropertiesView.ammy</DependentUpon>
     </Compile>
+    <Compile Include="Views\RemoveInstancesView.ammy.cs">
+      <DependentUpon>RemoveInstancesView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\SourcesView.xaml.cs">
       <DependentUpon>SourcesView.ammy</DependentUpon>
     </Compile>
@@ -279,6 +285,7 @@
     <None Include="Views\KeepAliveSampleData.ammy" />
     <None Include="Views\LogsView.ammy" />
     <None Include="Views\PropertiesView.ammy" />
+    <None Include="Views\RemoveInstancesView.ammy" />
     <None Include="Views\SourcesView.ammy" />
     <None Include="Views\StartupView.ammy" />
   </ItemGroup>
@@ -369,6 +376,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>PropertiesView.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\RemoveInstancesView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>RemoveInstancesView.ammy</DependentUpon>
     </Page>
     <Page Include="Views\SourcesView.g.xaml">
       <SubType>Designer</SubType>
