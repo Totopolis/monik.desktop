@@ -4,6 +4,9 @@ using FontAwesome.WPF;
 
 UserControl "MonikDesktop.Views.StartupView"
 {
+  Resources: [
+    BindingProxy Key="Proxy" { Data: bind }
+  ]
   Grid
   {
     StackPanel
@@ -24,7 +27,7 @@ UserControl "MonikDesktop.Views.StartupView"
             Button
             {
               "Remove"
-              Command: bind DataContext.RemoveUrlCommand from $ancestor<UserControl>
+              Command: bind Data.RemoveUrlCommand from $resource Proxy
               CommandParameter: bind
             }
             TextBlock

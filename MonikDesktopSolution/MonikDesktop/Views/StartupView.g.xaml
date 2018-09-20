@@ -1,4 +1,11 @@
-<UserControl x:Class="MonikDesktop.Views.StartupView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns1:Ammy.Register="/MonikDesktop;component/Views/StartupView.g.xaml">
+<UserControl x:Class="MonikDesktop.Views.StartupView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF" xmlns:ns2="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns2:Ammy.Register="/MonikDesktop;component/Views/StartupView.g.xaml">
+  <UserControl.Resources>
+    <ns0:BindingProxy x:Key="Proxy">
+      <ns0:BindingProxy.Data>
+        <Binding/>
+      </ns0:BindingProxy.Data>
+    </ns0:BindingProxy>
+  </UserControl.Resources>
   <Grid>
     <StackPanel Orientation="Vertical" Margin="3">
       <Label>Window header</Label>
@@ -14,7 +21,7 @@
             <StackPanel Orientation="Horizontal">
               <Button>Remove
                 <Button.Command>
-                  <Binding Path="DataContext.RemoveUrlCommand" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}"/>
+                  <Binding Path="Data.RemoveUrlCommand" Source="{StaticResource Proxy}"/>
                 </Button.Command>
                 <Button.CommandParameter>
                   <Binding/>
@@ -59,9 +66,9 @@
     </StackPanel>
     <Grid Background="Gray" Opacity="0.75">
       <Grid.Visibility>
-        <Binding Path="IsBusy" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        <Binding Path="IsBusy" Converter="{x:Static ns2:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
       </Grid.Visibility>
-      <ns0:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
+      <ns1:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
     </Grid>
   </Grid>
 </UserControl>
