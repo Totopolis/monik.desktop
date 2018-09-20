@@ -115,12 +115,24 @@ UserControl "MonikDesktop.Views.PropertiesView"
           SelectedValue: bind Model.MetricTerminalMode
                          set [ Mode: TwoWay ]
         }
-        Label { "Metric window depth in hours" }
-        IntegerUpDown
+        StackPanel
         {
-          Value: bind Model.MetricWindowDepth
-          Minimum: 1
-          Maximum: 333
+          Orientation: "Vertical"
+          Margin: "0"
+          Visibility: bind Model.MetricDiagramVisible
+                      convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
+          Label { "History depth (in hours)" }
+          IntegerUpDown
+          {
+            Value: bind Model.MetricHistoryDepthHours
+            Minimum: 1
+            Maximum: 333
+          }
+          Label { "History skip 5 min intervals" }
+          IntegerUpDown
+          {
+            Value: bind Model.MetricHistorySkip5Min
+          }
         }
       }
     }

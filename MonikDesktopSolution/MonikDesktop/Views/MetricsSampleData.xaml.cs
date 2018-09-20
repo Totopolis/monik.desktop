@@ -52,7 +52,7 @@ namespace SampleDatas
                 }
             };
 
-        public MetricsModel Model => new MetricsModel() { MetricDiagrammVisibility = Visibility.Visible };
+        public MetricsModel Model => new MetricsModel() { MetricDiagramVisible = true };
 
         public ChartValues<MetricValueItem> SeriesCollection { get; } = new ChartValues<MetricValueItem>()
         {

@@ -121,12 +121,23 @@
             <Binding Path="Model.MetricTerminalMode" Mode="TwoWay"/>
           </ComboBox.SelectedValue>
         </ComboBox>
-        <Label>Metric window depth in hours</Label>
-        <ns0:IntegerUpDown Minimum="1" Maximum="333">
-          <ns0:IntegerUpDown.Value>
-            <Binding Path="Model.MetricWindowDepth"/>
-          </ns0:IntegerUpDown.Value>
-        </ns0:IntegerUpDown>
+        <StackPanel Orientation="Vertical" Margin="0">
+          <StackPanel.Visibility>
+            <Binding Path="Model.MetricDiagramVisible" Converter="{x:Static ns1:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+          </StackPanel.Visibility>
+          <Label>History depth (in hours)</Label>
+          <ns0:IntegerUpDown Minimum="1" Maximum="333">
+            <ns0:IntegerUpDown.Value>
+              <Binding Path="Model.MetricHistoryDepthHours"/>
+            </ns0:IntegerUpDown.Value>
+          </ns0:IntegerUpDown>
+          <Label>History skip 5 min intervals</Label>
+          <ns0:IntegerUpDown>
+            <ns0:IntegerUpDown.Value>
+              <Binding Path="Model.MetricHistorySkip5Min"/>
+            </ns0:IntegerUpDown.Value>
+          </ns0:IntegerUpDown>
+        </StackPanel>
       </StackPanel>
     </StackPanel>
   </Grid>

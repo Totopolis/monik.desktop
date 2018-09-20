@@ -1,7 +1,6 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
-using System.Windows;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
@@ -13,15 +12,14 @@ namespace MonikDesktop.ViewModels.ShowModels
                .Subscribe(_ =>
                 {
                     Online = false;
-                    MetricValuesVisibility = MetricTerminalMode == MetricTerminalMode.Diagram ? Visibility.Collapsed : Visibility.Visible;
-                    MetricDiagrammVisibility = MetricTerminalMode == MetricTerminalMode.Diagram ? Visibility.Visible : Visibility.Collapsed;
+                    MetricDiagramVisible = MetricTerminalMode == MetricTerminalMode.Diagram;
                 });
         }
 
         [Reactive] public MetricTerminalMode MetricTerminalMode { get; set; } = MetricTerminalMode.Current;
-        [Reactive] public Visibility MetricValuesVisibility { get; set; } = Visibility.Visible;
-        [Reactive] public Visibility MetricDiagrammVisibility { get; set; } = Visibility.Collapsed;
-        [Reactive] public int MetricWindowDepth { get; set; } = 1; // 1 hour window depth == 12 * 5 min history bars
+        [Reactive] public bool MetricDiagramVisible { get; set; }
+        [Reactive] public int MetricHistoryDepthHours { get; set; } = 1; // in hours - 1 == 12 history bars by 5 min intervals
+        [Reactive] public int MetricHistorySkip5Min { get; set; } = 0; // skip some 5 min intervals
     }
 
     public enum MetricTerminalMode

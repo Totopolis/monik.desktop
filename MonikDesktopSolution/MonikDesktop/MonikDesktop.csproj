@@ -232,6 +232,7 @@
     <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
+    <Compile Include="Views\BindingProxy.cs" />
     <Compile Include="Views\MetricsChartTooltipView.ammy.cs">
       <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
     </Compile>

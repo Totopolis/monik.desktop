@@ -37,7 +37,7 @@ namespace MonikDesktop.ViewModels
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
-            _model.WhenAnyValue(x => x.MetricWindowDepth)
+            _model.WhenAnyValue(x => x.MetricHistoryDepthHours)
                 .Subscribe(v => SeriesColumnPadding = v > 5 ? 0 : v > 2 ? 1 : 2);
 
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
@@ -213,11 +213,10 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.Diagram:
 
                         if (SelectedMetric == null) break;
-                        var amount = _model.MetricWindowDepth * 12;
-                        var history = _service.GetMetricHistory(SelectedMetric.Description.Id, amount);
+                        var amount = _model.MetricHistoryDepthHours * 12;
+                        var history = _service.GetMetricHistory(SelectedMetric.Description.Id, amount, _model.MetricHistorySkip5Min);
 
                         response = history.Values
-                            //.Reverse()
                             .Select((v, i) => new MetricValueItem()
                             {
                                 Interval = history.Interval.AddMinutes(-5 * i).ToLocalTime(),

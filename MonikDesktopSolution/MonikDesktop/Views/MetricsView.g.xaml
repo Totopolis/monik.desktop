@@ -1,4 +1,11 @@
 <UserControl x:Class="MonikDesktop.Views.MetricsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:System;assembly=mscorlib" xmlns:ns2="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" xmlns:ns3="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns3:Ammy.Register="/MonikDesktop;component/Views/MetricsView.g.xaml">
+  <UserControl.Resources>
+    <ns0:BindingProxy x:Key="Proxy">
+      <ns0:BindingProxy.Data>
+        <Binding/>
+      </ns0:BindingProxy.Data>
+    </ns0:BindingProxy>
+  </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto"/>
@@ -37,7 +44,7 @@
             <Binding Path="Value"/>
           </DataGridTextColumn.Binding>
           <DataGridTextColumn.Visibility>
-            <Binding Path="Model.MetricValuesVisibility"/>
+            <Binding Path="Data.Model.MetricDiagramVisible" Source="{StaticResource Proxy}" Converter="{x:Static ns3:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
           </DataGridTextColumn.Visibility>
           <DataGridTextColumn.ElementStyle>
             <Style TargetType="{x:Type TextBlock}">
@@ -55,7 +62,7 @@
         <ns0:MetricsChartTooltipView/>
       </ns2:CartesianChart.DataTooltip>
       <ns2:CartesianChart.Visibility>
-        <Binding Path="Model.MetricDiagrammVisibility"/>
+        <Binding Path="Model.MetricDiagramVisible" Converter="{x:Static ns3:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
       </ns2:CartesianChart.Visibility>
       <ns2:CartesianChart.Series>
         <ns2:ColumnSeries MaxColumnWidth="{x:Static ns1:Double.PositiveInfinity}">
