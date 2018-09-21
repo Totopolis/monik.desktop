@@ -2,7 +2,7 @@
 
 namespace MonikDesktop.Common.Interfaces
 {
-    public interface IRemoveInstancesViewModel : IViewModel
+    public interface IRemoveEntitiesViewModel : IViewModel
     {
     }
 }

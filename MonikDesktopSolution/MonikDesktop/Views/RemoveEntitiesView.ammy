@@ -1,0 +1,388 @@
+﻿using MonikDesktop.ViewModels
+
+alias NodeView(type, color, removeCommand)
+{
+  @StackPanelHorizontal()
+  {
+    Border 
+    {
+      Margin: "0,0,10,0"
+      Padding: "5, 1, 5, 2"
+      Background: $color
+      CornerRadius: 5
+      TextBlock
+      {
+        VerticalAlignment: Center
+        HorizontalAlignment: Center
+        FontSize: 10
+        Foreground: White
+        Text: $type
+      } 
+    }
+    TextBlock
+    {
+      VerticalAlignment: Center
+      Margin: "0,0,10,0"
+      Text: bind Value.Name
+    }
+    TextBlock
+    {
+      VerticalAlignment: Center
+      Foreground: LightGray
+      Text: bind Value.ID set [ StringFormat: "(id: {0})"]
+    }
+    Button
+    {
+      "X"
+      Margin: "10,0,0,0"
+      Style: Style
+      {
+        TargetType: Button
+        #Setter("Visibility", "Hidden")
+        Setter 
+        {
+          Property: "Template"
+          Value: ControlTemplate
+          {
+            TargetType: Button
+            Border "button"
+            {
+              Padding: "5,0,5,1"
+              CornerRadius: 5
+              Background: Red
+              BorderBrush: "Black"
+              BorderThickness: 1
+              TextBlock 
+              {
+                Foreground: White
+                FontWeight: "Bold"
+                Text: "{TemplateBinding Button.Content}"
+                HorizontalAlignment: Center
+                VerticalAlignment: Center
+              }
+            }
+            Triggers:
+            [
+              Trigger
+              {
+                Property: "IsMouseOver"
+                Value: true
+                #Setter("Background", Brown, "button")
+              }
+              Trigger
+              {
+                Property: "IsPressed"
+                Value: true
+                #Setter("Background", DarkRed, "button")
+              }
+            ]
+          }
+        }
+        #Fade_OnBinding("{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}", true)
+      }
+      Command: $removeCommand
+      CommandParameter: bind
+    }
+  }
+}
+
+UserControl "MonikDesktop.Views.RemoveEntitiesView"
+{
+  Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
+  Grid
+  {
+    #TwoRows("Auto", "*")
+    StackPanel
+    {
+      Grid.Row: 0
+      Margin: 5
+      Label { "Authorization token" }
+      ComboBox
+      {
+        IsEditable: true
+        ItemTemplate: DataTemplate
+        {
+          StackPanel
+          {
+            Orientation: Horizontal
+            Button
+            {
+              "Remove"
+              Command: bind Data.RemoveAuthTokenCommand from $resource Proxy
+              CommandParameter: bind
+            }
+            TextBlock
+            {
+              Margin: "10,0,0,0"
+              VerticalAlignment: Center
+              Text: bind
+            }
+          }
+        }
+        ItemsSource: bind AuthTokens
+        SelectedValue: bind App.AuthToken
+        Text: bind UpdateAuthToken
+              set
+              [
+                UpdateSourceTrigger: LostFocus
+                Mode: OneWayToSource
+              ]
+      }
+    }
+    Grid
+    {
+      Grid.Row: 1
+      #TwoRows("Auto", "*")
+      Margin: 5
+      Grid
+      {
+        Grid.Row: 0
+        #TwoColumns("Auto", "*")
+        Margin: "0 10 0 10"
+        Label
+        {
+          Grid.Column: 0
+          Margin: "0 0 5 0"
+          "Search:"
+        }
+        TextBox
+        {
+          Grid.Column: 1
+          Text: bind FilterText
+                set [
+                  Mode: TwoWay
+                  UpdateSourceTrigger: PropertyChanged
+                ]
+        }
+      }
+      TabControl
+      {
+        Grid.Row: 1
+        Margin: "10"
+        BorderBrush: "Gainsboro"
+        Resources: Style
+        {
+          TargetType: "TabItem"
+          Setter
+          {
+            Property: "Template"
+            Value: ControlTemplate
+            {
+              TargetType: "TabItem"
+              Border
+              {
+                Name: "Border"
+                BorderThickness: "1,1,1,0"
+                BorderBrush: Gainsboro
+                CornerRadius: "4,4,0,0"
+                Margin: "2,0"
+                ContentPresenter "ContentSite"
+                {
+                  VerticalAlignment: Center
+                  HorizontalAlignment: Center
+                  ContentSource: "Header"
+                  Margin: "10,2"
+                }
+              }
+              Triggers: [
+                Trigger
+                {
+                  Property: "IsSelected"
+                  Value: true
+                  Setter
+                  {
+                    TargetName: "Border"
+                    Property: "Background"
+                    Value: LightSkyBlue
+                  }
+                }
+                Trigger
+                {
+                  Property: "IsSelected"
+                  Value: false
+                  Setter
+                  {
+                    TargetName: "Border"
+                    Property: "Background"
+                    Value: GhostWhite
+                  }
+                }
+              ]
+            }
+          }
+        }
+        TabItem
+        {
+          Header: "Tree View"
+          TreeView "RemovableEntities"
+          {
+            ItemsSource: bind SourcesTree
+            Resources: [
+              HierarchicalDataTemplate
+              {
+                DataType: NodeSource
+                ItemsSource: bind Instances
+                @NodeView("Source", DeepSkyBlue, bind Data.RemoveNodeSourceCommand from $resource Proxy) {}
+              }
+              HierarchicalDataTemplate
+              {
+                DataType: NodeInstance
+                ItemsSource: bind Metrics
+                @NodeView("Instance", LimeGreen, bind Data.RemoveNodeInstanceCommand from $resource Proxy) {}
+              }
+              DataTemplate
+              {
+                DataType: NodeMetric
+                @NodeView("Metric", OrangeRed, bind Data.RemoveNodeMetricCommand from $resource Proxy) {}
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Sources"
+          DataGrid "SourcesGrid"
+          {
+            IsReadOnly: true
+            CanUserAddRows: false
+            CanUserDeleteRows: false
+            AutoGenerateColumns: false
+            RowHeight: 40
+            HorizontalGridLinesBrush: Silver
+            VerticalGridLinesBrush: Silver
+            GridLinesVisibility: Horizontal
+            ItemsSource: bind SourcesFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveSourceCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Instances"
+          DataGrid "InstancesGrid"
+          {
+            IsReadOnly: true
+            CanUserAddRows: false
+            CanUserDeleteRows: false
+            AutoGenerateColumns: false
+            RowHeight: 40
+            HorizontalGridLinesBrush: Silver
+            VerticalGridLinesBrush: Silver
+            GridLinesVisibility: Horizontal
+            ItemsSource: bind InstancesFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind Source.Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Instance"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveInstanceCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Metrics"
+          DataGrid "MetricsGrid"
+          {
+            IsReadOnly: true
+            CanUserAddRows: false
+            CanUserDeleteRows: false
+            AutoGenerateColumns: false
+            RowHeight: 40
+            HorizontalGridLinesBrush: Silver
+            VerticalGridLinesBrush: Silver
+            GridLinesVisibility: Horizontal
+            ItemsSource: bind MetricsFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind "Instance.Source.Name"
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Instance"
+                Binding: bind Instance.Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Metric"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveMetricCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

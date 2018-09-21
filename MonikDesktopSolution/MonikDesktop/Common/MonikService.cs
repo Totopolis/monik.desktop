@@ -38,6 +38,13 @@ namespace MonikDesktop.Common
 			return result;
 		}
 
+	    public EMetric[] GetMetrics()
+	    {
+	        var json = GetJson("metrics");
+	        var result = JsonConvert.DeserializeObject<EMetric[]>(json);
+	        return result;
+	    }
+
 		public ELog_[] GetLogs(ELogRequest aRequest)
 		{
 			var reqJson = JsonConvert.SerializeObject(aRequest);
@@ -89,6 +96,32 @@ namespace MonikDesktop.Common
 
 	        var result = JsonConvert.DeserializeObject<EKeepAlive_[]>(resJson);
 	        return result;
+	    }
+
+
+	    public bool RemoveSource(short id)
+	    {
+	        return Delete($"sources/{id}");
+	    }
+
+	    public bool RemoveInstance(int id)
+	    {
+	        return Delete($"instances/{id}");
+        }
+
+	    public bool RemoveMetric(int id)
+	    {
+	        return Delete($"metrics/{id}");
+        }
+
+	    private bool Delete(string aMethod)
+	    {
+	        var request = CreateRequest(aMethod);
+	        request.Method = "DELETE";
+            request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+
+	        var response = (HttpWebResponse)request.GetResponse();
+	        return response.StatusCode == HttpStatusCode.OK;
 	    }
 
         private string GetJson(string aMethod)

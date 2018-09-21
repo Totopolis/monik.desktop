@@ -71,7 +71,7 @@ UserControl "MonikDesktop.Views.StartupView"
       Button
       {
         Command: bind RemoveInstancesCommand
-        "Remove instances"
+        "Remove entities"
       }
     }
     Grid

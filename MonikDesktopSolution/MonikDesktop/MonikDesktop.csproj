@@ -193,8 +193,8 @@
     <Compile Include="Common\Interfaces\IMetricsViewModel.cs" />
     <Compile Include="Common\Interfaces\IPropertiesView.cs" />
     <Compile Include="Common\Interfaces\IPropertiesViewModel.cs" />
-    <Compile Include="Common\Interfaces\IRemoveInstancesView.cs" />
-    <Compile Include="Common\Interfaces\IRemoveInstancesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IRemoveEntitiesView.cs" />
+    <Compile Include="Common\Interfaces\IRemoveEntitiesViewModel.cs" />
     <Compile Include="Common\Interfaces\IShowView.cs" />
     <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
@@ -206,12 +206,14 @@
     <Compile Include="Common\Enums\TopType.cs" />
     <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
+    <Compile Include="Common\ModelsApi\EMetric.cs" />
     <Compile Include="Common\ModelsApi\EMetricHistory.cs" />
     <Compile Include="Common\ModelsApi\EMetricValue.cs" />
     <Compile Include="Common\ModelsApi\EKeepAlive_.cs" />
     <Compile Include="Common\ModelsApi\EMetricDescription.cs" />
     <Compile Include="Common\ModelsApi\EWindowValue.cs" />
     <Compile Include="Common\ModelsApp\Group.cs" />
+    <Compile Include="Common\ModelsApp\Metric.cs" />
     <Compile Include="Common\ModelsApp\MetricDescription.cs" />
     <Compile Include="Common\ModelsApp\MetricValueItem.cs" />
     <Compile Include="Common\ModelsApp\KeepALiveItem.cs" />
@@ -227,7 +229,8 @@
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\KeepAliveViewModel.cs" />
-    <Compile Include="ViewModels\RemoveInstancesViewModel.cs" />
+    <Compile Include="ViewModels\RemovableEntities.cs" />
+    <Compile Include="ViewModels\RemoveEntitiesViewModel.cs" />
     <Compile Include="ViewModels\ShowModels\MetricsModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
@@ -260,8 +263,8 @@
     <Compile Include="Views\PropertiesView.xaml.cs">
       <DependentUpon>PropertiesView.ammy</DependentUpon>
     </Compile>
-    <Compile Include="Views\RemoveInstancesView.ammy.cs">
-      <DependentUpon>RemoveInstancesView.ammy</DependentUpon>
+    <Compile Include="Views\RemoveEntitiesView.ammy.cs">
+      <DependentUpon>RemoveEntitiesView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\SourcesView.xaml.cs">
       <DependentUpon>SourcesView.ammy</DependentUpon>
@@ -285,7 +288,7 @@
     <None Include="Views\KeepAliveSampleData.ammy" />
     <None Include="Views\LogsView.ammy" />
     <None Include="Views\PropertiesView.ammy" />
-    <None Include="Views\RemoveInstancesView.ammy" />
+    <None Include="Views\RemoveEntitiesView.ammy" />
     <None Include="Views\SourcesView.ammy" />
     <None Include="Views\StartupView.ammy" />
   </ItemGroup>
@@ -377,10 +380,10 @@
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>PropertiesView.ammy</DependentUpon>
     </Page>
-    <Page Include="Views\RemoveInstancesView.g.xaml">
+    <Page Include="Views\RemoveEntitiesView.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>RemoveInstancesView.ammy</DependentUpon>
+      <DependentUpon>RemoveEntitiesView.ammy</DependentUpon>
     </Page>
     <Page Include="Views\SourcesView.g.xaml">
       <SubType>Designer</SubType>

@@ -7,6 +7,7 @@ namespace MonikDesktop.Common.Interfaces
     {
         ESource[] GetSources();
         EInstance[] GetInstances();
+        EMetric[] GetMetrics();
         EGroup[] GetGroups();
         ELog_[] GetLogs(ELogRequest aRequest);
         EKeepAlive_[] GetKeepAlives(EKeepAliveRequest aRequest);
@@ -17,5 +18,9 @@ namespace MonikDesktop.Common.Interfaces
         IEnumerable<EMetricDescription> GetMetricDescriptions();
         EMetricHistory GetMetricHistory(int metricId, int amount, int skip);
         EMetricValue GetCurrentMetricValue(int metricId);
+
+        bool RemoveSource(short id);
+        bool RemoveInstance(int id);
+        bool RemoveMetric(int id);
     }
 }

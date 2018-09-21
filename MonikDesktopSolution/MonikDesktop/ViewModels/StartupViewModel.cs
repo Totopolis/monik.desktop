@@ -145,7 +145,7 @@ namespace MonikDesktop.ViewModels
             if (!_isInitialized)
                 await Initialize();
 
-            _shell.ShowView<IRemoveInstancesView>();
+            _shell.ShowView<IRemoveEntitiesView>();
         }
 
         public IAppModel App { get; }

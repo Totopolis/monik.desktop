@@ -10,6 +10,7 @@ namespace MonikDesktop.Common
 		private readonly IMonikService _service;
 	    private List<Group> _groups = new List<Group>();
 		private List<Source> _sources = new List<Source>();
+	    private List<Metric> _metrics = new List<Metric>();
 		private Dictionary<int, Instance> _instances= new Dictionary<int, Instance>();
 
 		private readonly Source _unknownSource;
@@ -25,9 +26,11 @@ namespace MonikDesktop.Common
 
 		public void Reload()
 		{
-			var sources = _service.GetSources();
-			var instances = _service.GetInstances();
-			var groups = _service.GetGroups();
+            var sources = _service.GetSources();
+		    var instances = _service.GetInstances();
+		    var metrics = _service.GetMetrics();
+            var groups = _service.GetGroups();
+
 
 			_sources = sources.Select(x => new Source
 			{
@@ -49,6 +52,16 @@ namespace MonikDesktop.Common
 
 				_instances.Add(instance.ID, instance);
 			}
+
+		    _metrics = metrics.Select(m =>
+		        new Metric
+		        {
+		            ID = m.ID,
+		            Name = m.Name,
+		            Instance = _instances.ContainsKey(m.InstanceID) ? _instances[m.InstanceID] : _unknownInstance,
+		            Aggregation = m.Aggregation
+		        }
+		    ).ToList();
 
 			_groups = new List<Group>();
 			foreach (var it in groups)
@@ -73,7 +86,46 @@ namespace MonikDesktop.Common
 
 		public Instance[] Instances => _instances.Values.ToArray();
 
-		public Instance GetInstance(int aInstanceId)
+	    public Metric[] Metrics => _metrics.ToArray();
+
+	    public bool RemoveSource(Source v)
+	    {
+	        var removed = _service.RemoveSource(v.ID);
+	        if (removed)
+	        {
+	            _sources.Remove(v);
+                foreach(var ins in _instances.Values.ToArray())
+	                if (ins.Source == v)
+	                {
+	                    _instances.Remove(ins.ID);
+	                    _metrics = _metrics.Where(m => m.Instance != ins).ToList();
+	                }
+	        }
+	        return removed;
+	    }
+
+	    public bool RemoveInstance(Instance v)
+	    {
+	        var removed = _service.RemoveInstance(v.ID);
+	        if (removed)
+	        {
+	            _instances.Remove(v.ID);
+	            _metrics = _metrics.Where(m => m.Instance != v).ToList();
+            }
+	        return removed;
+	    }
+
+	    public bool RemoveMetric(Metric v)
+	    {
+	        var removed = _service.RemoveMetric(v.ID);
+	        if (removed)
+	        {
+	            _metrics.Remove(v);
+	        }
+	        return removed;
+	    }
+
+	    public Instance GetInstance(int aInstanceId)
 		{
 			return _instances.ContainsKey(aInstanceId)
 				? _instances[aInstanceId]

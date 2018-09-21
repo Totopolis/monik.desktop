@@ -65,7 +65,7 @@
       <Button>
         <Button.Command>
           <Binding Path="RemoveInstancesCommand"/>
-        </Button.Command>Remove instances
+        </Button.Command>Remove entities
       </Button>
     </StackPanel>
     <Grid Background="Gray" Opacity="0.75">

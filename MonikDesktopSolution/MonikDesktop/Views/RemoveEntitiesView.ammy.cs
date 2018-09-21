@@ -4,9 +4,9 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.Views
 {
-    public partial class RemoveInstancesView : IRemoveInstancesView
+    public partial class RemoveEntitiesView : IRemoveEntitiesView
     {
-        public RemoveInstancesView(IRemoveInstancesViewModel viewModel)
+        public RemoveEntitiesView(IRemoveEntitiesViewModel viewModel)
         {
             InitializeComponent();
 
