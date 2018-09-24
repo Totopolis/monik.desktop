@@ -96,10 +96,7 @@ namespace MonikDesktop.Common
 	            _sources.Remove(v);
                 foreach(var ins in _instances.Values.ToArray())
 	                if (ins.Source == v)
-	                {
-	                    _instances.Remove(ins.ID);
-	                    _metrics = _metrics.Where(m => m.Instance != ins).ToList();
-	                }
+	                    RemoveInstanceFromCache(ins);
 	        }
 	        return removed;
 	    }
@@ -109,8 +106,7 @@ namespace MonikDesktop.Common
 	        var removed = _service.RemoveInstance(v.ID);
 	        if (removed)
 	        {
-	            _instances.Remove(v.ID);
-	            _metrics = _metrics.Where(m => m.Instance != v).ToList();
+                RemoveInstanceFromCache(v);
             }
 	        return removed;
 	    }
@@ -133,5 +129,18 @@ namespace MonikDesktop.Common
 
 			// TODO: if unknown instance then update from api?
 		}
+
+
+	    private void RemoveInstanceFromCache(Instance ins)
+	    {
+            // remove from instances
+	        _instances.Remove(ins.ID);
+            // cleanup groups
+            foreach (var g in _groups)
+	            g.Instances.Remove(ins);
+            // claenup metrics
+	        _metrics = _metrics.Where(m => m.Instance != ins).ToList();
+        }
+
 	} //end of class
 }

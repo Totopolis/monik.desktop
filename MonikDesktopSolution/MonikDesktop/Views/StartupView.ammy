@@ -70,8 +70,15 @@ UserControl "MonikDesktop.Views.StartupView"
       Label { "Management" }
       Button
       {
-        Command: bind RemoveInstancesCommand
+        Margin: "0 0 0 5"
+        Command: bind RemoveEntitiesCommand
         "Remove entities"
+      }
+      Button
+      {
+        Margin: "0 0 0 5"
+        Command: bind ManageGroupsCommand
+        "Manage groups"
       }
     }
     Grid

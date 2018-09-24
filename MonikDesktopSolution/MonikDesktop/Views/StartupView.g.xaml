@@ -62,10 +62,15 @@
         </Button.Command>Create Metrics
       </Button>
       <Label>Management</Label>
-      <Button>
+      <Button Margin="0 0 0 5">
         <Button.Command>
-          <Binding Path="RemoveInstancesCommand"/>
+          <Binding Path="RemoveEntitiesCommand"/>
         </Button.Command>Remove entities
+      </Button>
+      <Button Margin="0 0 0 5">
+        <Button.Command>
+          <Binding Path="ManageGroupsCommand"/>
+        </Button.Command>Manage groups
       </Button>
     </StackPanel>
     <Grid Background="Gray" Opacity="0.75">

@@ -29,6 +29,7 @@ namespace MonikDesktop
 			builder.RegisterType<StartupViewModel>().As<IStartupViewModel>().SingleInstance();
 			builder.RegisterType<LogDescriptionViewModel>().As<ILogDescriptionViewModel>().SingleInstance();
 		    builder.RegisterType<RemoveEntitiesViewModel>().As<IRemoveEntitiesViewModel>();
+		    builder.RegisterType<ManageGroupsViewModel>().As<IManageGroupsViewModel>();
 
             // Views
             builder.RegisterType<StartupView>().As<IStartupView>();
@@ -39,6 +40,7 @@ namespace MonikDesktop
 		    builder.RegisterType<SourcesView>().As<ISourcesView>();
 		    builder.RegisterType<LogDescriptionView>().As<ILogDescriptionView>();
 		    builder.RegisterType<RemoveEntitiesView>().As<IRemoveEntitiesView>();
+		    builder.RegisterType<ManageGroupsView>().As<IManageGroupsView>();
 
             var container = builder.Build();
 

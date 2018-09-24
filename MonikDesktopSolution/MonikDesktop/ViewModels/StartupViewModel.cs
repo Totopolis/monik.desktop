@@ -47,12 +47,13 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
-            var canNew = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
-            NewLogCommand       = ReactiveCommand.Create(NewLog,       canNew);
-            NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
-            NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   canNew);
+            var hasUrl = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
+            NewLogCommand       = ReactiveCommand.Create(NewLog,       hasUrl);
+            NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, hasUrl);
+            NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   hasUrl);
 
-            RemoveInstancesCommand = ReactiveCommand.Create(RemoveInstances, canNew);
+            RemoveEntitiesCommand = ReactiveCommand.Create(RemoveEntities, hasUrl);
+            ManageGroupsCommand = ReactiveCommand.Create(ManageGroups, hasUrl);
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
         }
@@ -61,7 +62,8 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
 
-        public ReactiveCommand RemoveInstancesCommand { get; set; }
+        public ReactiveCommand RemoveEntitiesCommand { get; set; }
+        public ReactiveCommand ManageGroupsCommand { get; set; }
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
 
@@ -140,12 +142,20 @@ namespace MonikDesktop.ViewModels
             _shell.ShowTool<ILogDescriptionView>();
         }
 
-        private async Task RemoveInstances()
+        private async Task RemoveEntities()
         {
             if (!_isInitialized)
                 await Initialize();
 
             _shell.ShowView<IRemoveEntitiesView>();
+        }
+
+        private async Task ManageGroups()
+        {
+            if (!_isInitialized)
+                await Initialize();
+
+            _shell.ShowView<IManageGroupsView>();
         }
 
         public IAppModel App { get; }

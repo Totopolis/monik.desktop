@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Configurations;
+using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
@@ -65,12 +66,7 @@ namespace MonikDesktop.ViewModels
             {
                 if (_model.MetricTerminalMode != MetricTerminalMode.Diagram)
                 {
-                    MetricValuesList.Clear();
-
-                    //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-                    //https://github.com/reactiveui/ReactiveUI/issues/1354
-                    foreach (var item in results)
-                        MetricValuesList.Add(item);
+                    MetricValuesList.Initialize(results);
                 }
                 else
                 {

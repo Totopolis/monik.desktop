@@ -1,4 +1,5 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.Properties;
 using ReactiveUI;
@@ -20,6 +21,7 @@ namespace MonikDesktop.ViewModels
         {
             _cache = cache;
 
+            App = app;
             Title = "Remove Instances";
 
             var urls = Settings.Default.AuthToken
@@ -28,11 +30,11 @@ namespace MonikDesktop.ViewModels
                 .ToArray();
 
             AuthTokens.AddRange(urls);
-            app.AuthToken = urls.FirstOrDefault();
+            App.AuthToken = urls.FirstOrDefault();
 
             AuthTokens.Changed.Subscribe(x =>
             {
-                Settings.Default.ServerUrl = string.Join(";", AuthTokens);
+                Settings.Default.AuthToken = string.Join(";", AuthTokens);
                 Settings.Default.Save();
             });
 
@@ -51,6 +53,8 @@ namespace MonikDesktop.ViewModels
 
             Refresh();
         }
+
+        public IAppModel App { get; }
 
         public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
         public ReactiveCommand RemoveAuthTokenCommand { get; set; }
@@ -74,6 +78,28 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveList<Metric> MetricsList { get; set; } = new ReactiveList<Metric>();
         public ReactiveList<Metric> MetricsFiltered { get; set; } = new ReactiveList<Metric>();
+
+        public string UpdateAuthToken
+        {
+            set
+            {
+                if (App.AuthToken != null && App.AuthToken == value)
+                {
+                    // move to the top
+                    var index = AuthTokens.IndexOf(App.AuthToken);
+                    if (index != 0)
+                    {
+                        using (AuthTokens.SuppressChangeNotifications())
+                            (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
+                    }
+                }
+                else
+                {
+                    AuthTokens.Insert(0, value);
+                    App.AuthToken = value;
+                }
+            }
+        }
 
         private void Refresh()
         {
@@ -105,17 +131,16 @@ namespace MonikDesktop.ViewModels
                     .OrderBy(s => s.Value.Name);
 
 
-            SourcesTree.Clear();
-            SourcesTree.AddRange(items);
+            SourcesTree.Initialize(items);
 
-            SourcesList = new ReactiveList<Source>(_cache.Sources);
-            SourcesFiltered = new ReactiveList<Source>(SourcesList);
+            SourcesList.Initialize(_cache.Sources);
+            SourcesFiltered.Initialize(SourcesList);
 
-            InstancesList = new ReactiveList<Instance>(_cache.Instances);
-            InstancesFiltered = new ReactiveList<Instance>(InstancesList);
+            InstancesList.Initialize(_cache.Instances);
+            InstancesFiltered.Initialize(InstancesList);
 
-            MetricsList = new ReactiveList<Metric>(_cache.Metrics);
-            MetricsFiltered = new ReactiveList<Metric>(MetricsList);
+            MetricsList.Initialize(_cache.Metrics);
+            MetricsFiltered.Initialize(MetricsList);
         }
 
         private void Filter(string filter)
@@ -137,11 +162,11 @@ namespace MonikDesktop.ViewModels
         {
             var hasFilter = !string.IsNullOrWhiteSpace(_filter);
             if (uSources)
-                SourcesFiltered = new ReactiveList<Source>(hasFilter ? SourcesList.Where(FilterSource) : SourcesList);
+                SourcesFiltered.Initialize(hasFilter ? SourcesList.Where(FilterSource) : SourcesList);
             if (uInstances)
-                InstancesFiltered = new ReactiveList<Instance>(hasFilter ? InstancesList.Where(FilterInstance) : InstancesList);
+                InstancesFiltered.Initialize(hasFilter ? InstancesList.Where(FilterInstance) : InstancesList);
             if (uMetrics)
-                MetricsFiltered = new ReactiveList<Metric>(hasFilter ? MetricsList.Where(FilterMetric) : MetricsList);
+                MetricsFiltered.Initialize(hasFilter ? MetricsList.Where(FilterMetric) : MetricsList);
         }
 
         private void RemoveNodeSource(NodeSource v)
@@ -182,8 +207,8 @@ namespace MonikDesktop.ViewModels
                 if (removed)
                 {
                     SourcesList.Remove(v);
-                    InstancesList = new ReactiveList<Instance>(InstancesList.Where(ins => ins.Source != v));
-                    MetricsList = new ReactiveList<Metric>(MetricsList.Where(m => InstancesList.Contains(m.Instance)));
+                    InstancesList.Initialize(InstancesList.Where(ins => ins.Source != v).ToList());
+                    MetricsList.Initialize(MetricsList.Where(m => InstancesList.Contains(m.Instance)).ToList());
 
                     UpdateFilteredEntities();
                 }
@@ -204,7 +229,7 @@ namespace MonikDesktop.ViewModels
                 if (removed)
                 {
                     InstancesList.Remove(v);
-                    MetricsList = new ReactiveList<Metric>(MetricsList.Where(m => m.Instance != v));
+                    MetricsList.Initialize(MetricsList.Where(m => m.Instance != v).ToList());
 
                     UpdateFilteredEntities(false);
                 }

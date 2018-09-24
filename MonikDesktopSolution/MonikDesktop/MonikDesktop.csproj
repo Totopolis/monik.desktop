@@ -186,6 +186,8 @@
     <Compile Include="Common\Interfaces\IKeepAliveViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogDescriptionViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogsViewModel.cs" />
+    <Compile Include="Common\Interfaces\IManageGroupsView.cs" />
+    <Compile Include="Common\Interfaces\IManageGroupsViewModel.cs" />
     <Compile Include="Common\Interfaces\IMetricsView.cs" />
     <Compile Include="Common\Interfaces\IKeepAliveView.cs" />
     <Compile Include="Common\Interfaces\ILogDescriptionView.cs" />
@@ -224,8 +226,10 @@
     <Compile Include="Common\ModelsApi\ELogRequest.cs" />
     <Compile Include="Common\ModelsApi\ELog_.cs" />
     <Compile Include="Common\ModelsApp\Source.cs" />
+    <Compile Include="Common\ReactiveExtensions.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
+    <Compile Include="ViewModels\ManageGroupsViewModel.cs" />
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\KeepAliveViewModel.cs" />
@@ -239,6 +243,9 @@
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\BindingProxy.cs" />
+    <Compile Include="Views\ManageGroupsView.ammy.cs">
+      <DependentUpon>ManageGroupsView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\MetricsChartTooltipView.ammy.cs">
       <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
     </Compile>
@@ -280,6 +287,7 @@
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
     <None Include="lib.ammy" />
+    <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
     <None Include="Views\MetricsSampleData.ammy" />
     <None Include="Views\MetricsView.ammy" />
@@ -340,6 +348,11 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\ManageGroupsView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ManageGroupsView.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\MetricsChartTooltipView.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

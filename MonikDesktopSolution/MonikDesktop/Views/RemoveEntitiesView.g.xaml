@@ -84,7 +84,7 @@
           </Style>
         </TabControl.Resources>
         <TabItem Header="Tree View">
-          <TreeView x:Name="RemovableEntities">
+          <TreeView x:Name="RemovableEntities" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
             <TreeView.ItemsSource>
               <Binding Path="SourcesTree"/>
             </TreeView.ItemsSource>

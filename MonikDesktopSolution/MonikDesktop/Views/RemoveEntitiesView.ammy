@@ -216,6 +216,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
           Header: "Tree View"
           TreeView "RemovableEntities"
           {
+            VirtualizingStackPanel.IsVirtualizing: true
+            VirtualizingStackPanel.VirtualizationMode: "Recycling"
             ItemsSource: bind SourcesTree
             Resources: [
               HierarchicalDataTemplate

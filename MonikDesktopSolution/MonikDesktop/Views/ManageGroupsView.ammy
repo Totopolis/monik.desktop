@@ -1,0 +1,154 @@
+﻿alias HeaderText(text)
+{
+  TextBlock
+  {
+    HorizontalAlignment: Center
+    VerticalAlignment: Center
+    FontSize: 20
+    Text: $text
+  }
+}
+
+alias SimpleDataGrid()
+{
+  DataGrid 
+  {
+    IsReadOnly: true
+    CanUserAddRows: false
+    CanUserDeleteRows: false
+    AutoGenerateColumns: false
+    RowHeight: 40
+    HorizontalGridLinesBrush: Silver
+    VerticalGridLinesBrush: Silver
+    GridLinesVisibility: Horizontal
+  }
+}
+
+alias InstancesData()
+{
+  @SimpleDataGrid() 
+  {
+    Columns: [
+        DataGridTextColumn
+        {
+          Header: "ID"
+          Binding: bind ID
+          Width: Auto
+        }
+        DataGridTextColumn
+        {
+          Header: "Source"
+          Binding: bind Source.Name
+          Width: Auto
+        }
+        DataGridTextColumn
+        {
+          Header: "Instance"
+          Binding: bind Name
+          Width: Auto
+        }
+      ]
+  }
+}
+
+UserControl "MonikDesktop.Views.ManageGroupsView"
+{
+  Grid 
+  {
+    #TwoRows(50)
+    #FiveColumns("*", 20, "*", 20, "*")
+    @HeaderText("Groups")
+    {
+      #Cell(0, 0)
+    }
+    @HeaderText("In Group")
+    {
+      #Cell(0, 2)
+    }
+    Grid
+    {
+      #Cell(0, 4)
+      #ThreeColumns("*", "Auto", "*")
+      @StackPanelHorizontal() 
+      {
+        Grid.Column: 0
+        Button 
+        {
+          "+"
+          Width: 50
+          Command: bind TempAdd
+        }
+        Button 
+        {
+          "-"
+          Width: 50
+          Command: bind TempSub
+        }
+      }
+      @HeaderText("Without Group")
+      {
+        Grid.Column: 1
+      }
+      Border
+      { 
+        Grid.Column: 2
+        HorizontalAlignment: Center
+        VerticalAlignment: Center
+        Padding: "7,3,7,5"
+        Background: Orange
+        CornerRadius: 10
+        MinWidth: 40
+        TextBlock 
+        {
+          HorizontalAlignment: Center
+          VerticalAlignment: Center
+          Foreground: White
+          FontSize: 20
+          Text: bind ListWithoutGroup.Count
+        }
+        Style: Style
+        {
+          TargetType: Border
+          #Visibility_OnBinding(bind ListWithoutGroup.Count, 0, "Collapsed", "Visible")
+        }
+      }
+    }
+    @SimpleDataGrid()
+    {
+      #Cell(1, 0)
+      ItemsSource: bind ListGroups
+      Columns: [
+        DataGridTextColumn
+        {
+          Header: "ID"
+          Binding: bind ID
+          Width: Auto
+        }
+        DataGridTextColumn
+        {
+          Header: "Group"
+          Binding: bind Name
+          Width: Auto
+        }
+        DataGridTextColumn
+        {
+          Header: "Amount"
+          Binding: bind Instances.Count
+          Width: Auto
+        }
+      ]
+    }
+    @InstancesData()
+    {
+      #Cell(1, 2)
+      ItemsSource: bind ListInGoup
+    }
+    @InstancesData()
+    {
+      #Cell(1, 4)
+      ItemsSource: bind ListWithoutGroup set [ Mode: OneWay, NotifyOnSourceUpdated:true, UpdateSourceTrigger: PropertyChanged ]
+    }
+  }
+  
+
+}
