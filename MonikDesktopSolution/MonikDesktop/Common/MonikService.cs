@@ -124,7 +124,12 @@ namespace MonikDesktop.Common
 	        Delete($"groups/{gId}/instances/{iId}");
         }
 
-	    private void Delete(string aMethod)
+	    public void RemoveGroup(short gId)
+	    {
+            Delete($"groups/{gId}");
+	    }
+
+        private void Delete(string aMethod)
 	    {
 	        var request = CreateRequest(aMethod);
 	        request.Method = "DELETE";

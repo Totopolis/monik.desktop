@@ -75,6 +75,9 @@
                     </TextBlock.Text>
                   </TextBlock>
                   <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
                     <Button.Style>
                       <Style TargetType="{x:Type Button}">
                         <Setter Property="Visibility" Value="Hidden"/>
@@ -121,9 +124,6 @@
                         </Style.Triggers>
                       </Style>
                     </Button.Style>
-                    <Button.CommandParameter>
-                      <Binding/>
-                    </Button.CommandParameter>
                     <Button.Command>
                       <Binding Path="Data.RemoveNodeSourceCommand" Source="{StaticResource Proxy}"/>
                     </Button.Command>X
@@ -149,6 +149,9 @@
                     </TextBlock.Text>
                   </TextBlock>
                   <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
                     <Button.Style>
                       <Style TargetType="{x:Type Button}">
                         <Setter Property="Visibility" Value="Hidden"/>
@@ -195,9 +198,6 @@
                         </Style.Triggers>
                       </Style>
                     </Button.Style>
-                    <Button.CommandParameter>
-                      <Binding/>
-                    </Button.CommandParameter>
                     <Button.Command>
                       <Binding Path="Data.RemoveNodeInstanceCommand" Source="{StaticResource Proxy}"/>
                     </Button.Command>X
@@ -220,6 +220,9 @@
                     </TextBlock.Text>
                   </TextBlock>
                   <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
                     <Button.Style>
                       <Style TargetType="{x:Type Button}">
                         <Setter Property="Visibility" Value="Hidden"/>
@@ -266,9 +269,6 @@
                         </Style.Triggers>
                       </Style>
                     </Button.Style>
-                    <Button.CommandParameter>
-                      <Binding/>
-                    </Button.CommandParameter>
                     <Button.Command>
                       <Binding Path="Data.RemoveNodeMetricCommand" Source="{StaticResource Proxy}"/>
                     </Button.Command>X
@@ -279,7 +279,7 @@
           </TreeView>
         </TabItem>
         <TabItem Header="Sources">
-          <DataGrid x:Name="SourcesGrid" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" x:Name="SourcesGrid">
             <DataGrid.ItemsSource>
               <Binding Path="SourcesFiltered"/>
             </DataGrid.ItemsSource>
@@ -312,7 +312,7 @@
           </DataGrid>
         </TabItem>
         <TabItem Header="Instances">
-          <DataGrid x:Name="InstancesGrid" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" x:Name="InstancesGrid">
             <DataGrid.ItemsSource>
               <Binding Path="InstancesFiltered"/>
             </DataGrid.ItemsSource>
@@ -350,7 +350,7 @@
           </DataGrid>
         </TabItem>
         <TabItem Header="Metrics">
-          <DataGrid x:Name="MetricsGrid" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" x:Name="MetricsGrid">
             <DataGrid.ItemsSource>
               <Binding Path="MetricsFiltered"/>
             </DataGrid.ItemsSource>

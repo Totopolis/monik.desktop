@@ -9,21 +9,6 @@
   }
 }
 
-alias SimpleDataGrid()
-{
-  DataGrid 
-  {
-    IsReadOnly: true
-    CanUserAddRows: false
-    CanUserDeleteRows: false
-    AutoGenerateColumns: false
-    RowHeight: 40
-    HorizontalGridLinesBrush: Silver
-    VerticalGridLinesBrush: Silver
-    GridLinesVisibility: Horizontal
-  }
-}
-
 alias InstancesData()
 {
   @SimpleDataGrid() 
@@ -60,6 +45,7 @@ alias InstancesData()
 
 UserControl "MonikDesktop.Views.ManageGroupsView"
 {
+  Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
   Grid 
   {
     #TwoRows(50)
@@ -110,6 +96,21 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
       ItemsSource: bind ListGroups
       SelectedItem: bind SelectedGroup
       Columns: [
+        DataGridTemplateColumn
+        {
+          CellTemplate: DataTemplate
+          {
+            @RemoveButton(bind Data.RemoveGroupCommand from $resource Proxy, bind)
+            {
+              Margin: 10
+              Style: Style
+              {
+                #RemoveButtonStyle()
+                #Fade_OnBinding("{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type DataGridRow}},Path=IsMouseOver}", true)
+              }
+            }
+          }
+        }
         DataGridTextColumn
         {
           Header: "ID"
@@ -125,8 +126,14 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
         DataGridTextColumn
         {
           Header: "Amount"
+          ElementStyle: Style
+          {
+            TargetType: TextBlock
+            #Setter("HorizontalAlignment", "Right")
+            #Setter("Margin", "10")
+          }
           Binding: bind Instances.Count
-          Width: Auto
+          Width: "*"
         }
       ]
     }

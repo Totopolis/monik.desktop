@@ -25,5 +25,6 @@ namespace MonikDesktop.Common.Interfaces
 
         void AddInstanceToGroup(int iId, short gId);
         void RemoveInstanceFromGroup(int iId, short gId);
+        void RemoveGroup(short gId);
     }
 }

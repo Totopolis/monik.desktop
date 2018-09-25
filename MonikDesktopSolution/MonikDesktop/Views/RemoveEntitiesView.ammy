@@ -31,57 +31,15 @@ alias NodeView(type, color, removeCommand)
       Foreground: LightGray
       Text: bind Value.ID set [ StringFormat: "(id: {0})"]
     }
-    Button
+
+    @RemoveButton($removeCommand, bind)
     {
-      "X"
       Margin: "10,0,0,0"
       Style: Style
       {
-        TargetType: Button
-        #Setter("Visibility", "Hidden")
-        Setter 
-        {
-          Property: "Template"
-          Value: ControlTemplate
-          {
-            TargetType: Button
-            Border "button"
-            {
-              Padding: "5,0,5,1"
-              CornerRadius: 5
-              Background: Red
-              BorderBrush: "Black"
-              BorderThickness: 1
-              TextBlock 
-              {
-                Foreground: White
-                FontWeight: "Bold"
-                Text: "{TemplateBinding Button.Content}"
-                HorizontalAlignment: Center
-                VerticalAlignment: Center
-              }
-            }
-            Triggers:
-            [
-              Trigger
-              {
-                Property: "IsMouseOver"
-                Value: true
-                #Setter("Background", Brown, "button")
-              }
-              Trigger
-              {
-                Property: "IsPressed"
-                Value: true
-                #Setter("Background", DarkRed, "button")
-              }
-            ]
-          }
-        }
+        #RemoveButtonStyle()
         #Fade_OnBinding("{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}", true)
       }
-      Command: $removeCommand
-      CommandParameter: bind
     }
   }
 }
@@ -206,16 +164,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
         TabItem
         {
           Header: "Sources"
-          DataGrid "SourcesGrid"
+          @SimpleDataGrid() "SourcesGrid"
           {
-            IsReadOnly: true
-            CanUserAddRows: false
-            CanUserDeleteRows: false
-            AutoGenerateColumns: false
-            RowHeight: 40
-            HorizontalGridLinesBrush: Silver
-            VerticalGridLinesBrush: Silver
-            GridLinesVisibility: Horizontal
             ItemsSource: bind SourcesFiltered
             Columns: [
               DataGridTextColumn
@@ -248,16 +198,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
         TabItem
         {
           Header: "Instances"
-          DataGrid "InstancesGrid"
+          @SimpleDataGrid() "InstancesGrid"
           {
-            IsReadOnly: true
-            CanUserAddRows: false
-            CanUserDeleteRows: false
-            AutoGenerateColumns: false
-            RowHeight: 40
-            HorizontalGridLinesBrush: Silver
-            VerticalGridLinesBrush: Silver
-            GridLinesVisibility: Horizontal
             ItemsSource: bind InstancesFiltered
             Columns: [
               DataGridTextColumn
@@ -296,16 +238,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
         TabItem
         {
           Header: "Metrics"
-          DataGrid "MetricsGrid"
+          @SimpleDataGrid "MetricsGrid"
           {
-            IsReadOnly: true
-            CanUserAddRows: false
-            CanUserDeleteRows: false
-            AutoGenerateColumns: false
-            RowHeight: 40
-            HorizontalGridLinesBrush: Silver
-            VerticalGridLinesBrush: Silver
-            GridLinesVisibility: Horizontal
             ItemsSource: bind MetricsFiltered
             Columns: [
               DataGridTextColumn

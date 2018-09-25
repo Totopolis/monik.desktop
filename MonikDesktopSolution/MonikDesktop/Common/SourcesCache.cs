@@ -131,7 +131,11 @@ namespace MonikDesktop.Common
 	        g.Instances.Remove(i);
 	    }
 
-
+	    public void RemoveGroup(Group g)
+	    {
+	        _service.RemoveGroup(g.ID);
+	        _groups.Remove(g);
+	    }
 
 
         private void RemoveInstanceFromCache(Instance ins)

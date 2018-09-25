@@ -1,4 +1,11 @@
-<UserControl x:Class="MonikDesktop.Views.ManageGroupsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns0:Ammy.Register="/MonikDesktop;component/Views/ManageGroupsView.g.xaml">
+<UserControl x:Class="MonikDesktop.Views.ManageGroupsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns1:Ammy.Register="/MonikDesktop;component/Views/ManageGroupsView.g.xaml">
+  <UserControl.Resources>
+    <ns0:BindingProxy x:Key="Proxy">
+      <ns0:BindingProxy.Data>
+        <Binding/>
+      </ns0:BindingProxy.Data>
+    </ns0:BindingProxy>
+  </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="50"/>
@@ -49,6 +56,66 @@
         <Binding Path="SelectedGroup"/>
       </DataGrid.SelectedItem>
       <DataGrid.Columns>
+        <DataGridTemplateColumn>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button Margin="10">
+                <Button.Command>
+                  <Binding Path="Data.RemoveGroupCommand" Source="{StaticResource Proxy}"/>
+                </Button.Command>
+                <Button.CommandParameter>
+                  <Binding/>
+                </Button.CommandParameter>X
+                <Button.Style>
+                  <Style TargetType="{x:Type Button}">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                          <Border x:Name="button" Padding="5,0,5,1" CornerRadius="5" Background="Red" BorderBrush="Black" BorderThickness="1">
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{TemplateBinding Button.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter Property="Background" Value="Brown" TargetName="button"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                              <Setter Property="Background" Value="DarkRed" TargetName="button"/>
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Setter Property="Opacity" Value="0"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type DataGridRow}},Path=IsMouseOver}" Value="True">
+                        <DataTrigger.EnterActions>
+                          <BeginStoryboard>
+                            <Storyboard>
+                              <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                            </Storyboard>
+                          </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                          <BeginStoryboard>
+                            <Storyboard>
+                              <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                            </Storyboard>
+                          </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                        <Setter Property="Opacity" Value="1"/>
+                      </DataTrigger>
+                      <Trigger Property="Opacity" Value="0">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                      </Trigger>
+                    </Style.Triggers>
+                  </Style>
+                </Button.Style>
+              </Button>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
             <Binding Path="ID"/>
@@ -59,7 +126,13 @@
             <Binding Path="Name"/>
           </DataGridTextColumn.Binding>
         </DataGridTextColumn>
-        <DataGridTextColumn Header="Amount" Width="Auto">
+        <DataGridTextColumn Header="Amount" Width="*">
+          <DataGridTextColumn.ElementStyle>
+            <Style TargetType="{x:Type TextBlock}">
+              <Setter Property="HorizontalAlignment" Value="Right"/>
+              <Setter Property="Margin" Value="10"/>
+            </Style>
+          </DataGridTextColumn.ElementStyle>
           <DataGridTextColumn.Binding>
             <Binding Path="Instances.Count"/>
           </DataGridTextColumn.Binding>

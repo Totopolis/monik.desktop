@@ -27,6 +27,8 @@ namespace MonikDesktop.ViewModels
             SelectedGroup = _cache.Groups.Length > 0 ? _cache.Groups[0] : null;
             this.ObservableForProperty(x => x.SelectedGroup)
                 .Subscribe(v => ShowGroup(v.Value));
+
+            RemoveGroupCommand = ReactiveCommand.Create<Group>(RemoveGroup);
         }
 
         [Reactive] public Group SelectedGroup { get; set; }
@@ -34,9 +36,25 @@ namespace MonikDesktop.ViewModels
         public ReactiveList<Instance> ListInGroup { get; set; }
         public ReactiveList<Instance> ListWithoutGroup { get; set; }
 
+        public ReactiveCommand RemoveGroupCommand { get; set; }
+
         private void ShowGroup(Group g)
         {
             ListInGroup.Initialize(g.Instances);
+        }
+
+        private void RemoveGroup(Group g)
+        {
+            try
+            {
+                _cache.RemoveGroup(g);
+
+                ListGroups.Remove(g);
+            }
+            catch (WebException e)
+            {
+                ShowPopupWebException(e);
+            }
         }
 
         public void AddInstanceToCurrentGroup(Instance instance)

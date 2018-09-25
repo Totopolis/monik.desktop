@@ -283,6 +283,7 @@
     <Compile Include="Common\MonikService.cs" />
     <None Include="App.ammy" />
     <None Include="lib.ammy" />
+    <None Include="Views\Common.ammy" />
     <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
     <None Include="Views\MetricsSampleData.ammy" />
