@@ -175,10 +175,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    <Compile Include="App.ammy.cs">
+      <DependentUpon>App.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Common\AppModel.cs" />
     <Compile Include="Common\Converters\LevelToNameConverter.cs" />
@@ -279,13 +278,10 @@
     <Compile Include="Views\StartupView.xaml.cs">
       <DependentUpon>StartupView.ammy</DependentUpon>
     </Compile>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Common\Interfaces\IMonikService.cs" />
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
+    <None Include="App.ammy" />
     <None Include="lib.ammy" />
     <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
