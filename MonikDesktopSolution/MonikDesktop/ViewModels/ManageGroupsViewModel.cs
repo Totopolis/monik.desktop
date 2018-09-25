@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using Ui.Wpf.Common.ViewModels;
@@ -41,5 +39,16 @@ namespace MonikDesktop.ViewModels
         public ReactiveList<Instance> ListInGroup { get; set; }
         public ReactiveList<Instance> ListWithoutGroup { get; set; }
 
+        public void AddInstanceToCurrentGroup(Instance instance)
+        {
+            ListWithoutGroup.Remove(instance);
+            ListInGroup.Add(instance);
+        }
+
+        public void RemoveInstanceFromCurrentGroup(Instance instance)
+        {
+            ListInGroup.Remove(instance);
+            ListWithoutGroup.Add(instance);
+        }
     }
 }

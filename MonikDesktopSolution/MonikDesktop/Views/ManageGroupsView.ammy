@@ -28,6 +28,12 @@ alias InstancesData()
 {
   @SimpleDataGrid() 
   {
+    PreviewMouseLeftButtonDown: "GridMouseLeftButtonDown" 
+    PreviewMouseMove: "GridMouseMove"
+    Drop: "GridDrop"
+    DragEnter: "GridDragEnter"
+    DragOver: "GridDragOver"
+    AllowDrop: true
     Columns: [
         DataGridTextColumn
         {
@@ -140,13 +146,15 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
     }
     @InstancesData()
     {
+      Tag: "InGroup"
       #Cell(1, 2)
-      ItemsSource: bind ListInGoup
+      ItemsSource: bind ListInGroup
     }
     @InstancesData()
     {
+      Tag: "WithoutGroup"
       #Cell(1, 4)
-      ItemsSource: bind ListWithoutGroup set [ Mode: OneWay, NotifyOnSourceUpdated:true, UpdateSourceTrigger: PropertyChanged ]
+      ItemsSource: bind ListWithoutGroup
     }
   }
   

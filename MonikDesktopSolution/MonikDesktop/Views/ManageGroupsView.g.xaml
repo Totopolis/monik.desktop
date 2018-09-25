@@ -75,7 +75,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Grid.Row="1" Grid.Column="2">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -94,10 +94,10 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
       <DataGrid.ItemsSource>
-        <Binding Path="ListInGoup"/>
+        <Binding Path="ListInGroup"/>
       </DataGrid.ItemsSource>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Grid.Row="1" Grid.Column="4">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -116,7 +116,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
       <DataGrid.ItemsSource>
-        <Binding Path="ListWithoutGroup" Mode="OneWay" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="ListWithoutGroup"/>
       </DataGrid.ItemsSource>
     </DataGrid>
   </Grid>
