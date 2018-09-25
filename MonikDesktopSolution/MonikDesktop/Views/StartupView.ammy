@@ -2,6 +2,42 @@ using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
 using FontAwesome.WPF;
 
+alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
+{
+  ComboBox
+  {
+    IsEditable: true
+    ItemTemplate: DataTemplate
+    {
+      StackPanel
+      {
+        Orientation: Horizontal
+        Button
+        {
+          "Remove"
+          Command: bind $removeCommand from $resource Proxy
+          CommandParameter: bind
+        }
+        TextBlock
+        {
+          Margin: "10,0,0,0"
+          VerticalAlignment: Center
+          Text: bind
+        }
+      }
+    }
+    ItemsSource: bind $itemsSource
+    SelectedValue: bind $selectedValue
+    Text: bind $updateValue
+          set
+          [
+            UpdateSourceTrigger: LostFocus
+            Mode: OneWayToSource
+            ValidatesOnExceptions: true
+          ]
+  }
+}
+
 UserControl "MonikDesktop.Views.StartupView"
 {
   Resources: [
@@ -13,41 +49,13 @@ UserControl "MonikDesktop.Views.StartupView"
     {
       Orientation: Vertical
       Margin: "3"
+
       Label { "Window header" }
       TextBox { Text: bind AppTitle }
+
       Label { "Server Url" }
-      ComboBox
-      {
-        IsEditable: true
-        ItemTemplate: DataTemplate
-        {
-          StackPanel
-          {
-            Orientation: Horizontal
-            Button
-            {
-              "Remove"
-              Command: bind Data.RemoveUrlCommand from $resource Proxy
-              CommandParameter: bind
-            }
-            TextBlock
-            {
-              Margin: "10,0,0,0"
-              VerticalAlignment: Center
-              Text: bind
-            }
-          }
-        }
-        ItemsSource: bind ServerUrls
-        SelectedValue: bind App.ServerUrl
-        Text: bind UpdateServerUrl
-              set
-              [
-                UpdateSourceTrigger: LostFocus
-                Mode: OneWayToSource
-                ValidatesOnExceptions: true
-              ]
-      }
+      @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "App.ServerUrl", "UpdateServerUrl") {}
+
       Label { "Actions" }
       Button
       {
@@ -67,6 +75,12 @@ UserControl "MonikDesktop.Views.StartupView"
         Command: bind NewMetricsCommand
         "Create Metrics"
       }
+
+      Separator { Margin: 10 }
+
+      Label { "Authorization token" }
+      @ComboBoxWithRemove("Data.RemoveAuthTokenCommand", "AuthTokens", "App.AuthToken", "UpdateAuthToken") {}
+
       Label { "Management" }
       Button
       {

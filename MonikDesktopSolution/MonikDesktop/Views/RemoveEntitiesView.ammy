@@ -92,43 +92,6 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
   Grid
   {
     #TwoRows("Auto", "*")
-    StackPanel
-    {
-      Grid.Row: 0
-      Margin: 5
-      Label { "Authorization token" }
-      ComboBox
-      {
-        IsEditable: true
-        ItemTemplate: DataTemplate
-        {
-          StackPanel
-          {
-            Orientation: Horizontal
-            Button
-            {
-              "Remove"
-              Command: bind Data.RemoveAuthTokenCommand from $resource Proxy
-              CommandParameter: bind
-            }
-            TextBlock
-            {
-              Margin: "10,0,0,0"
-              VerticalAlignment: Center
-              Text: bind
-            }
-          }
-        }
-        ItemsSource: bind AuthTokens
-        SelectedValue: bind App.AuthToken
-        Text: bind UpdateAuthToken
-              set
-              [
-                UpdateSourceTrigger: LostFocus
-                Mode: OneWayToSource
-              ]
-      }
-    }
     Grid
     {
       Grid.Row: 1

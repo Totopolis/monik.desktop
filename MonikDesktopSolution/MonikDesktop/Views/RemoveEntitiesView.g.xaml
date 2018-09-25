@@ -11,39 +11,6 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <StackPanel Grid.Row="0" Margin="5">
-      <Label>Authorization token</Label>
-      <ComboBox IsEditable="True">
-        <ComboBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel Orientation="Horizontal">
-              <Button>Remove
-                <Button.Command>
-                  <Binding Path="Data.RemoveAuthTokenCommand" Source="{StaticResource Proxy}"/>
-                </Button.Command>
-                <Button.CommandParameter>
-                  <Binding/>
-                </Button.CommandParameter>
-              </Button>
-              <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock.Text>
-                  <Binding/>
-                </TextBlock.Text>
-              </TextBlock>
-            </StackPanel>
-          </DataTemplate>
-        </ComboBox.ItemTemplate>
-        <ComboBox.ItemsSource>
-          <Binding Path="AuthTokens"/>
-        </ComboBox.ItemsSource>
-        <ComboBox.SelectedValue>
-          <Binding Path="App.AuthToken"/>
-        </ComboBox.SelectedValue>
-        <ComboBox.Text>
-          <Binding Path="UpdateAuthToken" UpdateSourceTrigger="LostFocus" Mode="OneWayToSource"/>
-        </ComboBox.Text>
-      </ComboBox>
-    </StackPanel>
     <Grid Row="1" Margin="5">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>

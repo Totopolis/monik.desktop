@@ -12,6 +12,7 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
+        public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
         public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
 
@@ -29,8 +30,12 @@ namespace MonikDesktop.ViewModels
             CanClose = false;
             App = app;
 
+            // Title
+
             this.WhenAnyValue(x => x.AppTitle)
                 .Subscribe(x => shell.Title = x);
+
+            // Server Urls
 
             var urls = Settings.Default.ServerUrl
                 .Split(';')
@@ -47,6 +52,24 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
+            // Authorization Tokens
+
+            var tokens = Settings.Default.AuthToken
+                .Split(';')
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToArray();
+
+            AuthTokens.AddRange(tokens);
+            App.AuthToken = tokens.FirstOrDefault();
+
+            AuthTokens.Changed.Subscribe(x =>
+            {
+                Settings.Default.AuthToken = string.Join(";", AuthTokens);
+                Settings.Default.Save();
+            });
+
+            // Create Commands
+
             var hasUrl = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
             NewLogCommand       = ReactiveCommand.Create(NewLog,       hasUrl);
             NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, hasUrl);
@@ -56,6 +79,7 @@ namespace MonikDesktop.ViewModels
             ManageGroupsCommand = ReactiveCommand.Create(ManageGroups, hasUrl);
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
+            RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
@@ -66,6 +90,7 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand ManageGroupsCommand { get; set; }
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
+        public ReactiveCommand RemoveAuthTokenCommand { get; set; }
 
         public string UpdateServerUrl
         {
@@ -89,6 +114,28 @@ namespace MonikDesktop.ViewModels
                 {
                     ServerUrls.Insert(0, val);
                     App.ServerUrl = val;
+                }
+            }
+        }
+
+        public string UpdateAuthToken
+        {
+            set
+            {
+                if (App.AuthToken != null && App.AuthToken == value)
+                {
+                    // move to the top
+                    var index = AuthTokens.IndexOf(App.AuthToken);
+                    if (index != 0)
+                    {
+                        using (AuthTokens.SuppressChangeNotifications())
+                            (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
+                    }
+                }
+                else
+                {
+                    AuthTokens.Insert(0, value);
+                    App.AuthToken = value;
                 }
             }
         }

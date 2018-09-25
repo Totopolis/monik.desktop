@@ -19,13 +19,13 @@
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
-              <Button>Remove
+              <Button>
                 <Button.Command>
                   <Binding Path="Data.RemoveUrlCommand" Source="{StaticResource Proxy}"/>
                 </Button.Command>
                 <Button.CommandParameter>
                   <Binding/>
-                </Button.CommandParameter>
+                </Button.CommandParameter>Remove
               </Button>
               <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
                 <TextBlock.Text>
@@ -61,6 +61,38 @@
           <Binding Path="NewMetricsCommand"/>
         </Button.Command>Create Metrics
       </Button>
+      <Separator Margin="10"/>
+      <Label>Authorization token</Label>
+      <ComboBox IsEditable="True">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <Button>
+                <Button.Command>
+                  <Binding Path="Data.RemoveAuthTokenCommand" Source="{StaticResource Proxy}"/>
+                </Button.Command>
+                <Button.CommandParameter>
+                  <Binding/>
+                </Button.CommandParameter>Remove
+              </Button>
+              <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock.Text>
+                  <Binding/>
+                </TextBlock.Text>
+              </TextBlock>
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+        <ComboBox.ItemsSource>
+          <Binding Path="AuthTokens"/>
+        </ComboBox.ItemsSource>
+        <ComboBox.SelectedValue>
+          <Binding Path="App.AuthToken"/>
+        </ComboBox.SelectedValue>
+        <ComboBox.Text>
+          <Binding Path="UpdateAuthToken" UpdateSourceTrigger="LostFocus" Mode="OneWayToSource" ValidatesOnExceptions="True"/>
+        </ComboBox.Text>
+      </ComboBox>
       <Label>Management</Label>
       <Button Margin="0 0 0 5">
         <Button.Command>

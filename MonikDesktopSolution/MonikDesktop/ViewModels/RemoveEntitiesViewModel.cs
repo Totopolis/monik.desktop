@@ -1,7 +1,6 @@
 ﻿using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
-using MonikDesktop.Properties;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -17,28 +16,11 @@ namespace MonikDesktop.ViewModels
         private readonly ISourcesCache _cache;
         private string _filter;
 
-        public RemoveEntitiesViewModel(ISourcesCache cache, IAppModel app)
+        public RemoveEntitiesViewModel(ISourcesCache cache)
         {
             _cache = cache;
 
-            App = app;
             Title = "Remove Instances";
-
-            var urls = Settings.Default.AuthToken
-                .Split(';')
-                .Where(x => !string.IsNullOrEmpty(x))
-                .ToArray();
-
-            AuthTokens.AddRange(urls);
-            App.AuthToken = urls.FirstOrDefault();
-
-            AuthTokens.Changed.Subscribe(x =>
-            {
-                Settings.Default.AuthToken = string.Join(";", AuthTokens);
-                Settings.Default.Save();
-            });
-
-            RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
 
             RemoveNodeSourceCommand = ReactiveCommand.Create<NodeSource>(RemoveNodeSource);
             RemoveNodeInstanceCommand = ReactiveCommand.Create<NodeInstance>(RemoveNodeInstance);
@@ -53,11 +35,6 @@ namespace MonikDesktop.ViewModels
 
             Refresh();
         }
-
-        public IAppModel App { get; }
-
-        public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
-        public ReactiveCommand RemoveAuthTokenCommand { get; set; }
 
         public ReactiveCommand RemoveNodeSourceCommand { get; set; }
         public ReactiveCommand RemoveNodeInstanceCommand { get; set; }
@@ -78,28 +55,6 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveList<Metric> MetricsList { get; set; } = new ReactiveList<Metric>();
         public ReactiveList<Metric> MetricsFiltered { get; set; } = new ReactiveList<Metric>();
-
-        public string UpdateAuthToken
-        {
-            set
-            {
-                if (App.AuthToken != null && App.AuthToken == value)
-                {
-                    // move to the top
-                    var index = AuthTokens.IndexOf(App.AuthToken);
-                    if (index != 0)
-                    {
-                        using (AuthTokens.SuppressChangeNotifications())
-                            (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
-                    }
-                }
-                else
-                {
-                    AuthTokens.Insert(0, value);
-                    App.AuthToken = value;
-                }
-            }
-        }
 
         private void Refresh()
         {
