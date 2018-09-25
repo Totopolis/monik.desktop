@@ -24,7 +24,7 @@ namespace MonikDesktop.Common
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
 		}
 
-		public void Reload()
+	    public void Reload()
 		{
             var sources = _service.GetSources();
 		    var instances = _service.GetInstances();
@@ -88,37 +88,26 @@ namespace MonikDesktop.Common
 
 	    public Metric[] Metrics => _metrics.ToArray();
 
-	    public bool RemoveSource(Source v)
+	    public void RemoveSource(Source v)
 	    {
-	        var removed = _service.RemoveSource(v.ID);
-	        if (removed)
-	        {
-	            _sources.Remove(v);
-                foreach(var ins in _instances.Values.ToArray())
-	                if (ins.Source == v)
-	                    RemoveInstanceFromCache(ins);
-	        }
-	        return removed;
+	        _service.RemoveSource(v.ID);
+	        
+	        _sources.Remove(v);
+            foreach(var ins in _instances.Values.ToArray())
+	            if (ins.Source == v)
+	                RemoveInstanceFromCache(ins);
 	    }
 
-	    public bool RemoveInstance(Instance v)
+	    public void RemoveInstance(Instance v)
 	    {
-	        var removed = _service.RemoveInstance(v.ID);
-	        if (removed)
-	        {
-                RemoveInstanceFromCache(v);
-            }
-	        return removed;
+	        _service.RemoveInstance(v.ID);
+	        RemoveInstanceFromCache(v);
 	    }
 
-	    public bool RemoveMetric(Metric v)
+	    public void RemoveMetric(Metric v)
 	    {
-	        var removed = _service.RemoveMetric(v.ID);
-	        if (removed)
-	        {
-	            _metrics.Remove(v);
-	        }
-	        return removed;
+	        _service.RemoveMetric(v.ID);
+	        _metrics.Remove(v);
 	    }
 
 	    public Instance GetInstance(int aInstanceId)
@@ -130,8 +119,22 @@ namespace MonikDesktop.Common
 			// TODO: if unknown instance then update from api?
 		}
 
+	    public void AddInstanceToGroup(Instance i, Group g)
+	    {
+	        _service.AddInstanceToGroup(i.ID, g.ID);
+            g.Instances.Add(i);
+	    }
 
-	    private void RemoveInstanceFromCache(Instance ins)
+	    public void RemoveInstanceFromGroup(Instance i, Group g)
+	    {
+	        _service.RemoveInstanceFromGroup(i.ID, g.ID);
+	        g.Instances.Remove(i);
+	    }
+
+
+
+
+        private void RemoveInstanceFromCache(Instance ins)
 	    {
             // remove from instances
 	        _instances.Remove(ins.ID);

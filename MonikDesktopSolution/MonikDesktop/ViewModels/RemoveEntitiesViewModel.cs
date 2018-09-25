@@ -203,20 +203,18 @@ namespace MonikDesktop.ViewModels
         {
             try
             {
-                var removed = _cache.RemoveSource(v);
-                if (removed)
-                {
-                    SourcesList.Remove(v);
-                    InstancesList.Initialize(InstancesList.Where(ins => ins.Source != v).ToList());
-                    MetricsList.Initialize(MetricsList.Where(m => InstancesList.Contains(m.Instance)).ToList());
+                _cache.RemoveSource(v);
+                
+                SourcesList.Remove(v);
+                InstancesList.Initialize(InstancesList.Where(ins => ins.Source != v).ToList());
+                MetricsList.Initialize(MetricsList.Where(m => InstancesList.Contains(m.Instance)).ToList());
 
-                    UpdateFilteredEntities();
-                }
-                return removed;
+                UpdateFilteredEntities();
+                return true;
             }
-            catch (WebException e) when (((HttpWebResponse) e.Response).StatusCode == HttpStatusCode.Unauthorized)
+            catch (WebException e)
             {
-                ShowPopupUnauthorized();
+                ShowPopupWebException(e);
                 return false;
             }
         }
@@ -225,19 +223,17 @@ namespace MonikDesktop.ViewModels
         {
             try
             {
-                var removed = _cache.RemoveInstance(v);
-                if (removed)
-                {
-                    InstancesList.Remove(v);
-                    MetricsList.Initialize(MetricsList.Where(m => m.Instance != v).ToList());
+                _cache.RemoveInstance(v);
+                
+                InstancesList.Remove(v);
+                MetricsList.Initialize(MetricsList.Where(m => m.Instance != v).ToList());
 
-                    UpdateFilteredEntities(false);
-                }
-                return removed;
+                UpdateFilteredEntities(false);
+                return true;
             }
-            catch (WebException e) when (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
+            catch (WebException e)
             {
-                ShowPopupUnauthorized();
+                ShowPopupWebException(e);
                 return false;
             }
         }
@@ -246,26 +242,25 @@ namespace MonikDesktop.ViewModels
         {
             try
             {
-                var removed = _cache.RemoveMetric(v);
-                if (removed)
-                {
-                    MetricsList.Remove(v);
+                _cache.RemoveMetric(v);
 
-                    UpdateFilteredEntities(false, false);
-                }
-                return removed;
+                MetricsList.Remove(v);
+
+                UpdateFilteredEntities(false, false);
+                return true;
             }
-            catch (WebException e) when (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
+            catch (WebException e)
             {
-                ShowPopupUnauthorized();
+                ShowPopupWebException(e);
                 return false;
             }
         }
 
-        private void ShowPopupUnauthorized()
+        private void ShowPopupWebException(WebException e)
         {
-            //ToDo: show unauthorized notification
-            Console.WriteLine(@"Bad Token");
+            //ToDo: show notification
+            //  when (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
+            Console.WriteLine($@"Web Exceptions {e}");
         }
 
     }

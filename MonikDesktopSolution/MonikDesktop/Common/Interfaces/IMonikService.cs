@@ -19,8 +19,11 @@ namespace MonikDesktop.Common.Interfaces
         EMetricHistory GetMetricHistory(int metricId, int amount, int skip);
         EMetricValue GetCurrentMetricValue(int metricId);
 
-        bool RemoveSource(short id);
-        bool RemoveInstance(int id);
-        bool RemoveMetric(int id);
+        void RemoveSource(short id);
+        void RemoveInstance(int id);
+        void RemoveMetric(int id);
+
+        void AddInstanceToGroup(int iId, short gId);
+        void RemoveInstanceFromGroup(int iId, short gId);
     }
 }

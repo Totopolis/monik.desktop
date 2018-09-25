@@ -44,17 +44,14 @@ namespace MonikDesktop.Views
                 (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                 Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
             {
-                // Get the dragged ListViewItem
                 var grid = (DataGrid)sender;
                 var gridRow = FindAnchestor<DataGridRow>((DependencyObject)e.OriginalSource);
 
                 if (gridRow == null)
                     return;
 
-                // Find the data behind the ListViewItem
                 var instance = (Instance)grid.ItemContainerGenerator.ItemFromContainer(gridRow);
 
-                // Initialize the drag & drop operation
                 var dragData = new DataObject();
                 dragData.SetData("Instance", instance);
                 dragData.SetData("Source", grid);

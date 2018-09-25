@@ -19,20 +19,7 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <StackPanel Orientation="Horizontal" Grid.Column="0">
-        <Button Width="50">+
-          <Button.Command>
-            <Binding Path="TempAdd"/>
-          </Button.Command>
-        </Button>
-        <Button Width="50">-
-          <Button.Command>
-            <Binding Path="TempSub"/>
-          </Button.Command>
-        </Button>
-      </StackPanel>
-      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Without Group" Grid.Column="1"/>
-      <Border Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="7,3,7,5" Background="Orange" CornerRadius="10" MinWidth="40">
+      <Border Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="7,3,7,5" Background="Orange" CornerRadius="10" MinWidth="40">
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">
           <TextBlock.Text>
             <Binding Path="ListWithoutGroup.Count"/>
@@ -52,11 +39,15 @@
           </Style>
         </Border.Style>
       </Border>
+      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Without Group" Grid.Column="1"/>
     </Grid>
     <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Grid.Row="1" Grid.Column="0">
       <DataGrid.ItemsSource>
         <Binding Path="ListGroups"/>
       </DataGrid.ItemsSource>
+      <DataGrid.SelectedItem>
+        <Binding Path="SelectedGroup"/>
+      </DataGrid.SelectedItem>
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -75,7 +66,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -97,7 +88,7 @@
         <Binding Path="ListInGroup"/>
       </DataGrid.ItemsSource>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>

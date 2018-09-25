@@ -1,6 +1,11 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System;
+using System.Linq;
+using System.Net;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -17,38 +22,58 @@ namespace MonikDesktop.ViewModels
 
             ListGroups = new ReactiveList<Group>(_cache.Groups);
             ListInGroup = _cache.Groups.Length > 0 ? new ReactiveList<Instance>(_cache.Groups[0].Instances) : new ReactiveList<Instance>();
-            ListWithoutGroup = new ReactiveList<Instance>(); //new ReactiveList<Instance>(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
+            ListWithoutGroup = new ReactiveList<Instance>(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
 
-            var rnd = new System.Random();
-            TempAdd = ReactiveCommand.Create(() =>
-            {
-                ListWithoutGroup.Add(
-                    new Instance {ID = rnd.Next(), Name = "HoHo", Source = new Source {ID = (short)rnd.Next(), Name = "HaHa"}});
-            });
-            TempSub = ReactiveCommand.Create(() =>
-            {
-                if (ListWithoutGroup.Count > 0)
-                    ListWithoutGroup.RemoveAt(0);
-            });
+            SelectedGroup = _cache.Groups.Length > 0 ? _cache.Groups[0] : null;
+            this.ObservableForProperty(x => x.SelectedGroup)
+                .Subscribe(v => ShowGroup(v.Value));
         }
 
-        public ReactiveCommand TempAdd { get; set; }
-        public ReactiveCommand TempSub { get; set; }
-
+        [Reactive] public Group SelectedGroup { get; set; }
         public ReactiveList<Group> ListGroups { get; set; }
         public ReactiveList<Instance> ListInGroup { get; set; }
         public ReactiveList<Instance> ListWithoutGroup { get; set; }
 
+        private void ShowGroup(Group g)
+        {
+            ListInGroup.Initialize(g.Instances);
+        }
+
         public void AddInstanceToCurrentGroup(Instance instance)
         {
-            ListWithoutGroup.Remove(instance);
-            ListInGroup.Add(instance);
+            try
+            {
+                _cache.AddInstanceToGroup(instance, SelectedGroup);
+
+                ListWithoutGroup.Remove(instance);
+                ListInGroup.Add(instance);
+            }
+            catch (WebException e)
+            {
+                ShowPopupWebException(e);
+            }
         }
 
         public void RemoveInstanceFromCurrentGroup(Instance instance)
         {
-            ListInGroup.Remove(instance);
-            ListWithoutGroup.Add(instance);
+            try
+            {
+                _cache.RemoveInstanceFromGroup(instance, SelectedGroup);
+                
+                ListInGroup.Remove(instance);
+                ListWithoutGroup.Add(instance);
+            }
+            catch (WebException e)
+            {
+                ShowPopupWebException(e);
+            }
         }
+
+        private void ShowPopupWebException(WebException e)
+        {
+            //ToDo: show notification
+            Console.WriteLine($@"Web Exception {e}");
+        }
+        
     }
 }

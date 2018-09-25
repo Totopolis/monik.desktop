@@ -99,30 +99,49 @@ namespace MonikDesktop.Common
 	    }
 
 
-	    public bool RemoveSource(short id)
+	    public void RemoveSource(short id)
 	    {
-	        return Delete($"sources/{id}");
+	        Delete($"sources/{id}");
 	    }
 
-	    public bool RemoveInstance(int id)
+	    public void RemoveInstance(int id)
 	    {
-	        return Delete($"instances/{id}");
+	        Delete($"instances/{id}");
         }
 
-	    public bool RemoveMetric(int id)
+	    public void RemoveMetric(int id)
 	    {
-	        return Delete($"metrics/{id}");
+	        Delete($"metrics/{id}");
         }
 
-	    private bool Delete(string aMethod)
+	    public void AddInstanceToGroup(int iId, short gId)
+	    {
+	        Put($"groups/{gId}/instances/{iId}");
+	    }
+
+	    public void RemoveInstanceFromGroup(int iId, short gId)
+	    {
+	        Delete($"groups/{gId}/instances/{iId}");
+        }
+
+	    private void Delete(string aMethod)
 	    {
 	        var request = CreateRequest(aMethod);
 	        request.Method = "DELETE";
             request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
 
-	        var response = (HttpWebResponse)request.GetResponse();
-	        return response.StatusCode == HttpStatusCode.OK;
+	        request.GetResponse();
 	    }
+
+	    private void Put(string aMethod)
+	    {
+	        var request = CreateRequest(aMethod);
+	        request.Method = "PUT";
+	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+	        request.ContentLength = 0;
+
+	        request.GetResponse();
+        }
 
         private string GetJson(string aMethod)
 		{

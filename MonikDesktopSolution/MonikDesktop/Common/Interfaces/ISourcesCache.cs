@@ -9,11 +9,14 @@ namespace MonikDesktop.Common.Interfaces
 		Instance[] Instances { get; }
         Metric[] Metrics { get; }
 
-	    bool RemoveSource(Source v);
-	    bool RemoveInstance(Instance v);
-	    bool RemoveMetric(Metric v);
+	    void RemoveSource(Source v);
+	    void RemoveInstance(Instance v);
+	    void RemoveMetric(Metric v);
 
 		Instance GetInstance(int aInstanceId);
+
+	    void AddInstanceToGroup(Instance i, Group g);
+	    void RemoveInstanceFromGroup(Instance i, Group g);
 
 		void Reload();
 	}
