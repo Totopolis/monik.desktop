@@ -32,12 +32,6 @@ UserControl "MonikDesktop.Views.LogsView" {
             Value: "20"
             Setter { Property: "Background",  Value: "#FFFFFF64" }
           }
-          Trigger {
-            Property: "IsSelected"
-            Value: "True"
-            Setter { Property: "Background",  Value: "Pink" }
-            Setter { Property: "Foreground",  Value: "Black" }
-          }
         ]
       }
       Columns: [

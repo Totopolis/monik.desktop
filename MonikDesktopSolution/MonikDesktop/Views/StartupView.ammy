@@ -1,71 +1,120 @@
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
 using FontAwesome.WPF;
+using MahApps.Metro.Controls;
+
+alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
+{
+  ComboBox
+  {
+    IsEditable: true
+    ItemTemplate: DataTemplate
+    {
+      StackPanel
+      {
+        Orientation: Horizontal
+        Button
+        {
+          "Remove"
+          Command: bind $removeCommand from $resource Proxy
+          CommandParameter: bind
+        }
+        TextBlock
+        {
+          Margin: "10,0,0,0"
+          VerticalAlignment: Center
+          Text: bind
+        }
+      }
+    }
+    ItemsSource: bind $itemsSource
+    SelectedValue: bind $selectedValue
+    Text: bind $updateValue
+          set
+          [
+            UpdateSourceTrigger: LostFocus
+            Mode: OneWayToSource
+            ValidatesOnExceptions: true
+          ]
+  }
+}
 
 UserControl "MonikDesktop.Views.StartupView"
 {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
+  Background: resource dyn "WhiteBrush"
   Grid
   {
     StackPanel
     {
       Orientation: Vertical
       Margin: "3"
-      Label { "Window header" }
-      TextBox { Text: bind AppTitle }
-      Label { "Server Url" }
-      ComboBox
-      {
-        IsEditable: true
-        ItemTemplate: DataTemplate
-        {
-          StackPanel
-          {
-            Orientation: Horizontal
-            Button
-            {
-              "Remove"
-              Command: bind Data.RemoveUrlCommand from $resource Proxy
-              CommandParameter: bind
-            }
-            TextBlock
-            {
-              Margin: "10,0,0,0"
-              VerticalAlignment: Center
-              Text: bind
-            }
-          }
+
+      Grid { 
+        #ThreeColumns("130", "Auto", "*")
+        ToggleSwitch {
+          Grid.Column:0
+          HorizontalContentAlignment: Center
+          OnLabel: "Dark"
+          OffLabel: "Light"
+          CheckChangedCommand: bind ThemeModeChangedCommand
+          CheckChangedCommandParameter: bind IsChecked from $this
         }
-        ItemsSource: bind ServerUrls
-        SelectedValue: bind App.ServerUrl
-        SelectedIndex: 0
-        Text: bind UpdateServerUrl
-              set
-              [
-                UpdateSourceTrigger: LostFocus
-                Mode: OneWayToSource
-                ValidatesOnExceptions: true
-              ]
+        TextBlock {
+          Grid.Column: 1
+          Margin: "20,0,10,0"
+          VerticalAlignment: Center
+          "Header"
+        }
+        TextBox {
+          Grid.Column: 2
+          VerticalAlignment: Center
+          Text: bind AppTitle
+        }
       }
+
+      Label { "Server Url" }
+      @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "App.ServerUrl", "UpdateServerUrl") {}
+
       Label { "Actions" }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewLogCommand
         "Create Logs"
       }
-      Separator {  }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewKeepAliveCommand
         "Create KeepAlive"
       }
-      Separator {  }
       Button
       {
+        Margin: "0 0 0 5"
         Command: bind NewMetricsCommand
         "Create Metrics"
+      }
+
+      Separator { Margin: 10 }
+
+      Label { "Authorization token" }
+      @ComboBoxWithRemove("Data.RemoveAuthTokenCommand", "AuthTokens", "App.AuthToken", "UpdateAuthToken") {}
+
+      Label { "Management" }
+      Button
+      {
+        Margin: "0 0 0 5"
+        Command: bind RemoveEntitiesCommand
+        "Remove entities"
+      }
+      Button
+      {
+        Margin: "0 0 0 5"
+        Command: bind ManageGroupsCommand
+        "Manage groups"
       }
     }
     Grid

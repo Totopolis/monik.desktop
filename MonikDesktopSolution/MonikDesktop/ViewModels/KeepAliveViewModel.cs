@@ -1,4 +1,5 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
@@ -39,15 +40,7 @@ namespace MonikDesktop.ViewModels
 
             UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
 
-            UpdateCommand.Subscribe(results =>
-            {
-                KeepALiveList.Clear();
-
-                //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-                //https://github.com/reactiveui/ReactiveUI/issues/1354
-                foreach (var item in results)
-                    KeepALiveList.Add(item);
-            });
+            UpdateCommand.Subscribe(results => KeepALiveList.Initialize(results));
 
             UpdateCommand.ThrownExceptions
                .Subscribe(ex =>

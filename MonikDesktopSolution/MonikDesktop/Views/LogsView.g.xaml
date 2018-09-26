@@ -15,10 +15,6 @@
             <DataTrigger Binding="{Binding Severity}" Value="20">
               <Setter Property="Background" Value="#FFFFFF64"/>
             </DataTrigger>
-            <Trigger Property="IsSelected" Value="True">
-              <Setter Property="Background" Value="Pink"/>
-              <Setter Property="Foreground" Value="Black"/>
-            </Trigger>
           </Style.Triggers>
         </Style>
       </DataGrid.RowStyle>

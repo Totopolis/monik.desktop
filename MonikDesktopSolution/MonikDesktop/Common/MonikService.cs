@@ -38,6 +38,13 @@ namespace MonikDesktop.Common
 			return result;
 		}
 
+	    public EMetric[] GetMetrics()
+	    {
+	        var json = GetJson("metrics");
+	        var result = JsonConvert.DeserializeObject<EMetric[]>(json);
+	        return result;
+	    }
+
 		public ELog_[] GetLogs(ELogRequest aRequest)
 		{
 			var reqJson = JsonConvert.SerializeObject(aRequest);
@@ -90,6 +97,56 @@ namespace MonikDesktop.Common
 	        var result = JsonConvert.DeserializeObject<EKeepAlive_[]>(resJson);
 	        return result;
 	    }
+
+
+	    public void RemoveSource(short id)
+	    {
+	        Delete($"sources/{id}");
+	    }
+
+	    public void RemoveInstance(int id)
+	    {
+	        Delete($"instances/{id}");
+        }
+
+	    public void RemoveMetric(int id)
+	    {
+	        Delete($"metrics/{id}");
+        }
+
+	    public void AddInstanceToGroup(int iId, short gId)
+	    {
+	        Put($"groups/{gId}/instances/{iId}");
+	    }
+
+	    public void RemoveInstanceFromGroup(int iId, short gId)
+	    {
+	        Delete($"groups/{gId}/instances/{iId}");
+        }
+
+	    public void RemoveGroup(short gId)
+	    {
+            Delete($"groups/{gId}");
+	    }
+
+        private void Delete(string aMethod)
+	    {
+	        var request = CreateRequest(aMethod);
+	        request.Method = "DELETE";
+            request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+
+	        request.GetResponse();
+	    }
+
+	    private void Put(string aMethod)
+	    {
+	        var request = CreateRequest(aMethod);
+	        request.Method = "PUT";
+	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+	        request.ContentLength = 0;
+
+	        request.GetResponse();
+        }
 
         private string GetJson(string aMethod)
 		{

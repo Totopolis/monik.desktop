@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Configurations;
+using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
@@ -63,19 +64,14 @@ namespace MonikDesktop.ViewModels
             
             UpdateCommand.Subscribe(results =>
             {
-                if (_model.MetricTerminalMode != MetricTerminalMode.Diagram)
-                {
-                    MetricValuesList.Clear();
-
-                    //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-                    //https://github.com/reactiveui/ReactiveUI/issues/1354
-                    foreach (var item in results)
-                        MetricValuesList.Add(item);
-                }
-                else
+                if (_model.MetricTerminalMode == MetricTerminalMode.Diagram)
                 {
                     SeriesCollection.Clear();
                     SeriesCollection.AddRange(results);
+                }
+                else
+                {
+                    MetricValuesList.Initialize(results);
                 }
             });
 
@@ -105,12 +101,15 @@ namespace MonikDesktop.ViewModels
         private void OnStart()
         {
             MetricValuesList.Clear();
-            _metricDescriptions = GetMetricDescriptions().ToDictionary(md => md.Id);
+            _metricDescriptions = GetMetricDescriptions()
+                .Where(IsNeedToShowMetricDescription)
+                .ToDictionary(md => md.Id);
 
             if (_model.MetricTerminalMode == MetricTerminalMode.Diagram)
             {
-                foreach (var md in _metricDescriptions.Values.Select(d => new MetricValueItem() { Description = d }))
-                    MetricValuesList.Add(md);
+                var data = _metricDescriptions.Values
+                    .Select(d => new MetricValueItem() {Description = d});
+                MetricValuesList.AddRange(data);
 
                 SelectedMetric = MetricValuesList.FirstOrDefault();
 
@@ -190,6 +189,7 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.Current:
 
                         response = _service.GetCurrentMetricValues()
+                           .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
                            .Select(x => new MetricValueItem
                            {
                                Description = _metricDescriptions[x.MetricId],
@@ -202,6 +202,7 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.TimeWindow:
 
                         response = _service.GetWindowMetricValues()
+                            .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
                             .Select(x => new MetricValueItem
                             {
                                 Description = _metricDescriptions[x.MetricId],
@@ -222,8 +223,7 @@ namespace MonikDesktop.ViewModels
                                 Interval = history.Interval.AddMinutes(-5 * i).ToLocalTime(),
                                 Description = SelectedMetric.Description,
                                 Value = v,
-                            })
-                            .ToList();
+                            });
 
                         break;
 
@@ -252,12 +252,22 @@ namespace MonikDesktop.ViewModels
                 };
             }
 
-            response = response.OrderBy(x => x.Description.Instance.Source.Name)
-               .ThenBy(x => x.Description.Instance.Name)
-               .ThenBy(x => x.Description.Name)
-               .ToList();
+            response = response
+                .OrderBy(x => x.Description.Instance.Source.Name)
+                .ThenBy(x => x.Description.Instance.Name)
+                .ThenBy(x => x.Description.Name)
+                .ToList();
 
             return response;
+        }
+
+        private bool IsNeedToShowMetricDescription(MetricDescription md)
+        {
+            if (_model.Instances.Contains(md.Instance.ID))
+                return true;
+
+            var groupId = _cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
+            return groupId.HasValue && _model.Groups.Contains(groupId.Value);
         }
     }
 }

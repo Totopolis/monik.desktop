@@ -1,0 +1,282 @@
+﻿using MonikDesktop.ViewModels
+
+alias NodeView(type, color, removeCommand)
+{
+  @StackPanelHorizontal()
+  {
+    Border 
+    {
+      Margin: "0,0,10,0"
+      Padding: "5, 1, 5, 2"
+      Background: $color
+      CornerRadius: 5
+      TextBlock
+      {
+        VerticalAlignment: Center
+        HorizontalAlignment: Center
+        FontSize: 10
+        Foreground: White
+        Text: $type
+      } 
+    }
+    TextBlock
+    {
+      VerticalAlignment: Center
+      Margin: "0,0,10,0"
+      Text: bind Value.Name
+    }
+    TextBlock
+    {
+      VerticalAlignment: Center
+      Foreground: LightGray
+      Text: bind Value.ID set [ StringFormat: "(id: {0})"]
+    }
+
+    @RemoveButton($removeCommand, bind)
+    {
+      Margin: "10,0,0,0"
+      Style: Style
+      {
+        #RemoveButtonStyle()
+        #Fade_OnBinding("{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}", true)
+      }
+    }
+  }
+}
+
+UserControl "MonikDesktop.Views.RemoveEntitiesView"
+{
+  Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
+  Background: resource dyn "WhiteBrush"
+  Grid
+  {
+    #TwoRows("Auto", "*")
+    Grid
+    {
+      Grid.Row: 1
+      #TwoRows("Auto", "*")
+      Margin: 5
+      Grid
+      {
+        Grid.Row: 0
+        #TwoColumns("Auto", "*")
+        Margin: "0 10 0 10"
+        Label
+        {
+          Grid.Column: 0
+          Margin: "0 0 5 0"
+          "Search:"
+        }
+        TextBox
+        {
+          Grid.Column: 1
+          Text: bind FilterText
+                set [
+                  Mode: TwoWay
+                  UpdateSourceTrigger: PropertyChanged
+                ]
+        }
+      }
+      TabControl
+      {
+        Grid.Row: 1
+        Margin: "10"
+        BorderBrush: resource dyn "AccentBaseColorBrush"
+        Resources: Style
+        {
+          TargetType: "TabItem"
+          Setter
+          {
+            Property: "Template"
+            Value: ControlTemplate
+            {
+              TargetType: "TabItem"
+              Border "Border"
+              {
+                CornerRadius: "3,3,0,0"
+                Margin: "2,0"
+                ContentPresenter "ContentSite"
+                {
+                  VerticalAlignment: Center
+                  HorizontalAlignment: Center
+                  ContentSource: "Header"
+                  Margin: "10,3"
+                  TextBlock.Foreground: resource dyn "BlackBrush"
+                }
+              }
+              Triggers: [
+                Trigger
+                {
+                  Property: "IsSelected"
+                  Value: true
+                  #Setter("Background", resource dyn "AccentBaseColorBrush", "Border")
+                }
+                Trigger
+                {
+                  Property: "IsSelected"
+                  Value: false
+                  #Setter("Background", resource dyn "AccentColorBrush3", "Border")
+                }
+              ]
+            }
+          }
+        }
+        TabItem
+        {
+          Header: "Tree View"
+          TreeView "RemovableEntities"
+          {
+            VirtualizingStackPanel.IsVirtualizing: true
+            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            ItemsSource: bind SourcesTree
+            Resources: [
+              HierarchicalDataTemplate
+              {
+                DataType: NodeSource
+                ItemsSource: bind Instances
+                @NodeView("Source", DeepSkyBlue, bind Data.RemoveNodeSourceCommand from $resource Proxy) {}
+              }
+              HierarchicalDataTemplate
+              {
+                DataType: NodeInstance
+                ItemsSource: bind Metrics
+                @NodeView("Instance", LimeGreen, bind Data.RemoveNodeInstanceCommand from $resource Proxy) {}
+              }
+              DataTemplate
+              {
+                DataType: NodeMetric
+                @NodeView("Metric", OrangeRed, bind Data.RemoveNodeMetricCommand from $resource Proxy) {}
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Sources"
+          @SimpleDataGrid() "SourcesGrid"
+          {
+            VirtualizingStackPanel.IsVirtualizing: true
+            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            ItemsSource: bind SourcesFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveSourceCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Instances"
+          @SimpleDataGrid() "InstancesGrid"
+          {
+            VirtualizingStackPanel.IsVirtualizing: true
+            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            ItemsSource: bind InstancesFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind Source.Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Instance"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveInstanceCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+        TabItem
+        {
+          Header: "Metrics"
+          @SimpleDataGrid "MetricsGrid"
+          {
+            VirtualizingStackPanel.IsVirtualizing: true
+            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            ItemsSource: bind MetricsFiltered
+            Columns: [
+              DataGridTextColumn
+              {
+                Header: "ID"
+                Binding: bind ID
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Source"
+                Binding: bind "Instance.Source.Name"
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Instance"
+                Binding: bind Instance.Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Metric"
+                Binding: bind Name
+                Width: Auto
+              }
+              DataGridTemplateColumn
+              {
+                CellTemplate: DataTemplate
+                {
+                  Button
+                  {
+                    "Remove"
+                    Command: bind Data.RemoveMetricCommand from $resource Proxy
+                    CommandParameter: bind
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

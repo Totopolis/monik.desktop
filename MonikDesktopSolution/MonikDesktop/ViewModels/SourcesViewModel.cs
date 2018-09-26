@@ -1,4 +1,5 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using MonikDesktop.Common;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -18,7 +19,7 @@ namespace MonikDesktop.ViewModels
         private ReactiveList<short> _selectedGroups;
         private ReactiveList<int>   _selectedInstances;
 
-        private LogsModel  _model;
+        private WithSourcesShowModel _model;
 
         public SourcesViewModel(IShell shell, ISourcesCache aCache)
         {
@@ -64,7 +65,6 @@ namespace MonikDesktop.ViewModels
         private void Filter(string aFilter)
         {
             aFilter = aFilter.ToLower();
-            FilteredItems.Clear();
 
             IEnumerable<SourceItem> tmp;
 
@@ -74,11 +74,8 @@ namespace MonikDesktop.ViewModels
                 tmp = SourceItems
                    .Where(x => x.SourceName.ToLower().Contains(aFilter) ||
                                x.InstanceName.ToLower().Contains(aFilter));
-
-            //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-            //https://github.com/reactiveui/ReactiveUI/issues/1354
-            foreach (var item in tmp)
-                FilteredItems.Add(item);
+            
+            FilteredItems.Initialize(tmp);
         }
 
         private void SelectNone()
@@ -117,6 +114,7 @@ namespace MonikDesktop.ViewModels
             var groups    = _cache.Groups;
             var instances = _cache.Instances;
 
+            var srcItems = new List<SourceItem>();
             var _sourceItems = groups.SelectMany(gr => gr.Instances,
                                                  (gr, inst) => new SourceItem
                                                  {
@@ -127,12 +125,9 @@ namespace MonikDesktop.ViewModels
                                                      InstanceID   = inst.ID
                                                  });
 
-            //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-            //https://github.com/reactiveui/ReactiveUI/issues/1354
-            foreach (var item in _sourceItems)
-                SourceItems.Add(item);
+            srcItems.AddRange(_sourceItems);
 
-            _sourceItems = instances.Where(inst => SourceItems.All(x => x.InstanceID != inst.ID))
+            _sourceItems = instances.Where(inst => srcItems.All(x => x.InstanceID != inst.ID))
                .Select(inst => new SourceItem
                 {
                     GroupID      = 0,
@@ -142,20 +137,13 @@ namespace MonikDesktop.ViewModels
                     InstanceID   = inst.ID
                 });
 
-            //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-            //https://github.com/reactiveui/ReactiveUI/issues/1354
-            foreach (var item in _sourceItems)
-                SourceItems.Add(item);
+            srcItems.AddRange(_sourceItems);
+
+            SourceItems.Initialize(srcItems);
 
             FilterText = "";
-
             FilteredItems.ChangeTrackingEnabled = false;
-
-            //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-            //https://github.com/reactiveui/ReactiveUI/issues/1354
-            foreach (var item in SourceItems)
-                FilteredItems.Add(item);
-
+            FilteredItems.Initialize(srcItems);
             FilteredItems.ChangeTrackingEnabled = true;
         }
 
@@ -175,38 +163,45 @@ namespace MonikDesktop.ViewModels
 
         private void OnSelectedWindow(IShowView aWindow)
         {
-            IsEnabled = aWindow is ILogsView;
+            if (aWindow.ShowViewModel.Model is WithSourcesShowModel model)
+            {
+                IsEnabled = true;
 
-            if (!IsEnabled || aWindow.ShowViewModel.Model == _model)
-                return;
+                if (model == _model)
+                    return;
 
-            _model = (LogsModel)aWindow.ShowViewModel.Model;
+                _model = model;
 
-            SelectNoneCommand  = null;
-            SelectGroupCommand = null;
+                SelectNoneCommand = null;
+                SelectGroupCommand = null;
 
-            _selectedGroups    = _model.Groups;
-            _selectedInstances = _model.Instances;
+                _selectedGroups = _model.Groups;
+                _selectedInstances = _model.Instances;
 
-            SyncCheckStatuses();
+                SyncCheckStatuses();
 
-            // update view
-            this.RaisePropertyChanged("SourceItems");
+                // update view
+                this.RaisePropertyChanged("SourceItems");
 
-            // Select None Command
-            var canSelectNone = _model.WhenAny(
-                x => x.Instances.Count,
-                x => x.Groups.Count,
-                (ins, gr) => ins.Value > 0 || gr.Value > 0);
+                // Select None Command
+                var canSelectNone = _model.WhenAny(
+                    x => x.Instances.Count,
+                    x => x.Groups.Count,
+                    (ins, gr) => ins.Value > 0 || gr.Value > 0);
 
-            SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
+                SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
 
-            // Select Group Command
-            var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
-               .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
-               .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
+                // Select Group Command
+                var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
+                    .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
+                    .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
 
-            SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
+                SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
+            }
+            else
+            {
+                IsEnabled = false;
+            }
         }
 
         /// <summary>
@@ -226,10 +221,7 @@ namespace MonikDesktop.ViewModels
                    .Where(x => (x.GroupID == aItem.GroupID) && x.Checked)
                    .Select(x => x.InstanceID);
 
-                //workaround since ReactiveList.AddRange(results); throws UnsupportedException for collections with 2-10 items
-                //https://github.com/reactiveui/ReactiveUI/issues/1354
-                foreach (var item in checkedItems)
-                    _selectedInstances.Add(item);
+                _selectedInstances.AddRange(checkedItems);
 
                 _selectedGroups.Remove(aItem.GroupID);
             }

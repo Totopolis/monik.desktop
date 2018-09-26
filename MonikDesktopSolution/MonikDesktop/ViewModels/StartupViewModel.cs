@@ -5,6 +5,8 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using MahApps.Metro;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -12,12 +14,14 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
+        public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
         public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
 
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
         private bool _isInitialized;
+        private bool _isToolsShown;
 
         public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app)
         {
@@ -28,8 +32,12 @@ namespace MonikDesktop.ViewModels
             CanClose = false;
             App = app;
 
+            // Title
+
             this.WhenAnyValue(x => x.AppTitle)
                 .Subscribe(x => shell.Title = x);
+
+            // Server Urls
 
             var urls = Settings.Default.ServerUrl
                 .Split(';')
@@ -46,19 +54,49 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
-            var canNew = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
-            NewLogCommand       = ReactiveCommand.Create(NewLog,       canNew);
-            NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, canNew);
-            NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   canNew);
+            // Authorization Tokens
 
-            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(RemoveUrl);
+            var tokens = Settings.Default.AuthToken
+                .Split(';')
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToArray();
+
+            AuthTokens.AddRange(tokens);
+            App.AuthToken = tokens.FirstOrDefault();
+
+            AuthTokens.Changed.Subscribe(x =>
+            {
+                Settings.Default.AuthToken = string.Join(";", AuthTokens);
+                Settings.Default.Save();
+            });
+
+            // Create Commands
+
+            var hasUrl = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
+            NewLogCommand       = ReactiveCommand.Create(NewLog,       hasUrl);
+            NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, hasUrl);
+            NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   hasUrl);
+
+            RemoveEntitiesCommand = ReactiveCommand.Create(RemoveEntities, hasUrl);
+            ManageGroupsCommand = ReactiveCommand.Create(ManageGroups, hasUrl);
+
+            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
+            RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
+
+            ThemeModeChangedCommand = ReactiveCommand.Create<bool>(SetThemeMode);
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
         public ReactiveCommand NewKeepAliveCommand { get; set; }
         public ReactiveCommand NewMetricsCommand   { get; set; }
 
+        public ReactiveCommand RemoveEntitiesCommand { get; set; }
+        public ReactiveCommand ManageGroupsCommand { get; set; }
+
         public ReactiveCommand RemoveUrlCommand    { get; set; }
+        public ReactiveCommand RemoveAuthTokenCommand { get; set; }
+
+        public ReactiveCommand ThemeModeChangedCommand { get; set; }
 
         public string UpdateServerUrl
         {
@@ -86,9 +124,26 @@ namespace MonikDesktop.ViewModels
             }
         }
 
-        public void RemoveUrl(Uri url)
+        public string UpdateAuthToken
         {
-            ServerUrls.Remove(url);
+            set
+            {
+                if (App.AuthToken != null && App.AuthToken == value)
+                {
+                    // move to the top
+                    var index = AuthTokens.IndexOf(App.AuthToken);
+                    if (index != 0)
+                    {
+                        using (AuthTokens.SuppressChangeNotifications())
+                            (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
+                    }
+                }
+                else
+                {
+                    AuthTokens.Insert(0, value);
+                    App.AuthToken = value;
+                }
+            }
         }
 
         private async Task Initialize()
@@ -99,8 +154,6 @@ namespace MonikDesktop.ViewModels
 
             await Task.Run(() => _cache.Reload());
 
-            ShowTools();
-
             IsBusy = false;
         }
 
@@ -110,6 +163,7 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<ILogsView>();
+            ShowTools();
         }
 
         private async Task NewKeepAlive()
@@ -118,6 +172,7 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<IKeepAliveView>();
+            ShowTools();
         }
 
         private async Task NewMetrics()
@@ -126,13 +181,50 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<IMetricsView>();
+            ShowTools();
         }
 
         private void ShowTools()
         {
+            if (_isToolsShown)
+                return;
+
+            _isToolsShown = true;
             _shell.ShowTool<IPropertiesView>();
             _shell.ShowTool<ISourcesView>();
             _shell.ShowTool<ILogDescriptionView>();
+        }
+
+        private async Task RemoveEntities()
+        {
+            if (!_isInitialized)
+                await Initialize();
+
+            _shell.ShowView<IRemoveEntitiesView>();
+        }
+
+        private async Task ManageGroups()
+        {
+            if (!_isInitialized)
+                await Initialize();
+
+            _shell.ShowView<IManageGroupsView>();
+        }
+
+        private void SetThemeMode(bool isLight)
+        {
+            if (isLight)
+            {
+                ThemeManager.ChangeAppStyle(Application.Current,
+                    ThemeManager.GetAccent("Blue"),
+                    ThemeManager.GetAppTheme("BaseLight"));
+            }
+            else
+            {
+                ThemeManager.ChangeAppStyle(Application.Current,
+                    ThemeManager.GetAccent("Green"),
+                    ThemeManager.GetAppTheme("BaseDark"));
+            }
         }
 
         public IAppModel App { get; }

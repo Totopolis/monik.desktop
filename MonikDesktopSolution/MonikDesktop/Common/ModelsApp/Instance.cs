@@ -1,4 +1,6 @@
-﻿namespace MonikDesktop.Common.ModelsApp
+﻿using System.Collections.Generic;
+
+namespace MonikDesktop.Common.ModelsApp
 {
     public class Instance
     {

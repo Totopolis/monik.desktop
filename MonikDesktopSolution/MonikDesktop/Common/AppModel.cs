@@ -8,5 +8,6 @@ namespace MonikDesktop.Common
     public class AppModel : ReactiveObject, IAppModel
     {
         [Reactive] public Uri ServerUrl { get; set; } = null;
+        [Reactive] public string AuthToken { get; set; } = null;
     }
 }

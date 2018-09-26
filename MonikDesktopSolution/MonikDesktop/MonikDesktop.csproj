@@ -175,10 +175,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    <Compile Include="App.ammy.cs">
+      <DependentUpon>App.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Common\AppModel.cs" />
     <Compile Include="Common\Converters\LevelToNameConverter.cs" />
@@ -186,6 +185,8 @@
     <Compile Include="Common\Interfaces\IKeepAliveViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogDescriptionViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogsViewModel.cs" />
+    <Compile Include="Common\Interfaces\IManageGroupsView.cs" />
+    <Compile Include="Common\Interfaces\IManageGroupsViewModel.cs" />
     <Compile Include="Common\Interfaces\IMetricsView.cs" />
     <Compile Include="Common\Interfaces\IKeepAliveView.cs" />
     <Compile Include="Common\Interfaces\ILogDescriptionView.cs" />
@@ -193,6 +194,8 @@
     <Compile Include="Common\Interfaces\IMetricsViewModel.cs" />
     <Compile Include="Common\Interfaces\IPropertiesView.cs" />
     <Compile Include="Common\Interfaces\IPropertiesViewModel.cs" />
+    <Compile Include="Common\Interfaces\IRemoveEntitiesView.cs" />
+    <Compile Include="Common\Interfaces\IRemoveEntitiesViewModel.cs" />
     <Compile Include="Common\Interfaces\IShowView.cs" />
     <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
@@ -204,12 +207,14 @@
     <Compile Include="Common\Enums\TopType.cs" />
     <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
+    <Compile Include="Common\ModelsApi\EMetric.cs" />
     <Compile Include="Common\ModelsApi\EMetricHistory.cs" />
     <Compile Include="Common\ModelsApi\EMetricValue.cs" />
     <Compile Include="Common\ModelsApi\EKeepAlive_.cs" />
     <Compile Include="Common\ModelsApi\EMetricDescription.cs" />
     <Compile Include="Common\ModelsApi\EWindowValue.cs" />
     <Compile Include="Common\ModelsApp\Group.cs" />
+    <Compile Include="Common\ModelsApp\Metric.cs" />
     <Compile Include="Common\ModelsApp\MetricDescription.cs" />
     <Compile Include="Common\ModelsApp\MetricValueItem.cs" />
     <Compile Include="Common\ModelsApp\KeepALiveItem.cs" />
@@ -220,19 +225,28 @@
     <Compile Include="Common\ModelsApi\ELogRequest.cs" />
     <Compile Include="Common\ModelsApi\ELog_.cs" />
     <Compile Include="Common\ModelsApp\Source.cs" />
+    <Compile Include="Common\ReactiveExtensions.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
+    <Compile Include="ViewModels\GroupItem.cs" />
+    <Compile Include="ViewModels\ManageGroupsViewModel.cs" />
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\KeepAliveViewModel.cs" />
+    <Compile Include="ViewModels\RemovableEntities.cs" />
+    <Compile Include="ViewModels\RemoveEntitiesViewModel.cs" />
     <Compile Include="ViewModels\ShowModels\MetricsModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
+    <Compile Include="ViewModels\ShowModels\WithSourcesShowModel.cs" />
     <Compile Include="ViewModels\SourceItem.cs" />
     <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\BindingProxy.cs" />
+    <Compile Include="Views\ManageGroupsView.ammy.cs">
+      <DependentUpon>ManageGroupsView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\MetricsChartTooltipView.ammy.cs">
       <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
     </Compile>
@@ -257,20 +271,22 @@
     <Compile Include="Views\PropertiesView.xaml.cs">
       <DependentUpon>PropertiesView.ammy</DependentUpon>
     </Compile>
+    <Compile Include="Views\RemoveEntitiesView.ammy.cs">
+      <DependentUpon>RemoveEntitiesView.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\SourcesView.xaml.cs">
       <DependentUpon>SourcesView.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\StartupView.xaml.cs">
       <DependentUpon>StartupView.ammy</DependentUpon>
     </Compile>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Common\Interfaces\IMonikService.cs" />
     <Compile Include="Common\ModelsApi\ESource.cs" />
     <Compile Include="Common\MonikService.cs" />
+    <None Include="App.ammy" />
     <None Include="lib.ammy" />
+    <None Include="Views\Common.ammy" />
+    <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
     <None Include="Views\MetricsSampleData.ammy" />
     <None Include="Views\MetricsView.ammy" />
@@ -279,6 +295,7 @@
     <None Include="Views\KeepAliveSampleData.ammy" />
     <None Include="Views\LogsView.ammy" />
     <None Include="Views\PropertiesView.ammy" />
+    <None Include="Views\RemoveEntitiesView.ammy" />
     <None Include="Views\SourcesView.ammy" />
     <None Include="Views\StartupView.ammy" />
   </ItemGroup>
@@ -330,6 +347,11 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\ManageGroupsView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ManageGroupsView.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\MetricsChartTooltipView.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -369,6 +391,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>PropertiesView.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\RemoveEntitiesView.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>RemoveEntitiesView.ammy</DependentUpon>
     </Page>
     <Page Include="Views\SourcesView.g.xaml">
       <SubType>Designer</SubType>

@@ -6,25 +6,13 @@ UserControl "MonikDesktop.Views.MetricsView" {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
+  Background: resource dyn "WhiteBrush"
   Grid {
-    ColumnDefinitions:
-    [
-      ColumnDefinition { Width: Auto }
-      ColumnDefinition { Width: "*" }
-    ]
-    DataGrid "MainGrid" {
-      CanUserAddRows: false
-      CanUserDeleteRows: false
-      AutoGenerateColumns: false
-      IsReadOnly: true
-      RowHeight: 20
-      HorizontalGridLinesBrush: Silver
-      VerticalGridLinesBrush: Silver
-      GridLinesVisibility: Horizontal
-      Foreground: Black
+    #TwoColumns("Auto", "*")
+    @SimpleDataGrid(20) "MainGrid" {
+      Grid.Column: 0
       SelectedItem: bind SelectedMetric
       ItemsSource: bind MetricValuesList
-      Grid.Column: 0
       Columns: [
         DataGridTextColumn {
           Header: "Source"
@@ -64,18 +52,19 @@ UserControl "MonikDesktop.Views.MetricsView" {
     }
     CartesianChart {
       Grid.Column: 1
-      Background: White
       LegendLocation: None
       DataTooltip: MonikDesktop.Views.MetricsChartTooltipView {}
       DisableAnimations: true
       Hoverable: false
       Visibility: bind Model.MetricDiagramVisible
                   convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
+
       Series: ColumnSeries
       {
         MaxColumnWidth: double.PositiveInfinity
         ColumnPadding: bind SeriesColumnPadding
         Values: bind SeriesCollection
+        Fill: resource dyn "AccentBaseColorBrush"
       }
       AxisX: Axis { LabelFormatter: bind DateTimeFormatter }
     }
