@@ -3,6 +3,7 @@ using MonikDesktop.Properties;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +17,9 @@ namespace MonikDesktop.ViewModels
     {
         public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
         public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
+        public IAppModel App { get; }
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
+        [Reactive] public string AuthTokenDescription { get; set; }
 
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
@@ -128,6 +131,22 @@ namespace MonikDesktop.ViewModels
         {
             set
             {
+                try
+                {
+                    // will throw if Token is not valid JWT token
+                    // and will be made red by ValidatesOnExceptions
+                    var token = new JwtSecurityTokenHandler().ReadJwtToken(value);
+                    if (long.Parse(token.Claims.First(cl => cl.Type == "exp").Value) < DateTimeOffset.Now.ToUnixTimeSeconds())
+                        throw new ArgumentException("Expired");
+
+                    AuthTokenDescription = token.Payload.SerializeToJson();
+                }
+                catch
+                {
+                    AuthTokenDescription = null;
+                    throw;
+                }
+
                 if (App.AuthToken != null && App.AuthToken == value)
                 {
                     // move to the top
@@ -138,7 +157,7 @@ namespace MonikDesktop.ViewModels
                             (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
                     }
                 }
-                else
+                else if (!string.IsNullOrEmpty(value))
                 {
                     AuthTokens.Insert(0, value);
                     App.AuthToken = value;
@@ -226,7 +245,5 @@ namespace MonikDesktop.ViewModels
                     ThemeManager.GetAppTheme("BaseDark"));
             }
         }
-
-        public IAppModel App { get; }
     }
 }

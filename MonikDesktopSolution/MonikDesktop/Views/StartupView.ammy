@@ -102,6 +102,13 @@ UserControl "MonikDesktop.Views.StartupView"
 
       Label { "Authorization token" }
       @ComboBoxWithRemove("Data.RemoveAuthTokenCommand", "AuthTokens", "App.AuthToken", "UpdateAuthToken") {}
+      TextBlock 
+      {
+        Margin: 3
+        Foreground: resource dyn "GrayBrush4"
+        Visibility: bind AuthTokenDescription convert (string val) => string.IsNullOrEmpty(val) ? Visibility.Collapsed : Visibility.Visible
+        Text: bind AuthTokenDescription
+      }
 
       Label { "Management" }
       Button
