@@ -1,4 +1,4 @@
-<UserControl x:Class="MonikDesktop.Views.StartupView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF" xmlns:ns2="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns2:Ammy.Register="/MonikDesktop;component/Views/StartupView.g.xaml">
+<UserControl x:Class="MonikDesktop.Views.StartupView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" xmlns:ns2="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF" xmlns:ns3="clr-namespace:AmmySidekick;assembly=AmmySidekick" Background="{DynamicResource WhiteBrush}" ns3:Ammy.Register="/MonikDesktop;component/Views/StartupView.g.xaml">
   <UserControl.Resources>
     <ns0:BindingProxy x:Key="Proxy">
       <ns0:BindingProxy.Data>
@@ -8,12 +8,27 @@
   </UserControl.Resources>
   <Grid>
     <StackPanel Orientation="Vertical" Margin="3">
-      <Label>Window header</Label>
-      <TextBox>
-        <TextBox.Text>
-          <Binding Path="AppTitle"/>
-        </TextBox.Text>
-      </TextBox>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="130"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ns1:ToggleSwitch Grid.Column="0" HorizontalContentAlignment="Center" OnLabel="Dark" OffLabel="Light">
+          <ns1:ToggleSwitch.CheckChangedCommand>
+            <Binding Path="ThemeModeChangedCommand"/>
+          </ns1:ToggleSwitch.CheckChangedCommand>
+          <ns1:ToggleSwitch.CheckChangedCommandParameter>
+            <Binding Path="IsChecked" RelativeSource="{x:Static RelativeSource.Self}"/>
+          </ns1:ToggleSwitch.CheckChangedCommandParameter>
+        </ns1:ToggleSwitch>
+        <TextBlock Grid.Column="1" Margin="20,0,10,0" VerticalAlignment="Center">Header</TextBlock>
+        <TextBox Grid.Column="2" VerticalAlignment="Center">
+          <TextBox.Text>
+            <Binding Path="AppTitle"/>
+          </TextBox.Text>
+        </TextBox>
+      </Grid>
       <Label>Server Url</Label>
       <ComboBox IsEditable="True">
         <ComboBox.ItemTemplate>
@@ -107,9 +122,9 @@
     </StackPanel>
     <Grid Background="Gray" Opacity="0.75">
       <Grid.Visibility>
-        <Binding Path="IsBusy" Converter="{x:Static ns2:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        <Binding Path="IsBusy" Converter="{x:Static ns3:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;2&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
       </Grid.Visibility>
-      <ns1:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
+      <ns2:ImageAwesome Icon="Cog" Spin="True" Height="48" Width="48" SpinDuration="4"/>
     </Grid>
   </Grid>
 </UserControl>

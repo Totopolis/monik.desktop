@@ -6,6 +6,7 @@ UserControl "MonikDesktop.Views.MetricsView" {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
+  Background: resource dyn "WhiteBrush"
   Grid {
     #TwoColumns("Auto", "*")
     @SimpleDataGrid(20) "MainGrid" {
@@ -57,11 +58,13 @@ UserControl "MonikDesktop.Views.MetricsView" {
       Hoverable: false
       Visibility: bind Model.MetricDiagramVisible
                   convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
+
       Series: ColumnSeries
       {
         MaxColumnWidth: double.PositiveInfinity
         ColumnPadding: bind SeriesColumnPadding
         Values: bind SeriesCollection
+        Fill: resource dyn "AccentBaseColorBrush"
       }
       AxisX: Axis { LabelFormatter: bind DateTimeFormatter }
     }

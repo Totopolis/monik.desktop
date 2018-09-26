@@ -54,18 +54,22 @@
             <Binding Path="Model.Top" Mode="TwoWay"/>
           </ComboBox.SelectedValue>
         </ComboBox>
-        <Label>Colorized</Label>
-        <CheckBox>
-          <CheckBox.IsChecked>
-            <Binding Path="Model.Colorized"/>
-          </CheckBox.IsChecked>
-        </CheckBox>
-        <Label>GroupDoublingLogs</Label>
-        <CheckBox>
-          <CheckBox.IsChecked>
-            <Binding Path="Model.GroupDuplicatingItems" Mode="TwoWay"/>
-          </CheckBox.IsChecked>
-        </CheckBox>
+        <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+          <CheckBox>
+            <CheckBox.IsChecked>
+              <Binding Path="Model.Colorized"/>
+            </CheckBox.IsChecked>
+          </CheckBox>
+          <Label>Colorized</Label>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5,0,0,10">
+          <CheckBox>
+            <CheckBox.IsChecked>
+              <Binding Path="Model.GroupDuplicatingItems" Mode="TwoWay"/>
+            </CheckBox.IsChecked>
+          </CheckBox>
+          <Label>GroupDoublingLogs</Label>
+        </StackPanel>
       </StackPanel>
       <Label>Datetime format</Label>
       <ComboBox>

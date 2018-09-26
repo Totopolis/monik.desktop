@@ -17,7 +17,7 @@
       <Button Command="{Binding RefreshCommand}" Margin="5">Refresh</Button>
       <TextBox Text="{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" Width="150"/>
     </StackPanel>
-    <DataGrid VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" VirtualizingPanel.ScrollUnit="Item" ScrollViewer.CanContentScroll="True" EnableRowVirtualization="True" SelectedItem="{Binding SelectedItem}" ItemsSource="{Binding Source={StaticResource CustomerView}}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="Silver" Grid.Row="1" ns0:DataGridExtensions.LastColumnFill="True">
+    <DataGrid VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" VirtualizingPanel.ScrollUnit="Item" ScrollViewer.CanContentScroll="True" EnableRowVirtualization="True" SelectedItem="{Binding SelectedItem}" ItemsSource="{Binding Source={StaticResource CustomerView}}" CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" Grid.Row="1" ns0:DataGridExtensions.LastColumnFill="True">
       <DataGrid.Columns>
         <DataGridCheckBoxColumn Header="Checked" Binding="{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <DataGridTextColumn Header="Source" IsReadOnly="True" Binding="{Binding SourceName}"/>
@@ -31,7 +31,7 @@
               <Setter Property="Template">
                 <Setter.Value>
                   <ControlTemplate TargetType="{x:Type GroupItem}">
-                    <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
+                    <Expander IsExpanded="True" Background="{DynamicResource AccentColorBrush}" BorderBrush="{DynamicResource AccentColorBrush3}" Foreground="{DynamicResource BlackBrush}" BorderThickness="1,1,1,5">
                       <Expander.Header>
                         <DockPanel>
                           <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
@@ -49,18 +49,6 @@
           </GroupStyle.ContainerStyle>
         </GroupStyle>
       </DataGrid.GroupStyle>
-      <DataGrid.RowStyle>
-        <Style TargetType="DataGridRow">
-          <Setter Property="Foreground" Value="Black"/>
-          <Setter Property="Background" Value="White"/>
-          <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-              <Setter Property="Background" Value="Pink"/>
-              <Setter Property="Foreground" Value="Black"/>
-            </Trigger>
-          </Style.Triggers>
-        </Style>
-      </DataGrid.RowStyle>
     </DataGrid>
   </Grid>
 </UserControl>

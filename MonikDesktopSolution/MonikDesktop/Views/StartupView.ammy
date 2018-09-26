@@ -1,6 +1,7 @@
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
 using FontAwesome.WPF;
+using MahApps.Metro.Controls;
 
 alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
 {
@@ -43,6 +44,7 @@ UserControl "MonikDesktop.Views.StartupView"
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
+  Background: resource dyn "WhiteBrush"
   Grid
   {
     StackPanel
@@ -50,8 +52,28 @@ UserControl "MonikDesktop.Views.StartupView"
       Orientation: Vertical
       Margin: "3"
 
-      Label { "Window header" }
-      TextBox { Text: bind AppTitle }
+      Grid { 
+        #ThreeColumns("130", "Auto", "*")
+        ToggleSwitch {
+          Grid.Column:0
+          HorizontalContentAlignment: Center
+          OnLabel: "Dark"
+          OffLabel: "Light"
+          CheckChangedCommand: bind ThemeModeChangedCommand
+          CheckChangedCommandParameter: bind IsChecked from $this
+        }
+        TextBlock {
+          Grid.Column: 1
+          Margin: "20,0,10,0"
+          VerticalAlignment: Center
+          "Header"
+        }
+        TextBox {
+          Grid.Column: 2
+          VerticalAlignment: Center
+          Text: bind AppTitle
+        }
+      }
 
       Label { "Server Url" }
       @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "App.ServerUrl", "UpdateServerUrl") {}

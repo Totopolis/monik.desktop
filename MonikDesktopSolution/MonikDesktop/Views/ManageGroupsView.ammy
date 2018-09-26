@@ -46,6 +46,7 @@ alias InstancesData()
 UserControl "MonikDesktop.Views.ManageGroupsView"
 {
   Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
+  Background: resource dyn "WhiteBrush"
   Grid 
   {
     #TwoRows(50)

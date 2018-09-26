@@ -5,6 +5,8 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using MahApps.Metro;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -80,6 +82,8 @@ namespace MonikDesktop.ViewModels
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
+
+            ThemeModeChangedCommand = ReactiveCommand.Create<bool>(SetThemeMode);
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
@@ -91,6 +95,8 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
         public ReactiveCommand RemoveAuthTokenCommand { get; set; }
+
+        public ReactiveCommand ThemeModeChangedCommand { get; set; }
 
         public string UpdateServerUrl
         {
@@ -203,6 +209,22 @@ namespace MonikDesktop.ViewModels
                 await Initialize();
 
             _shell.ShowView<IManageGroupsView>();
+        }
+
+        private void SetThemeMode(bool isLight)
+        {
+            if (isLight)
+            {
+                ThemeManager.ChangeAppStyle(Application.Current,
+                    ThemeManager.GetAccent("Blue"),
+                    ThemeManager.GetAppTheme("BaseLight"));
+            }
+            else
+            {
+                ThemeManager.ChangeAppStyle(Application.Current,
+                    ThemeManager.GetAccent("Green"),
+                    ThemeManager.GetAppTheme("BaseDark"));
+            }
         }
 
         public IAppModel App { get; }

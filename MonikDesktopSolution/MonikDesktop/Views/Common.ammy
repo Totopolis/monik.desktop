@@ -62,8 +62,8 @@ alias SimpleDataGrid(rowHeight="40")
     CanUserDeleteRows: false
     AutoGenerateColumns: false
     RowHeight: $rowHeight
-    HorizontalGridLinesBrush: Silver
-    VerticalGridLinesBrush: Silver
+    HorizontalGridLinesBrush: resource dyn "SeperatorBrush"
+    VerticalGridLinesBrush: resource dyn "SeperatorBrush"
     GridLinesVisibility: Horizontal
   }
 }

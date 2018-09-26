@@ -1,4 +1,4 @@
-<UserControl x:Class="MonikDesktop.Views.ManageGroupsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" ns1:Ammy.Register="/MonikDesktop;component/Views/ManageGroupsView.g.xaml">
+<UserControl x:Class="MonikDesktop.Views.ManageGroupsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:AmmySidekick;assembly=AmmySidekick" Background="{DynamicResource WhiteBrush}" ns1:Ammy.Register="/MonikDesktop;component/Views/ManageGroupsView.g.xaml">
   <UserControl.Resources>
     <ns0:BindingProxy x:Key="Proxy">
       <ns0:BindingProxy.Data>
@@ -48,7 +48,7 @@
       </Border>
       <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Without Group" Grid.Column="1"/>
     </Grid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Grid.Row="1" Grid.Column="0">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" Grid.Row="1" Grid.Column="0">
       <DataGrid.ItemsSource>
         <Binding Path="ListGroups"/>
       </DataGrid.ItemsSource>
@@ -139,7 +139,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -161,7 +161,7 @@
         <Binding Path="ListInGroup"/>
       </DataGrid.ItemsSource>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" SelectionMode="Single" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>

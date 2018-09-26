@@ -41,13 +41,13 @@ UserControl "MonikDesktop.Views.SourcesView" {
       EnableRowVirtualization: "True"
       SelectedItem: "{Binding SelectedItem}"
       ItemsSource: "{Binding Source={StaticResource CustomerView}}"
-      CanUserAddRows: "False"
-      CanUserDeleteRows: "False"
-      AutoGenerateColumns: "False"
+      CanUserAddRows: true
+      CanUserDeleteRows: true
+      AutoGenerateColumns: true
       GridLinesVisibility: "Horizontal"
-      HorizontalGridLinesBrush: "Silver"
+      HorizontalGridLinesBrush: resource dyn "SeperatorBrush"
       Grid.Row: "1"
-      DataGridExtensions.LastColumnFill: "True"
+      DataGridExtensions.LastColumnFill: true
       Columns: [
         DataGridCheckBoxColumn { Header: "Checked",  Binding: "{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" }
         DataGridTextColumn {
@@ -71,9 +71,9 @@ UserControl "MonikDesktop.Views.SourcesView" {
               TargetType: GroupItem
               Expander {
                 IsExpanded: "True"
-                Background: "#FF112255"
-                BorderBrush: "#FF002255"
-                Foreground: "#FFEEEEEE"
+                Background: resource dyn "AccentColorBrush"
+                BorderBrush: resource dyn "AccentColorBrush3"
+                Foreground: resource dyn "BlackBrush"
                 BorderThickness: "1,1,1,5"
                 Header: DockPanel {
                   TextBlock {
@@ -88,17 +88,6 @@ UserControl "MonikDesktop.Views.SourcesView" {
               }
             }
           }
-        }
-      }
-      RowStyle: Style {
-        TargetType: "DataGridRow"
-        Setter { Property: "Foreground",  Value: "Black" }
-        Setter { Property: "Background",  Value: "White" }
-        Triggers: Trigger {
-          Property: "IsSelected"
-          Value: "True"
-          Setter { Property: "Background",  Value: "Pink" }
-          Setter { Property: "Foreground",  Value: "Black" }
         }
       }
     }
