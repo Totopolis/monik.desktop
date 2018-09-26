@@ -19,7 +19,7 @@ namespace MonikDesktop.ViewModels
         private ReactiveList<short> _selectedGroups;
         private ReactiveList<int>   _selectedInstances;
 
-        private LogsModel  _model;
+        private WithSourcesShowModel _model;
 
         public SourcesViewModel(IShell shell, ISourcesCache aCache)
         {
@@ -163,38 +163,45 @@ namespace MonikDesktop.ViewModels
 
         private void OnSelectedWindow(IShowView aWindow)
         {
-            IsEnabled = aWindow is ILogsView;
+            if (aWindow.ShowViewModel.Model is WithSourcesShowModel model)
+            {
+                IsEnabled = true;
 
-            if (!IsEnabled || aWindow.ShowViewModel.Model == _model)
-                return;
+                if (model == _model)
+                    return;
 
-            _model = (LogsModel)aWindow.ShowViewModel.Model;
+                _model = model;
 
-            SelectNoneCommand  = null;
-            SelectGroupCommand = null;
+                SelectNoneCommand = null;
+                SelectGroupCommand = null;
 
-            _selectedGroups    = _model.Groups;
-            _selectedInstances = _model.Instances;
+                _selectedGroups = _model.Groups;
+                _selectedInstances = _model.Instances;
 
-            SyncCheckStatuses();
+                SyncCheckStatuses();
 
-            // update view
-            this.RaisePropertyChanged("SourceItems");
+                // update view
+                this.RaisePropertyChanged("SourceItems");
 
-            // Select None Command
-            var canSelectNone = _model.WhenAny(
-                x => x.Instances.Count,
-                x => x.Groups.Count,
-                (ins, gr) => ins.Value > 0 || gr.Value > 0);
+                // Select None Command
+                var canSelectNone = _model.WhenAny(
+                    x => x.Instances.Count,
+                    x => x.Groups.Count,
+                    (ins, gr) => ins.Value > 0 || gr.Value > 0);
 
-            SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
+                SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
 
-            // Select Group Command
-            var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
-               .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
-               .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
+                // Select Group Command
+                var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
+                    .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
+                    .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
 
-            SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
+                SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
+            }
+            else
+            {
+                IsEnabled = false;
+            }
         }
 
         /// <summary>

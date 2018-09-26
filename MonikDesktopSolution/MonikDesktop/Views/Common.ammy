@@ -53,7 +53,7 @@ alias RemoveButton(bindingCommand, bindingCommandParameter)
   }
 }
 
-alias SimpleDataGrid()
+alias SimpleDataGrid(rowHeight="40")
 {
   DataGrid 
   {
@@ -61,7 +61,7 @@ alias SimpleDataGrid()
     CanUserAddRows: false
     CanUserDeleteRows: false
     AutoGenerateColumns: false
-    RowHeight: 40
+    RowHeight: $rowHeight
     HorizontalGridLinesBrush: Silver
     VerticalGridLinesBrush: Silver
     GridLinesVisibility: Horizontal

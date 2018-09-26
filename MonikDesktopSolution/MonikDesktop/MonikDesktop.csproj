@@ -238,6 +238,7 @@
     <Compile Include="ViewModels\ShowModels\MetricsModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
+    <Compile Include="ViewModels\ShowModels\WithSourcesShowModel.cs" />
     <Compile Include="ViewModels\SourceItem.cs" />
     <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />

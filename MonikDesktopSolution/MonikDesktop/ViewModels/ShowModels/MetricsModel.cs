@@ -4,7 +4,7 @@ using System;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
-    public class MetricsModel : ShowModel
+    public class MetricsModel : WithSourcesShowModel
     {
         public MetricsModel()
         {

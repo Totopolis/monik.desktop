@@ -11,7 +11,7 @@
       <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
-    <DataGrid x:Name="MainGrid" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="20" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Foreground="Black" Grid.Column="0">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="Silver" VerticalGridLinesBrush="Silver" GridLinesVisibility="Horizontal" Grid.Column="0" x:Name="MainGrid">
       <DataGrid.SelectedItem>
         <Binding Path="SelectedMetric"/>
       </DataGrid.SelectedItem>
@@ -57,7 +57,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <ns2:CartesianChart Grid.Column="1" Background="White" LegendLocation="None" DisableAnimations="True" Hoverable="False">
+    <ns2:CartesianChart Grid.Column="1" LegendLocation="None" DisableAnimations="True" Hoverable="False">
       <ns2:CartesianChart.DataTooltip>
         <ns0:MetricsChartTooltipView/>
       </ns2:CartesianChart.DataTooltip>
