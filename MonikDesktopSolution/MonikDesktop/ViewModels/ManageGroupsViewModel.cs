@@ -20,36 +20,43 @@ namespace MonikDesktop.ViewModels
 
             Title = "Manage Groups";
 
-            ListGroups = new ReactiveList<Group>(_cache.Groups);
+            ListGroups = new ReactiveList<GroupItem>(_cache.Groups.Select(x => new GroupItem(x)));
             ListInGroup = _cache.Groups.Length > 0 ? new ReactiveList<Instance>(_cache.Groups[0].Instances) : new ReactiveList<Instance>();
             ListWithoutGroup = new ReactiveList<Instance>(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
 
-            SelectedGroup = _cache.Groups.Length > 0 ? _cache.Groups[0] : null;
+            SelectedGroup = ListGroups.FirstOrDefault();
             this.ObservableForProperty(x => x.SelectedGroup)
                 .Subscribe(v => ShowGroup(v.Value));
 
-            RemoveGroupCommand = ReactiveCommand.Create<Group>(RemoveGroup);
+            RemoveGroupCommand = ReactiveCommand.Create<GroupItem>(RemoveGroup);
         }
 
-        [Reactive] public Group SelectedGroup { get; set; }
-        public ReactiveList<Group> ListGroups { get; set; }
+        [Reactive] public GroupItem SelectedGroup { get; set; }
+        public ReactiveList<GroupItem> ListGroups { get; set; }
         public ReactiveList<Instance> ListInGroup { get; set; }
         public ReactiveList<Instance> ListWithoutGroup { get; set; }
 
         public ReactiveCommand RemoveGroupCommand { get; set; }
 
-        private void ShowGroup(Group g)
+        private void ShowGroup(GroupItem gItem)
         {
-            ListInGroup.Initialize(g.Instances);
+            if (gItem == null)
+                ListInGroup.Clear();
+            else
+                ListInGroup.Initialize(gItem.Group.Instances);
         }
 
-        private void RemoveGroup(Group g)
+        private void RemoveGroup(GroupItem gItem)
         {
             try
             {
-                _cache.RemoveGroup(g);
+                _cache.RemoveGroup(gItem.Group);
 
-                ListGroups.Remove(g);
+                ListGroups.Remove(gItem);
+                ListWithoutGroup.AddRange(gItem.Group.Instances);
+
+                if (SelectedGroup == gItem)
+                    SelectedGroup = ListGroups.FirstOrDefault();
             }
             catch (WebException e)
             {
@@ -61,7 +68,8 @@ namespace MonikDesktop.ViewModels
         {
             try
             {
-                _cache.AddInstanceToGroup(instance, SelectedGroup);
+                _cache.AddInstanceToGroup(instance, SelectedGroup.Group);
+                SelectedGroup.UpdateAmount();
 
                 ListWithoutGroup.Remove(instance);
                 ListInGroup.Add(instance);
@@ -76,8 +84,9 @@ namespace MonikDesktop.ViewModels
         {
             try
             {
-                _cache.RemoveInstanceFromGroup(instance, SelectedGroup);
-                
+                _cache.RemoveInstanceFromGroup(instance, SelectedGroup.Group);
+                SelectedGroup.UpdateAmount();
+
                 ListInGroup.Remove(instance);
                 ListWithoutGroup.Add(instance);
             }

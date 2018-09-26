@@ -228,6 +228,7 @@
     <Compile Include="Common\ReactiveExtensions.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
+    <Compile Include="ViewModels\GroupItem.cs" />
     <Compile Include="ViewModels\ManageGroupsViewModel.cs" />
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />

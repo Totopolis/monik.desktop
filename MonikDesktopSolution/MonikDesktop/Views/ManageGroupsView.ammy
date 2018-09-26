@@ -94,7 +94,7 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
     {
       #Cell(1, 0)
       ItemsSource: bind ListGroups
-      SelectedItem: bind SelectedGroup
+      SelectedItem: bind SelectedGroup set [ Mode: TwoWay ]
       Columns: [
         DataGridTemplateColumn
         {
@@ -114,13 +114,13 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
         DataGridTextColumn
         {
           Header: "ID"
-          Binding: bind ID
+          Binding: bind Group.ID
           Width: Auto
         }
         DataGridTextColumn
         {
           Header: "Group"
-          Binding: bind Name
+          Binding: bind Group.Name
           Width: Auto
         }
         DataGridTextColumn
@@ -132,7 +132,7 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
             #Setter("HorizontalAlignment", "Right")
             #Setter("Margin", "10")
           }
-          Binding: bind Instances.Count
+          Binding: bind InstancesAmount set [ Mode: TwoWay ]
           Width: "*"
         }
       ]
