@@ -32,13 +32,13 @@ namespace MonikDesktop
 		    builder.RegisterType<ManageGroupsViewModel>().As<IManageGroupsViewModel>();
 
             // Views
-            builder.RegisterType<StartupView>().As<IStartupView>();
+            builder.RegisterType<StartupView>().As<IStartupView>().SingleInstance();
 		    builder.RegisterType<LogsView>().As<ILogsView>();
 		    builder.RegisterType<KeepAliveView>().As<IKeepAliveView>();
 		    builder.RegisterType<MetricsView>().As<IMetricsView>();
-		    builder.RegisterType<PropertiesView>().As<IPropertiesView>();
-		    builder.RegisterType<SourcesView>().As<ISourcesView>();
-		    builder.RegisterType<LogDescriptionView>().As<ILogDescriptionView>();
+		    builder.RegisterType<PropertiesView>().As<IPropertiesView>().SingleInstance();
+		    builder.RegisterType<SourcesView>().As<ISourcesView>().SingleInstance();
+		    builder.RegisterType<LogDescriptionView>().As<ILogDescriptionView>().SingleInstance();
 		    builder.RegisterType<RemoveEntitiesView>().As<IRemoveEntitiesView>();
 		    builder.RegisterType<ManageGroupsView>().As<IManageGroupsView>();
 

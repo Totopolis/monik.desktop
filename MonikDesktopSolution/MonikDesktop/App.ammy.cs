@@ -27,7 +27,8 @@ namespace MonikDesktop
         {
             base.OnStartup(e);
 
-            UiStarter.Start<IDockWindow, IStartupView>(new Bootstrap());
+            var shell = UiStarter.Start<IDockWindow>(new Bootstrap());
+            shell.ShowTool<IStartupView>();
         }
     }
 }

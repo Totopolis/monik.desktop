@@ -1,4 +1,6 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using Autofac;
+using MahApps.Metro;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -7,7 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using MahApps.Metro;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -32,7 +33,6 @@ namespace MonikDesktop.ViewModels
             _cache = cache;
             
             Title = "App settings";
-            CanClose = false;
             App = app;
 
             // Title
@@ -205,13 +205,15 @@ namespace MonikDesktop.ViewModels
 
         private void ShowTools()
         {
-            if (_isToolsShown)
-                return;
+            if (!_isToolsShown)
+            {
+                _isToolsShown = true;
+                _shell.ShowTool<IPropertiesView>();
+                _shell.ShowTool<ISourcesView>();
+                _shell.ShowTool<ILogDescriptionView>();
+            }
 
-            _isToolsShown = true;
-            _shell.ShowTool<IPropertiesView>();
-            _shell.ShowTool<ISourcesView>();
-            _shell.ShowTool<ILogDescriptionView>();
+            _shell.SelectedView = _shell.Container.Resolve<IPropertiesView>();
         }
 
         private async Task RemoveEntities()
