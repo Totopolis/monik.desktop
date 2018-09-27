@@ -185,7 +185,9 @@ namespace MonikDesktop.Common
 	    private HttpWebRequest CreateRequest(string aMethod)
 	    {
 	        var uri = new Uri(_app.ServerUrl, aMethod);
-	        return (HttpWebRequest) WebRequest.Create(uri);
+	        var request = (HttpWebRequest) WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            return request;
 	    }
     }
 }
