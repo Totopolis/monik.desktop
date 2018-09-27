@@ -72,8 +72,9 @@ namespace MonikDesktop.Common
 					IsDefault = it.IsDefault,
 					Name = it.Name,
 					Instances = it.Instances
-						.Where(v => _instances.Keys.Count(x => x == v) > 0)
-						.Select(v => _instances.Values.First(x => x.ID == v)).ToList()
+						.Where(v => _instances.ContainsKey(v))
+						.Select(v => _instances[v])
+					    .ToList()
 				};
 
 				_groups.Add(gr);
