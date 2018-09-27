@@ -126,6 +126,12 @@ UserControl "MonikDesktop.Views.ManageGroupsView"
         }
         DataGridTextColumn
         {
+          Header: "Default"
+          Binding: bind Group.IsDefault convert (bool val) => val ? "Default" : ""
+          Width: Auto
+        }
+        DataGridTextColumn
+        {
           Header: "Amount"
           ElementStyle: Style
           {

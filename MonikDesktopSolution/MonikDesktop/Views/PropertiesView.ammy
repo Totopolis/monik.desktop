@@ -1,4 +1,4 @@
-using Xceed.Wpf.Toolkit;
+using MahApps.Metro.Controls;
 
 UserControl "MonikDesktop.Views.PropertiesView"
 {
@@ -27,7 +27,7 @@ UserControl "MonikDesktop.Views.PropertiesView"
         Height: "20"
       }
       Label { "Refresh period (sec.)" }
-      IntegerUpDown
+      NumericUpDown
       {
         Value: bind Model.RefreshSec
       }
@@ -106,7 +106,7 @@ UserControl "MonikDesktop.Views.PropertiesView"
         Margin: "0"
         Visibility: bind KeepAlivesVisibility
         Label { "Keep Alive Warning period (sec.)" }
-        IntegerUpDown
+        NumericUpDown
         {
           Value: bind Model.KeepAliveWarningPeriod
         }
@@ -130,14 +130,14 @@ UserControl "MonikDesktop.Views.PropertiesView"
           Visibility: bind Model.MetricDiagramVisible
                       convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
           Label { "History depth (in hours)" }
-          IntegerUpDown
+          NumericUpDown
           {
             Value: bind Model.MetricHistoryDepthHours
             Minimum: 1
             Maximum: 333
           }
           Label { "History skip 5 min intervals" }
-          IntegerUpDown
+          NumericUpDown
           {
             Value: bind Model.MetricHistorySkip5Min
           }

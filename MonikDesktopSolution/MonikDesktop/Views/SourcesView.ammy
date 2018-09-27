@@ -33,32 +33,39 @@ UserControl "MonikDesktop.Views.SourcesView" {
       }
     }
     DataGrid {
-      VirtualizingPanel.IsVirtualizingWhenGrouping: "True"
-      VirtualizingPanel.IsVirtualizing: "True"
-      VirtualizingPanel.IsContainerVirtualizable: "True"
-      VirtualizingPanel.ScrollUnit: "Item"
-      ScrollViewer.CanContentScroll: "True"
-      EnableRowVirtualization: "True"
-      SelectedItem: "{Binding SelectedItem}"
+      VirtualizingPanel.IsVirtualizingWhenGrouping: true
+      VirtualizingPanel.IsVirtualizing: true
+      VirtualizingPanel.IsContainerVirtualizable: true
+      VirtualizingPanel.ScrollUnit: Item
+      ScrollViewer.CanContentScroll: true
+      EnableRowVirtualization: true
+      SelectedItem: bind SelectedItem
       ItemsSource: "{Binding Source={StaticResource CustomerView}}"
-      CanUserAddRows: true
-      CanUserDeleteRows: true
-      AutoGenerateColumns: true
-      GridLinesVisibility: "Horizontal"
+      CanUserAddRows: false
+      CanUserDeleteRows: false
+      AutoGenerateColumns: false
+      GridLinesVisibility: Horizontal
       HorizontalGridLinesBrush: resource dyn "SeperatorBrush"
       Grid.Row: "1"
       DataGridExtensions.LastColumnFill: true
       Columns: [
-        DataGridCheckBoxColumn { Header: "Checked",  Binding: "{Binding Path=Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" }
+        DataGridCheckBoxColumn {
+          Header: "Checked"
+          Binding: bind Checked
+                   set [
+                     Mode: TwoWay
+                     UpdateSourceTrigger: PropertyChanged
+                   ]
+        }
         DataGridTextColumn {
           Header: "Source"
-          IsReadOnly: "True"
-          Binding: "{Binding SourceName}"
+          IsReadOnly: true
+          Binding: bind SourceName
         }
         DataGridTextColumn {
           Header: "Instance"
-          IsReadOnly: "True"
-          Binding: "{Binding InstanceName}"
+          IsReadOnly: true
+          Binding: bind InstanceName
         }
       ]
       GroupStyle: GroupStyle {
@@ -70,7 +77,7 @@ UserControl "MonikDesktop.Views.SourcesView" {
             Value: ControlTemplate {
               TargetType: GroupItem
               Expander {
-                IsExpanded: "True"
+                IsExpanded: true
                 Background: resource dyn "AccentColorBrush"
                 BorderBrush: resource dyn "AccentColorBrush3"
                 Foreground: resource dyn "BlackBrush"
@@ -78,11 +85,11 @@ UserControl "MonikDesktop.Views.SourcesView" {
                 Header: DockPanel {
                   TextBlock {
                     FontWeight: "Bold"
-                    Text: "{Binding Path=Name}"
+                    Text: bind Name
                     Margin: "5,0,0,0"
                     Width: "100"
                   }
-                  TextBlock { FontWeight: "Bold",  Text: "{Binding Path=ItemCount}" }
+                  TextBlock { FontWeight: "Bold",  Text: bind ItemCount }
                 }
                 Content: ItemsPresenter { }
               }

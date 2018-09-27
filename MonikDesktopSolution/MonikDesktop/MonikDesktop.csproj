@@ -297,6 +297,7 @@
     <Compile Include="Common\MonikService.cs" />
     <None Include="App.ammy" />
     <None Include="lib.ammy" />
+    <None Include="Themes\AvalonDockStyle.ammy" />
     <None Include="Views\Common.ammy" />
     <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
@@ -359,6 +360,11 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Themes\AvalonDockStyle.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>AvalonDockStyle.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\ManageGroupsView.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -419,6 +425,11 @@
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>StartupView.ammy</DependentUpon>
     </Page>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Themes\Images\PinDocMenu.png" />
+    <Resource Include="Themes\Images\PinDocMenu_Black.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.3.0.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.0.3\build\Fody.targets')" />

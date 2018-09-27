@@ -19,7 +19,6 @@ UserControl "MonikDesktop.Views.MetricsChartTooltipView" {
         ]
         Rectangle {
           Grid.Column: 0
-          Stroke: bind Series.Stroke
           Fill: bind Series.Fill
           Height: 15
           Width: 15

@@ -263,6 +263,9 @@ namespace MonikDesktop.ViewModels
 
         private bool IsNeedToShowMetricDescription(MetricDescription md)
         {
+            if (_model.Instances.IsEmpty && _model.Groups.IsEmpty)
+                return true;
+
             if (_model.Instances.Contains(md.Instance.ID))
                 return true;
 

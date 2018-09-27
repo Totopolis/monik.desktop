@@ -15,7 +15,6 @@ UserControl "MonikDesktop.Views.LogsView" {
       HorizontalGridLinesBrush: "Silver"
       VerticalGridLinesBrush: "Silver"
       GridLinesVisibility: "Horizontal"
-      Foreground: "Black"
       SelectedItem: "{Binding Model.SelectedItem}"
       ItemsSource: "{Binding LogsList}"
       RowStyle: Style {
@@ -30,6 +29,7 @@ UserControl "MonikDesktop.Views.LogsView" {
           DataTrigger {
             Binding: "{Binding Severity}"
             Value: "20"
+            Setter { Property: "Foreground",  Value: "Black" } 
             Setter { Property: "Background",  Value: "#FFFFFF64" }
           }
         ]
