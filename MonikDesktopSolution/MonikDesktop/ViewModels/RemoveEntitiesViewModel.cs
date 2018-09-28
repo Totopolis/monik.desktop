@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Reactive.Linq;
+using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -14,11 +15,13 @@ namespace MonikDesktop.ViewModels
     public class RemoveEntitiesViewModel : ViewModelBase, IRemoveEntitiesViewModel
     {
         private readonly ISourcesCache _cache;
+        private readonly IDockWindow _window;
         private string _filter;
 
-        public RemoveEntitiesViewModel(ISourcesCache cache)
+        public RemoveEntitiesViewModel(ISourcesCache cache, IDockWindow window)
         {
             _cache = cache;
+            _window = window;
 
             Title = "Remove Instances";
 
@@ -213,9 +216,7 @@ namespace MonikDesktop.ViewModels
 
         private void ShowPopupWebException(WebException e)
         {
-            //ToDo: show notification
-            //  when (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.Unauthorized)
-            Console.WriteLine($@"Web Exceptions {e}");
+            _window.ShowWebExceptionMessage(e);
         }
 
     }

@@ -6,6 +6,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Linq;
 using System.Net;
+using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -13,10 +14,12 @@ namespace MonikDesktop.ViewModels
     public class ManageGroupsViewModel : ViewModelBase, IManageGroupsViewModel
     {
         private readonly ISourcesCache _cache;
+        private readonly IDockWindow _window;
 
-        public ManageGroupsViewModel(ISourcesCache cache)
+        public ManageGroupsViewModel(ISourcesCache cache, IDockWindow window)
         {
             _cache = cache;
+            _window = window;
 
             Title = "Manage Groups";
 
@@ -98,8 +101,7 @@ namespace MonikDesktop.ViewModels
 
         private void ShowPopupWebException(WebException e)
         {
-            //ToDo: show notification
-            Console.WriteLine($@"Web Exception {e}");
+            _window.ShowWebExceptionMessage(e);
         }
         
     }

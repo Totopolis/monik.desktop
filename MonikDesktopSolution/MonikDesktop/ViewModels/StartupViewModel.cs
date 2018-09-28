@@ -7,6 +7,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using Ui.Wpf.Common;
@@ -24,13 +25,15 @@ namespace MonikDesktop.ViewModels
 
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
+        private readonly IDockWindow _window;
         private bool _isInitialized;
         private bool _isToolsShown;
 
-        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app)
+        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app, IDockWindow window)
         {
             _shell = shell;
             _cache = cache;
+            _window = window;
             
             Title = "App settings";
             App = app;
@@ -76,12 +79,12 @@ namespace MonikDesktop.ViewModels
             // Create Commands
 
             var hasUrl = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
-            NewLogCommand       = ReactiveCommand.Create(NewLog,       hasUrl);
-            NewKeepAliveCommand = ReactiveCommand.Create(NewKeepAlive, hasUrl);
-            NewMetricsCommand   = ReactiveCommand.Create(NewMetrics,   hasUrl);
+            NewLogCommand       = CreateCommandWithInit(NewLog,       hasUrl);
+            NewKeepAliveCommand = CreateCommandWithInit(NewKeepAlive, hasUrl);
+            NewMetricsCommand   = CreateCommandWithInit(NewMetrics,   hasUrl);
 
-            RemoveEntitiesCommand = ReactiveCommand.Create(RemoveEntities, hasUrl);
-            ManageGroupsCommand = ReactiveCommand.Create(ManageGroups, hasUrl);
+            RemoveEntitiesCommand = CreateCommandWithInit(RemoveEntities, hasUrl);
+            ManageGroupsCommand = CreateCommandWithInit(ManageGroups, hasUrl);
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
@@ -165,40 +168,54 @@ namespace MonikDesktop.ViewModels
             }
         }
 
-        private async Task Initialize()
+        private ReactiveCommand CreateCommandWithInit(Action act, IObservable<bool> canExecute)
         {
-            _isInitialized = true;
-
-            IsBusy = true;
-
-            await Task.Run(() => _cache.Reload());
-
-            IsBusy = false;
+            return ReactiveCommand.Create(WrapInInit(act), canExecute);
         }
 
-        private async Task NewLog()
+        private Func<Task> WrapInInit(Action act)
         {
-            if (!_isInitialized)
-                await Initialize();
+            return async () =>
+            {
+                if (_isInitialized || await Initialize())
+                    act();
+            };
+        }
 
+        private async Task<bool> Initialize()
+        {
+            try
+            {
+                IsBusy = true;
+                await Task.Run(() => _cache.Reload());
+                _isInitialized = true;
+                return true;
+            }
+            catch (WebException e)
+            {
+                _window.ShowWebExceptionMessage(e);
+                return false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void NewLog()
+        {
             _shell.ShowView<ILogsView>();
             ShowTools();
         }
 
-        private async Task NewKeepAlive()
+        private void NewKeepAlive()
         {
-            if (!_isInitialized)
-                await Initialize();
-
             _shell.ShowView<IKeepAliveView>();
             ShowTools();
         }
 
-        private async Task NewMetrics()
+        private void NewMetrics()
         {
-            if (!_isInitialized)
-                await Initialize();
-
             _shell.ShowView<IMetricsView>();
             ShowTools();
         }
@@ -216,20 +233,16 @@ namespace MonikDesktop.ViewModels
             _shell.SelectedView = _shell.Container.Resolve<IPropertiesView>();
         }
 
-        private async Task RemoveEntities()
+        private void RemoveEntities()
         {
-            if (!_isInitialized)
-                await Initialize();
-
             _shell.ShowView<IRemoveEntitiesView>();
+            _shell.SelectedView = _shell.Container.Resolve<IStartupView>();
         }
 
-        private async Task ManageGroups()
+        private void ManageGroups()
         {
-            if (!_isInitialized)
-                await Initialize();
-
             _shell.ShowView<IManageGroupsView>();
+            _shell.SelectedView = _shell.Container.Resolve<IStartupView>();
         }
 
         private void SetThemeMode(bool isLight)
