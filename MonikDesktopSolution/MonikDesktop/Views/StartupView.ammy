@@ -44,7 +44,6 @@ UserControl "MonikDesktop.Views.StartupView"
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
-  Background: resource dyn "WhiteBrush"
   Grid
   {
     StackPanel

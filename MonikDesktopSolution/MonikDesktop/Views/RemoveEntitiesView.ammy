@@ -47,7 +47,6 @@ alias NodeView(type, color, removeCommand)
 UserControl "MonikDesktop.Views.RemoveEntitiesView"
 {
   Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
-  Background: resource dyn "WhiteBrush"
   Grid
   {
     #TwoRows("Auto", "*")

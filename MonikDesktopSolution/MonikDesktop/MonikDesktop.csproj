@@ -218,6 +218,7 @@
     <Compile Include="Common\Enums\SeverityCutoffType.cs" />
     <Compile Include="Common\Enums\TopType.cs" />
     <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
+    <Compile Include="Common\ModelsApi\EGroupCreateRequest.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
     <Compile Include="Common\ModelsApi\EMetric.cs" />
     <Compile Include="Common\ModelsApi\EMetricHistory.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="Common\ReactiveExtensions.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
+    <Compile Include="ViewModels\GroupCreateDialogResult.cs" />
     <Compile Include="ViewModels\GroupItem.cs" />
     <Compile Include="ViewModels\MainWindowExtensions.cs" />
     <Compile Include="ViewModels\ManageGroupsViewModel.cs" />
@@ -257,6 +259,9 @@
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="Views\BindingProxy.cs" />
+    <Compile Include="Views\GroupCreateDialog.ammy.cs">
+      <DependentUpon>GroupCreateDialog.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\ManageGroupsView.ammy.cs">
       <DependentUpon>ManageGroupsView.ammy</DependentUpon>
     </Compile>
@@ -300,6 +305,7 @@
     <None Include="lib.ammy" />
     <None Include="Themes\AvalonDockStyle.ammy" />
     <None Include="Views\Common.ammy" />
+    <None Include="Views\GroupCreateDialog.ammy" />
     <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
     <None Include="Views\MetricsSampleData.ammy" />
@@ -365,6 +371,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>AvalonDockStyle.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\GroupCreateDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>GroupCreateDialog.ammy</DependentUpon>
     </Page>
     <Page Include="Views\ManageGroupsView.g.xaml">
       <SubType>Designer</SubType>

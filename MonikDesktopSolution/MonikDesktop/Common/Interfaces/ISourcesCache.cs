@@ -17,6 +17,7 @@ namespace MonikDesktop.Common.Interfaces
 
 	    void AddInstanceToGroup(Instance i, Group g);
 	    void RemoveInstanceFromGroup(Instance i, Group g);
+	    Group CreateGroup(string name, bool isDefault, string description);
 	    void RemoveGroup(Group g);
 
         void Reload();

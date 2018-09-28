@@ -32,6 +32,7 @@ namespace MonikDesktop.ViewModels
                 .Subscribe(v => ShowGroup(v.Value));
 
             RemoveGroupCommand = ReactiveCommand.Create<GroupItem>(RemoveGroup);
+            CreateGroupCommand = ReactiveCommand.Create(CreateGroup);
         }
 
         [Reactive] public GroupItem SelectedGroup { get; set; }
@@ -40,6 +41,7 @@ namespace MonikDesktop.ViewModels
         public ReactiveList<Instance> ListWithoutGroup { get; set; }
 
         public ReactiveCommand RemoveGroupCommand { get; set; }
+        public ReactiveCommand CreateGroupCommand { get; set; }
 
         private void ShowGroup(GroupItem gItem)
         {
@@ -60,6 +62,27 @@ namespace MonikDesktop.ViewModels
 
                 if (SelectedGroup == gItem)
                     SelectedGroup = ListGroups.FirstOrDefault();
+            }
+            catch (WebException e)
+            {
+                ShowPopupWebException(e);
+            }
+        }
+
+        private async void CreateGroup()
+        {
+            var result = await ((MainWindow)_window).ShowGroupCreateDialog();
+
+            if (result == null)
+                return;
+
+            try
+            {
+                var group = _cache.CreateGroup(result.Name, result.IsDeafult, result.Description);
+
+                var gItem = new GroupItem(group);
+                ListGroups.Add(gItem);
+                SelectedGroup = gItem;
             }
             catch (WebException e)
             {

@@ -1,11 +1,16 @@
 ﻿alias HeaderText(text)
 {
-  TextBlock
+  Border
   {
-    HorizontalAlignment: Center
-    VerticalAlignment: Center
-    FontSize: 20
-    Text: $text
+    BorderBrush: resource dyn "AccentBaseColorBrush"
+    BorderThickness: "0,0,0,4"
+    TextBlock
+    {
+      HorizontalAlignment: Center
+      VerticalAlignment: Center
+      FontSize: 20
+      Text: $text
+    }
   }
 }
 
@@ -43,21 +48,93 @@ alias InstancesData()
   }
 }
 
+alias PlusButton(bindingCommand, bindingCommandParameter=none)
+{
+  Button 
+  {
+    "+"
+    Command: $bindingCommand
+    CommandParameter: $bindingCommandParameter
+    Style: Style {
+      TargetType: Button
+      Setter 
+      {
+        Property: "Template"
+        Value: ControlTemplate
+        {
+          TargetType: Button
+      
+          Border "button"
+          { 
+            Grid.Column: 0
+            HorizontalAlignment: Center
+            VerticalAlignment: Center
+            Padding: "7,0,7,5"
+            Background: Green
+            CornerRadius: 10
+            Width: 30
+            Height: 30
+            TextBlock 
+            {
+              HorizontalAlignment: Center
+              VerticalAlignment: Center
+              Foreground: White
+              FontSize: 20
+              FontWeight: "Bold"
+              Text: "{TemplateBinding Button.Content}"
+            }
+          }
+      
+          Triggers:
+          [
+            Trigger
+            {
+              Property: "IsMouseOver"
+              Value: true
+              #Setter("Background", SeaGreen, "button")
+            }
+            Trigger
+            {
+              Property: "IsPressed"
+              Value: true
+              #Setter("Background", DarkGreen, "button")
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+
+
 UserControl "MonikDesktop.Views.ManageGroupsView"
 {
   Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
-  Background: resource dyn "WhiteBrush"
   Grid 
   {
     #TwoRows(50)
     #FiveColumns("*", 20, "*", 20, "*")
-    @HeaderText("Groups")
+    Grid 
     {
       #Cell(0, 0)
+      #ThreeColumns("*", "Auto", "*")
+      @HeaderText("Groups")
+      {
+        Grid.Column: 1
+      }
+      @PlusButton(bind CreateGroupCommand) 
+      {
+        Grid.Column: 2
+      }
     }
-    @HeaderText("In Group")
+    Grid 
     {
       #Cell(0, 2)
+      #ThreeColumns("*", "Auto", "*")
+      @HeaderText("In Group")
+      {
+        Grid.Column: 1
+      }
     }
     Grid
     {

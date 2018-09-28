@@ -124,6 +124,15 @@ namespace MonikDesktop.Common
 	        Delete($"groups/{gId}/instances/{iId}");
         }
 
+	    public EGroup CreateGroup(EGroupCreateRequest request)
+	    {
+	        var reqJson = JsonConvert.SerializeObject(request);
+	        var resJson = PostJson("groups", reqJson, true);
+
+	        var result = JsonConvert.DeserializeObject<EGroup>(resJson);
+	        return result;
+	    }
+
 	    public void RemoveGroup(short gId)
 	    {
             Delete($"groups/{gId}");
@@ -133,19 +142,20 @@ namespace MonikDesktop.Common
 	    {
 	        var request = CreateRequest(aMethod);
 	        request.Method = "DELETE";
-            request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+            AddAuthorization(request);
 
 	        request.GetResponse();
 	    }
 
-	    private void Put(string aMethod)
-	    {
-	        var request = CreateRequest(aMethod);
-	        request.Method = "PUT";
-	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
-	        request.ContentLength = 0;
+        private void Put(string aMethod)
+        {
+            var request = CreateRequest(aMethod);
+            request.Method = "PUT";
+            AddAuthorization(request);
 
-	        request.GetResponse();
+            request.ContentLength = 0;
+
+            request.GetResponse();
         }
 
         private string GetJson(string aMethod)
@@ -162,14 +172,17 @@ namespace MonikDesktop.Common
 			}
 		}
 
-		private string PostJson(string aMethod, string aJson)
+		private string PostJson(string aMethod, string aJson, bool needAuthorization = false)
 		{
 		    var request = CreateRequest(aMethod);
 			request.Method = WebRequestMethods.Http.Post;
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
 
-			using (var sw = new StreamWriter(request.GetRequestStream()))
+            if (needAuthorization)
+                AddAuthorization(request);
+
+            using (var sw = new StreamWriter(request.GetRequestStream()))
 			{
 				sw.Write(aJson);
 			}
@@ -189,5 +202,10 @@ namespace MonikDesktop.Common
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             return request;
 	    }
+
+	    private void AddAuthorization(HttpWebRequest request)
+	    {
+	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+        }
     }
 }

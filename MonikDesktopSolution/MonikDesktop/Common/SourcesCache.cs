@@ -1,4 +1,5 @@
 ﻿using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,7 +133,28 @@ namespace MonikDesktop.Common
 	        g.Instances.Remove(i);
 	    }
 
-	    public void RemoveGroup(Group g)
+	    public Group CreateGroup(string name, bool isDefault, string description)
+	    {
+	        var newGroup = _service.CreateGroup(new EGroupCreateRequest
+	        {
+	            Name = name,
+	            IsDefault = isDefault,
+	            Description = description
+	        });
+
+	        var gr = new Group
+	        {
+	            ID = newGroup.ID,
+	            IsDefault = newGroup.IsDefault,
+	            Name = newGroup.Name,
+	            Instances = new List<Instance>()
+	        };
+
+            _groups.Add(gr);
+	        return gr;
+	    }
+
+        public void RemoveGroup(Group g)
 	    {
 	        _service.RemoveGroup(g.ID);
 	        _groups.Remove(g);

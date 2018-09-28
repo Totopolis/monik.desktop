@@ -1,5 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using MonikDesktop.Views;
 using System.Net;
+using System.Threading.Tasks;
 using Ui.Wpf.Common;
 
 namespace MonikDesktop.ViewModels
@@ -25,5 +27,22 @@ namespace MonikDesktop.ViewModels
                     return e.ToString();
             }
         }
+
+
+        public static async Task<GroupCreateDialogResult> ShowGroupCreateDialog(this IDockWindow window)
+        {
+            var view = (MainWindow) window;
+
+            var dialog = new GroupCreateDialog();
+
+            await view.ShowMetroDialogAsync(dialog);
+
+            var result = await dialog.WaitForButtonPressAsync();
+                
+            await view.HideMetroDialogAsync(dialog);
+
+            return result;
+        }
+
     }
 }

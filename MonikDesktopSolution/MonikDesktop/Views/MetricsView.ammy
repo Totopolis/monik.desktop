@@ -6,7 +6,6 @@ UserControl "MonikDesktop.Views.MetricsView" {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]
-  Background: resource dyn "WhiteBrush"
   Grid {
     #TwoColumns("Auto", "*")
     @SimpleDataGrid(20) "MainGrid" {

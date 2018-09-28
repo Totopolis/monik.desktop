@@ -25,6 +25,7 @@ namespace MonikDesktop.Common.Interfaces
 
         void AddInstanceToGroup(int iId, short gId);
         void RemoveInstanceFromGroup(int iId, short gId);
+        EGroup CreateGroup(EGroupCreateRequest request);
         void RemoveGroup(short gId);
     }
 }
