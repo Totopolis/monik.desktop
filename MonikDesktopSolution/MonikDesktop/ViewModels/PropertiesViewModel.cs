@@ -20,8 +20,17 @@ namespace MonikDesktop.ViewModels
             Title = "Properties";
 
             shell.WhenAnyValue(x => x.SelectedView)
-               .Where(v => v is IShowView)
-               .Subscribe(v => OnSelectedWindow(v as IShowView));
+               .Where(v => !(v is IToolView))
+               .Subscribe(v =>
+                {
+                    if (v is IShowView showView)
+                    {
+                        OnSelectedShowView(showView);
+                        IsEnabled = true;
+                    }
+                    else
+                        IsEnabled = false;
+                });
         }
 
         [Reactive] public ShowModel   Model      { get; private set; }
@@ -47,7 +56,7 @@ namespace MonikDesktop.ViewModels
         [Reactive] public Visibility KeepAlivesVisibility { get; set; } = Visibility.Collapsed;
         [Reactive] public Visibility MetricsVisibility    { get; set; } = Visibility.Collapsed;
 
-        private void OnSelectedWindow(IShowView aWindow)
+        private void OnSelectedShowView(IShowView aWindow)
         {
             switch (aWindow)
             {

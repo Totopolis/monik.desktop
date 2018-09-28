@@ -16,14 +16,9 @@ namespace MonikDesktop.ViewModels
 			Title = "Log Description";
 
             shell.WhenAnyValue(x => x.SelectedView)
-                .Where(v => v is IShowView)
-                .Subscribe(v => OnSelectedWindow(v as IShowView));
+                .Where(v => !(v is IToolView))
+                .Subscribe(v => IsEnabled = v is ILogsView);
         }
-
-	    private void OnSelectedWindow(IShowView aWindow)
-	    {
-	        IsEnabled = aWindow is ILogsView;
-	    }
 
         [Reactive] public LogItem         SelectedItem    { get; set; } = null;
 	} //end of class

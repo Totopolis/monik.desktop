@@ -37,8 +37,18 @@ namespace MonikDesktop.ViewModels
             FillSourcesTree();
 
             shell.WhenAnyValue(x => x.SelectedView)
-               .Where(v => v is IShowView)
-               .Subscribe(v => OnSelectedWindow(v as IShowView));
+                .Where(v => !(v is IToolView))
+                .Subscribe(v =>
+                {
+                    if (v is IShowView showView &&
+                        showView.ShowViewModel.Model is WithSourcesShowModel model)
+                    {
+                        UpdateModel(model);
+                        IsEnabled = true;
+                    }
+                    else
+                        IsEnabled = false;
+                });
 
             this.ObservableForProperty(x => x.SelectedItem)
                .Where(v => v.Value != null)
@@ -161,47 +171,38 @@ namespace MonikDesktop.ViewModels
             SourceItems.ChangeTrackingEnabled = true;
         }
 
-        private void OnSelectedWindow(IShowView aWindow)
+        private void UpdateModel(WithSourcesShowModel model)
         {
-            if (aWindow.ShowViewModel.Model is WithSourcesShowModel model)
-            {
-                IsEnabled = true;
+            if (model == _model)
+                return;
 
-                if (model == _model)
-                    return;
+            _model = model;
 
-                _model = model;
+            SelectNoneCommand = null;
+            SelectGroupCommand = null;
 
-                SelectNoneCommand = null;
-                SelectGroupCommand = null;
+            _selectedGroups = _model.Groups;
+            _selectedInstances = _model.Instances;
 
-                _selectedGroups = _model.Groups;
-                _selectedInstances = _model.Instances;
+            SyncCheckStatuses();
 
-                SyncCheckStatuses();
+            // update view
+            this.RaisePropertyChanged("SourceItems");
 
-                // update view
-                this.RaisePropertyChanged("SourceItems");
+            // Select None Command
+            var canSelectNone = _model.WhenAny(
+                x => x.Instances.Count,
+                x => x.Groups.Count,
+                (ins, gr) => ins.Value > 0 || gr.Value > 0);
 
-                // Select None Command
-                var canSelectNone = _model.WhenAny(
-                    x => x.Instances.Count,
-                    x => x.Groups.Count,
-                    (ins, gr) => ins.Value > 0 || gr.Value > 0);
+            SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
 
-                SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
+            // Select Group Command
+            var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
+                .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
+                .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
 
-                // Select Group Command
-                var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
-                    .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
-                    .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
-
-                SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
-            }
-            else
-            {
-                IsEnabled = false;
-            }
+            SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
         }
 
         /// <summary>
