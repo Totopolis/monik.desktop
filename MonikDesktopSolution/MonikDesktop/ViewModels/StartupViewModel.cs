@@ -23,6 +23,10 @@ namespace MonikDesktop.ViewModels
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
         [Reactive] public string AuthTokenDescription { get; set; }
 
+        public ReactiveList<string> Accents { get; } = new ReactiveList<string>(ThemeManager.Accents.Select(a => a.Name));
+        [Reactive] public string Accent { get; set; }
+        [Reactive] public bool IsDark { get; set; }
+
         private readonly IShell _shell;
         private readonly ISourcesCache _cache;
         private readonly IDockWindow _window;
@@ -42,6 +46,17 @@ namespace MonikDesktop.ViewModels
 
             this.WhenAnyValue(x => x.AppTitle)
                 .Subscribe(x => shell.Title = x);
+
+            // Theme
+
+            Accent = Settings.Default.Accent;
+            IsDark = Settings.Default.IsDark;
+            UpdateTheme(false);
+
+            this.ObservableForProperty(x => x.Accent)
+                .Subscribe(_ => UpdateTheme());
+            this.ObservableForProperty(x => x.IsDark)
+                .Subscribe(_ => UpdateTheme());
 
             // Server Urls
 
@@ -88,8 +103,6 @@ namespace MonikDesktop.ViewModels
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
-
-            ThemeModeChangedCommand = ReactiveCommand.Create<bool>(SetThemeMode);
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
@@ -101,8 +114,6 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
         public ReactiveCommand RemoveAuthTokenCommand { get; set; }
-
-        public ReactiveCommand ThemeModeChangedCommand { get; set; }
 
         public string UpdateServerUrl
         {
@@ -245,20 +256,18 @@ namespace MonikDesktop.ViewModels
             _shell.SelectedView = _shell.Container.Resolve<IStartupView>();
         }
 
-        private void SetThemeMode(bool isLight)
+        private void UpdateTheme(bool needToSave = true)
         {
-            if (isLight)
+            if (needToSave)
             {
-                ThemeManager.ChangeAppStyle(Application.Current,
-                    ThemeManager.GetAccent("Blue"),
-                    ThemeManager.GetAppTheme("BaseLight"));
+                Settings.Default.Accent = Accent;
+                Settings.Default.IsDark = IsDark;
+                Settings.Default.Save();
             }
-            else
-            {
-                ThemeManager.ChangeAppStyle(Application.Current,
-                    ThemeManager.GetAccent("Green"),
-                    ThemeManager.GetAppTheme("BaseDark"));
-            }
+
+            ThemeManager.ChangeAppStyle(Application.Current,
+                ThemeManager.GetAccent(Accent),
+                ThemeManager.GetAppTheme(IsDark ? "BaseDark" : "BaseLight"));
         }
     }
 }

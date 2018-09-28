@@ -46,5 +46,29 @@ namespace MonikDesktop.Properties {
                 this["AuthToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Blue")]
+        public string Accent {
+            get {
+                return ((string)(this["Accent"]));
+            }
+            set {
+                this["Accent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsDark {
+            get {
+                return ((bool)(this["IsDark"]));
+            }
+            set {
+                this["IsDark"] = value;
+            }
+        }
     }
 }

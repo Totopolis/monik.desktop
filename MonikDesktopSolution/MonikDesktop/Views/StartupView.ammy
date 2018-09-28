@@ -52,27 +52,42 @@ UserControl "MonikDesktop.Views.StartupView"
       Margin: "3"
 
       Grid { 
-        #ThreeColumns("130", "Auto", "*")
+        #ThreeColumns("120", "80", "*")
+        #TwoRows()
         ToggleSwitch {
-          Grid.Column:0
+          #Cell(0,0,2)
           HorizontalContentAlignment: Center
           OnLabel: "Dark"
           OffLabel: "Light"
-          CheckChangedCommand: bind ThemeModeChangedCommand
-          CheckChangedCommandParameter: bind IsChecked from $this
+          IsChecked: bind IsDark
         }
         TextBlock {
-          Grid.Column: 1
-          Margin: "20,0,10,0"
+          #Cell(0,1)
+          Margin: "20,0,0,0"
+          VerticalAlignment: Center
+          "Color"
+        }
+        ComboBox {
+          #Cell(0,2)
+          Margin: "0,5,0,5"
+          ItemsSource: bind Accents
+          SelectedValue: bind Accent
+        }
+        TextBlock {
+          #Cell(1,1)
+          Margin: "20,0,0,0"
           VerticalAlignment: Center
           "Header"
         }
         TextBox {
-          Grid.Column: 2
+          #Cell(1,2)
+          Margin: "0,5,0,5"
           VerticalAlignment: Center
           Text: bind AppTitle
         }
       }
+
+      Separator { Margin: 10 }
 
       Label { "Server Url" }
       @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "App.ServerUrl", "UpdateServerUrl") {}
