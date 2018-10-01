@@ -191,9 +191,7 @@
       <DependentUpon>App.ammy</DependentUpon>
     </Compile>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="Common\AppModel.cs" />
     <Compile Include="Common\Converters\LevelToNameConverter.cs" />
-    <Compile Include="Common\Interfaces\IAppModel.cs" />
     <Compile Include="Common\Interfaces\IKeepAliveViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogDescriptionViewModel.cs" />
     <Compile Include="Common\Interfaces\ILogsViewModel.cs" />
@@ -218,6 +216,7 @@
     <Compile Include="Common\Enums\SeverityCutoffType.cs" />
     <Compile Include="Common\Enums\TopType.cs" />
     <Compile Include="Common\Interfaces\IStartupViewModel.cs" />
+    <Compile Include="Common\Interfaces\ISourcesCacheProvider.cs" />
     <Compile Include="Common\ModelsApi\EGroupCreateRequest.cs" />
     <Compile Include="Common\ModelsApi\EKeepAliveRequest.cs" />
     <Compile Include="Common\ModelsApi\EMetric.cs" />
@@ -241,6 +240,7 @@
     <Compile Include="Common\ReactiveExtensions.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
+    <Compile Include="Common\SourcesCacheProvider.cs" />
     <Compile Include="ViewModels\GroupCreateDialogResult.cs" />
     <Compile Include="ViewModels\GroupItem.cs" />
     <Compile Include="ViewModels\MainWindowExtensions.cs" />
@@ -254,7 +254,7 @@
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />
     <Compile Include="ViewModels\ShowModels\LogsModel.cs" />
     <Compile Include="ViewModels\ShowModels\WithSourcesShowModel.cs" />
-    <Compile Include="ViewModels\SourceItem.cs" />
+    <Compile Include="Common\ModelsApp\SourceItem.cs" />
     <Compile Include="ViewModels\ShowModels\ShowModel.cs" />
     <Compile Include="ViewModels\PropertiesViewModel.cs" />
     <Compile Include="ViewModels\StartupViewModel.cs" />

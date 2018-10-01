@@ -8,6 +8,12 @@ UserControl "MonikDesktop.Views.PropertiesView"
     {
       Orientation: "Vertical"
       Margin: "3"
+      TextBlock 
+      {
+        Margin: 5
+        Text: bind "Model.Cache.Service.ServerUrl"
+      }
+      Separator {  }
       Button
       {
         Command: bind ShowWindow.StartCommand

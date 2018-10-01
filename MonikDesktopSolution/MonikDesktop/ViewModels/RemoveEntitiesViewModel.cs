@@ -18,9 +18,9 @@ namespace MonikDesktop.ViewModels
         private readonly IDockWindow _window;
         private string _filter;
 
-        public RemoveEntitiesViewModel(ISourcesCache cache, IDockWindow window)
+        public RemoveEntitiesViewModel(ISourcesCacheProvider cacheProvider, IDockWindow window)
         {
-            _cache = cache;
+            _cache = cacheProvider.CurrentCache;
             _window = window;
 
             Title = "Remove Instances";

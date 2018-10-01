@@ -10,14 +10,15 @@ namespace MonikDesktop.Common
 {
     public class MonikService : IMonikService
 	{
-		private readonly IAppModel _app;
+	    public Uri ServerUrl { get; }
+	    public string AuthToken { get; set; }
 
-		public MonikService(IAppModel app)
-		{
-			_app = app;
-		}
+	    public MonikService(Uri url)
+	    {
+	        ServerUrl = url;
+	    }
 
-		public EGroup[] GetGroups()
+        public EGroup[] GetGroups()
 		{
 			var json = GetJson("groups");
 			var result = JsonConvert.DeserializeObject<EGroup[]>(json);
@@ -197,7 +198,7 @@ namespace MonikDesktop.Common
 
 	    private HttpWebRequest CreateRequest(string aMethod)
 	    {
-	        var uri = new Uri(_app.ServerUrl, aMethod);
+	        var uri = new Uri(ServerUrl, aMethod);
 	        var request = (HttpWebRequest) WebRequest.Create(uri);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             return request;
@@ -205,7 +206,7 @@ namespace MonikDesktop.Common
 
 	    private void AddAuthorization(HttpWebRequest request)
 	    {
-	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {_app.AuthToken}");
+	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {AuthToken}");
         }
-    }
+	}
 }

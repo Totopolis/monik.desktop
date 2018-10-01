@@ -1,31 +1,45 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MonikDesktop.Common
 {
     public class SourcesCache : ISourcesCache
-	{
-		private readonly IMonikService _service;
-	    private List<Group> _groups = new List<Group>();
+    {
+        private readonly IMonikService _service;
+        private List<Group> _groups = new List<Group>();
 		private List<Source> _sources = new List<Source>();
 	    private List<Metric> _metrics = new List<Metric>();
 		private Dictionary<int, Instance> _instances= new Dictionary<int, Instance>();
 
-		private readonly Source _unknownSource;
+        private List<SourceItem> _sourceItems = new List<SourceItem>();
+
+
+        private readonly Source _unknownSource;
 		private readonly Instance _unknownInstance;
 
-		public SourcesCache(IMonikService aService)
+		public SourcesCache(Uri url, Func<Uri, IMonikService> serviceFactory)
 		{
-			_service = aService;
+			_service = serviceFactory(url);
 
 			_unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
 		}
 
-	    public void Reload()
+	    public bool Initialized { get; private set; }
+	    public async Task Initialize()
+	    {
+	        await Task.Run(() => Reload());
+	        Initialized = true;
+	    }
+
+        public IMonikService Service => _service;
+
+        public void Reload()
 		{
             var sources = _service.GetSources();
 		    var instances = _service.GetInstances();
@@ -64,6 +78,8 @@ namespace MonikDesktop.Common
 		        }
 		    ).ToList();
 
+            var instancesInGroup = new HashSet<int>();
+
 			_groups = new List<Group>();
 			foreach (var it in groups)
 			{
@@ -78,17 +94,43 @@ namespace MonikDesktop.Common
 					    .ToList()
 				};
 
+                instancesInGroup.UnionWith(it.Instances);
+
 				_groups.Add(gr);
 			}
-		}
 
-		public Group[] Groups => _groups.ToArray();
+		    _sourceItems = _groups
+		        .SelectMany(gr => gr.Instances,
+		            (gr, inst) => new SourceItem
+		            {
+		                GroupID = gr.ID,
+		                GroupName = gr.Name,
+		                SourceName = inst.Source.Name,
+		                InstanceName = inst.Name,
+		                InstanceID = inst.ID
+		            })
+		        .Concat(_instances.Values
+		            .Where(inst => !instancesInGroup.Contains(inst.ID))
+		            .Select(inst => new SourceItem
+		            {
+		                GroupID = 0,
+		                GroupName = "[NOGROUP]",
+		                SourceName = inst.Source.Name,
+		                InstanceName = inst.Name,
+		                InstanceID = inst.ID
+		            }))
+		        .ToList();
+        }
+
+	    public Group[] Groups => _groups.ToArray();
 
 		public Source[] Sources => _sources.ToArray();
 
 		public Instance[] Instances => _instances.Values.ToArray();
 
 	    public Metric[] Metrics => _metrics.ToArray();
+
+        public SourceItem[] SourceItems => _sourceItems.ToArray();
 
 	    public void RemoveSource(Source v)
 	    {

@@ -125,8 +125,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
           Header: "Tree View"
           TreeView "RemovableEntities"
           {
-            VirtualizingStackPanel.IsVirtualizing: true
-            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            VirtualizingPanel.IsVirtualizing: true
+            VirtualizingPanel.VirtualizationMode: "Recycling"
             ItemsSource: bind SourcesTree
             Resources: [
               HierarchicalDataTemplate
@@ -154,8 +154,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
           Header: "Sources"
           @SimpleDataGrid() "SourcesGrid"
           {
-            VirtualizingStackPanel.IsVirtualizing: true
-            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            VirtualizingPanel.IsVirtualizing: true
+            VirtualizingPanel.VirtualizationMode: "Recycling"
             ItemsSource: bind SourcesFiltered
             Columns: [
               DataGridTextColumn
@@ -190,8 +190,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
           Header: "Instances"
           @SimpleDataGrid() "InstancesGrid"
           {
-            VirtualizingStackPanel.IsVirtualizing: true
-            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            VirtualizingPanel.IsVirtualizing: true
+            VirtualizingPanel.VirtualizationMode: "Recycling"
             ItemsSource: bind InstancesFiltered
             Columns: [
               DataGridTextColumn
@@ -232,8 +232,8 @@ UserControl "MonikDesktop.Views.RemoveEntitiesView"
           Header: "Metrics"
           @SimpleDataGrid "MetricsGrid"
           {
-            VirtualizingStackPanel.IsVirtualizing: true
-            VirtualizingStackPanel.VirtualizationMode: "Recycling"
+            VirtualizingPanel.IsVirtualizing: true
+            VirtualizingPanel.VirtualizationMode: "Recycling"
             ItemsSource: bind MetricsFiltered
             Columns: [
               DataGridTextColumn

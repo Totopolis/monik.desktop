@@ -1,10 +1,14 @@
 ﻿using MonikDesktop.Common.ModelsApi;
+using System;
 using System.Collections.Generic;
 
 namespace MonikDesktop.Common.Interfaces
 {
     public interface IMonikService
     {
+        Uri ServerUrl { get; }
+        string AuthToken { get; set; }
+
         ESource[] GetSources();
         EInstance[] GetInstances();
         EMetric[] GetMetrics();

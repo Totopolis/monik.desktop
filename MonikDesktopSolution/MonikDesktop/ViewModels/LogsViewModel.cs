@@ -17,20 +17,18 @@ namespace MonikDesktop.ViewModels
 {
     public class LogsViewModel : ViewModelBase, ILogsViewModel
 	{
-		private readonly IMonikService _service;
-		private readonly ISourcesCache _cache;
-
 		private readonly LogsModel _model;
 		
 		private IDisposable _updateExecutor;
 
-		public LogsViewModel(IShell aShell, IMonikService aService, ISourcesCache aCache)
+		public LogsViewModel(IShell aShell, ISourcesCacheProvider cacheProvider)
 		{
-			_service = aService;
-			_cache = aCache;
-
 			LogsList = new ReactiveList<LogItem>();
-			_model = new LogsModel {Caption = "Logs"};
+		    _model = new LogsModel
+		    {
+		        Caption = "Logs",
+		        Cache = cacheProvider.CurrentCache
+		    };
 
 			_model.WhenAnyValue(x => x.Caption, x => x.Online)
 				.Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -121,7 +119,7 @@ namespace MonikDesktop.ViewModels
 
 			try
 			{
-				response = _service.GetLogs(req);
+				response = _model.Cache.Service.GetLogs(req);
 			}
 			catch
 			{
@@ -149,7 +147,7 @@ namespace MonikDesktop.ViewModels
 			        ReceivedStr = x.Received.ToLocalTime().ToString(_model.DateTimeFormat),
 			        Level       = x.Level,
 			        Severity    = x.Severity,
-			        Instance    = _cache.GetInstance(x.InstanceID),
+			        Instance    = _model.Cache.GetInstance(x.InstanceID),
 			        Body        = x.Body.Replace(Environment.NewLine, "")
 			    };
 			});

@@ -1,16 +1,19 @@
-﻿using System;
+﻿using MonikDesktop.Common.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
-	public class ShowModel : ReactiveObject
+    public class ShowModel : ReactiveObject
 	{
 		protected ShowModel()
 		{
 			this.ObservableForProperty(x => x.RefreshSec).Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
 		}
+
+        public ISourcesCache Cache { get; set; }
 
 		[Reactive]
 		public string Caption { get; set; } = "";

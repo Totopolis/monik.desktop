@@ -1,5 +1,6 @@
 ﻿using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -14,16 +15,10 @@ namespace MonikDesktop.ViewModels
 {
     public class SourcesViewModel : ViewModelBase, ISourcesViewModel
     {
-        private readonly ISourcesCache _cache;
-
-        private ReactiveList<short> _selectedGroups;
-        private ReactiveList<int>   _selectedInstances;
-
         private WithSourcesShowModel _model;
 
-        public SourcesViewModel(IShell shell, ISourcesCache aCache)
+        public SourcesViewModel(IShell shell)
         {
-            _cache = aCache;
             Title  = "Sources";
 
             SourceItems = new ReactiveList<SourceItem>();
@@ -33,8 +28,6 @@ namespace MonikDesktop.ViewModels
             FilteredItems
                .ItemChanged
                .Subscribe(x => OnSourceChanged(x.Sender));
-
-            FillSourcesTree();
 
             shell.WhenAnyValue(x => x.SelectedView)
                 .Where(v => !(v is IToolView))
@@ -61,14 +54,14 @@ namespace MonikDesktop.ViewModels
                .Subscribe(v => Filter(v.Value));
         }
 
-        public ReactiveCommand SelectNoneCommand  { get; set; }
-        public ReactiveCommand SelectGroupCommand { get; set; }
+        [Reactive] public ReactiveCommand SelectNoneCommand  { get; set; }
+        [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
         public ReactiveCommand RefreshCommand     { get; set; }
 
-        public ReactiveList<SourceItem> FilteredItems { get; private set; }
-        public ReactiveList<SourceItem> SourceItems   { get; private set; }
+        public ReactiveList<SourceItem> FilteredItems { get; }
+        public ReactiveList<SourceItem> SourceItems   { get; }
 
-        [Reactive]public SourceItem SelectedHack { get; set; }
+        [Reactive] public SourceItem SelectedHack { get; set; }
         [Reactive] public SourceItem SelectedItem { get; set; }
         [Reactive] public string FilterText { get; set; }
 
@@ -90,8 +83,8 @@ namespace MonikDesktop.ViewModels
 
         private void SelectNone()
         {
-            _selectedGroups.Clear();
-            _selectedInstances.Clear();
+            _model.Groups.Clear();
+            _model.Instances.Clear();
 
             foreach (var it in SourceItems)
                 it.Checked = false;
@@ -99,76 +92,42 @@ namespace MonikDesktop.ViewModels
 
         private void SelectGroup()
         {
-            if (SelectedHack == null || _selectedGroups.Contains(SelectedHack.GroupID))
+            if (SelectedHack == null || _model.Groups.Contains(SelectedHack.GroupID))
                 return;
 
-            foreach (var x in SourceItems.Where(x => x.GroupID == SelectedHack.GroupID).ToList())
-                x.Checked = true;
+            foreach (var x in SourceItems)
+                x.Checked = x.Checked || x.GroupID == SelectedHack.GroupID;
         }
 
         private void Refresh()
         {
-            _cache.Reload();
+            _model.Cache.Reload();
 
             FillSourcesTree();
             SyncCheckStatuses();
-
-            this.RaisePropertyChanged("SourceItems");
         }
 
         private void FillSourcesTree()
         {
-            SourceItems.Clear();
-            FilteredItems.Clear();
+            using (FilteredItems.SuppressChangeNotifications())
+            using (SourceItems.SuppressChangeNotifications())
+            {
+                SourceItems.Clear();
+                FilteredItems.Clear();
 
-            var groups    = _cache.Groups;
-            var instances = _cache.Instances;
+                SourceItems.Initialize(_model.Cache.SourceItems);
 
-            var srcItems = new List<SourceItem>();
-            var _sourceItems = groups.SelectMany(gr => gr.Instances,
-                                                 (gr, inst) => new SourceItem
-                                                 {
-                                                     GroupID      = gr.ID,
-                                                     GroupName    = gr.Name,
-                                                     SourceName   = inst.Source.Name,
-                                                     InstanceName = inst.Name,
-                                                     InstanceID   = inst.ID
-                                                 });
-
-            srcItems.AddRange(_sourceItems);
-
-            _sourceItems = instances.Where(inst => srcItems.All(x => x.InstanceID != inst.ID))
-               .Select(inst => new SourceItem
-                {
-                    GroupID      = 0,
-                    GroupName    = "[NOGROUP]",
-                    SourceName   = inst.Source.Name,
-                    InstanceName = inst.Name,
-                    InstanceID   = inst.ID
-                });
-
-            srcItems.AddRange(_sourceItems);
-
-            SourceItems.Initialize(srcItems);
-
-            FilterText = "";
-            FilteredItems.ChangeTrackingEnabled = false;
-            FilteredItems.Initialize(srcItems);
-            FilteredItems.ChangeTrackingEnabled = true;
+                FilterText = "";
+                FilteredItems.Initialize(SourceItems);
+            }
         }
 
         private void SyncCheckStatuses()
         {
-            SourceItems.ChangeTrackingEnabled = false;
-
-            foreach (var it in SourceItems)
-                it.Checked = false;
-
-            // fill from IShowWindow
-            foreach (var it in SourceItems.Where(it => _selectedGroups.Contains(it.GroupID) || _selectedInstances.Contains(it.InstanceID)).ToList())
-                it.Checked = true;
-
-            SourceItems.ChangeTrackingEnabled = true;
+            using (FilteredItems.SuppressChangeNotifications())
+            using (SourceItems.SuppressChangeNotifications())
+                foreach (var it in SourceItems)
+                    it.Checked = _model.Groups.Contains(it.GroupID) || _model.Instances.Contains(it.InstanceID);
         }
 
         private void UpdateModel(WithSourcesShowModel model)
@@ -176,19 +135,20 @@ namespace MonikDesktop.ViewModels
             if (model == _model)
                 return;
 
+            var cacheIsChanged = _model == null || model == null || _model.Cache != model.Cache;
             _model = model;
+
+            SelectedItem = null;
+            SelectedHack = null;
 
             SelectNoneCommand = null;
             SelectGroupCommand = null;
 
-            _selectedGroups = _model.Groups;
-            _selectedInstances = _model.Instances;
+            if (cacheIsChanged)
+                FillSourcesTree();
 
             SyncCheckStatuses();
-
-            // update view
-            this.RaisePropertyChanged("SourceItems");
-
+            
             // Select None Command
             var canSelectNone = _model.WhenAny(
                 x => x.Instances.Count,
@@ -200,7 +160,7 @@ namespace MonikDesktop.ViewModels
             // Select Group Command
             var canSelectGroup = this.WhenAny(x => x.SelectedHack, v => v.Value)
                 .Merge(SourceItems.ItemChanged.Select(v => v.Sender))
-                .Select(si => si != null && !_selectedGroups.Contains(si.GroupID));
+                .Select(si => si != null && !_model.Groups.Contains(si.GroupID));
 
             SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
         }
@@ -212,22 +172,22 @@ namespace MonikDesktop.ViewModels
         private void OnSourceChanged(SourceItem aItem)
         {
             if (aItem.Checked)
-                _selectedInstances.Add(aItem.InstanceID);
+                _model.Instances.Add(aItem.InstanceID);
             else
-                _selectedInstances.Remove(aItem.InstanceID);
+                _model.Instances.Remove(aItem.InstanceID);
 
-            if (!aItem.Checked && (aItem.GroupID > 0) && _selectedGroups.Contains(aItem.GroupID))
+            if (!aItem.Checked && (aItem.GroupID > 0) && _model.Groups.Contains(aItem.GroupID))
             {
                 var checkedItems = SourceItems
                    .Where(x => (x.GroupID == aItem.GroupID) && x.Checked)
                    .Select(x => x.InstanceID);
 
-                _selectedInstances.AddRange(checkedItems);
+                _model.Instances.AddRange(checkedItems);
 
-                _selectedGroups.Remove(aItem.GroupID);
+                _model.Groups.Remove(aItem.GroupID);
             }
 
-            if (aItem.Checked && (aItem.GroupID > 0) && !_selectedGroups.Contains(aItem.GroupID))
+            if (aItem.Checked && (aItem.GroupID > 0) && !_model.Groups.Contains(aItem.GroupID))
             {
                 var allItems = SourceItems
                    .Where(x => x.GroupID == aItem.GroupID)
@@ -239,8 +199,8 @@ namespace MonikDesktop.ViewModels
 
                 if (allItems.Count == allCheckedItems.Count)
                 {
-                    _selectedGroups.Add(aItem.GroupID);
-                    _selectedInstances.RemoveAll(allItems.Select(x => x.InstanceID));
+                    _model.Groups.Add(aItem.GroupID);
+                    _model.Instances.RemoveAll(allItems.Select(x => x.InstanceID));
                 }
             }
         }

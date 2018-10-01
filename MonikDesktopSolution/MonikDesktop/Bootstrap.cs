@@ -14,11 +14,11 @@ namespace MonikDesktop
 			var builder = new ContainerBuilder();
 
 		    builder.RegisterType<Shell>().As<IShell>().SingleInstance();
-            builder.RegisterType<AppModel>().As<IAppModel>().SingleInstance();
 			builder.RegisterType<MainWindow>().As<IDockWindow>().SingleInstance();
 
 			builder.RegisterType<MonikService>().As<IMonikService>();
-			builder.RegisterType<SourcesCache>().As<ISourcesCache>().SingleInstance();
+		    builder.RegisterType<SourcesCache>().As<ISourcesCache>();
+		    builder.RegisterType<SourcesCacheProvider>().As<ISourcesCacheProvider>().SingleInstance();
 
             // ViewModels
 			builder.RegisterType<LogsViewModel>().As<ILogsViewModel>();

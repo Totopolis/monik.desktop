@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MonikDesktop.ViewModels
+namespace MonikDesktop.Common.ModelsApp
 {
 	public class SourceItem : ReactiveObject
 	{

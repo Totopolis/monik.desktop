@@ -33,6 +33,7 @@ UserControl "MonikDesktop.Views.SourcesView" {
       }
     }
     DataGrid {
+      VirtualizingPanel.VirtualizationMode: "Recycling"
       VirtualizingPanel.IsVirtualizingWhenGrouping: true
       VirtualizingPanel.IsVirtualizing: true
       VirtualizingPanel.IsContainerVirtualizable: true

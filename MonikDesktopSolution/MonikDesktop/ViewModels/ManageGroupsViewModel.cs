@@ -16,9 +16,9 @@ namespace MonikDesktop.ViewModels
         private readonly ISourcesCache _cache;
         private readonly IDockWindow _window;
 
-        public ManageGroupsViewModel(ISourcesCache cache, IDockWindow window)
+        public ManageGroupsViewModel(ISourcesCacheProvider cacheProvider, IDockWindow window)
         {
-            _cache = cache;
+            _cache = cacheProvider.CurrentCache;
             _window = window;
 
             Title = "Manage Groups";

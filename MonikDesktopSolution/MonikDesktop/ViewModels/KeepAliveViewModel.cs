@@ -14,20 +14,18 @@ namespace MonikDesktop.ViewModels
 {
     public class KeepAliveViewModel : ViewModelBase, IKeepAliveViewModel
     {
-        private readonly IMonikService _service;
-        private readonly ISourcesCache _cache;
-
         private readonly KeepAliveModel _model;
 
         private IDisposable _updateExecutor;
 
-        public KeepAliveViewModel(IMonikService aService, ISourcesCache aCache)
+        public KeepAliveViewModel(ISourcesCacheProvider cacheProvider)
         {
-            _service = aService;
-            _cache   = aCache;
-
             KeepALiveList = new ReactiveList<KeepALiveItem>();
-            _model        = new KeepAliveModel {Caption = "KeepAlives"};
+            _model = new KeepAliveModel
+            {
+                Caption = "KeepAlives",
+                Cache = cacheProvider.CurrentCache
+            };
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -94,7 +92,7 @@ namespace MonikDesktop.ViewModels
 
             try
             {
-                response = _service.GetKeepAlives(req);
+                response = _model.Cache.Service.GetKeepAlives(req);
             }
             catch
             {
@@ -116,7 +114,7 @@ namespace MonikDesktop.ViewModels
             if (response.Length > 0)
                 LastId = response.Max(x => x.ID);
 
-            response = response.GroupBy(x => _cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key).SelectMany(g => g.OrderBy(x => _cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
+            response = response.GroupBy(x => _model.Cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key).SelectMany(g => g.OrderBy(x => _model.Cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
 
             var result = response.Select(x =>
             {
@@ -127,7 +125,7 @@ namespace MonikDesktop.ViewModels
                 {
                     Created    = created,
                     CreatedStr = created.ToString(_model.DateTimeFormat),
-                    Instance   = _cache.GetInstance(x.InstanceID),
+                    Instance   = _model.Cache.GetInstance(x.InstanceID),
                     StatusIsOk = statusIsOk,
                     Status     = statusIsOk ? "OK" : "ERROR"
                 };

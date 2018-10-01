@@ -90,7 +90,7 @@ UserControl "MonikDesktop.Views.StartupView"
       Separator { Margin: 10 }
 
       Label { "Server Url" }
-      @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "App.ServerUrl", "UpdateServerUrl") {}
+      @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "ServerUrl", "UpdateServerUrl") {}
 
       Label { "Actions" }
       Button
@@ -115,7 +115,7 @@ UserControl "MonikDesktop.Views.StartupView"
       Separator { Margin: 10 }
 
       Label { "Authorization token" }
-      @ComboBoxWithRemove("Data.RemoveAuthTokenCommand", "AuthTokens", "App.AuthToken", "UpdateAuthToken") {}
+      @ComboBoxWithRemove("Data.RemoveAuthTokenCommand", "AuthTokens", "AuthToken", "UpdateAuthToken") {}
       TextBlock 
       {
         Margin: 3

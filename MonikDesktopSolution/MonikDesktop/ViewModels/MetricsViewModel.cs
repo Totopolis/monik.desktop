@@ -18,22 +18,20 @@ namespace MonikDesktop.ViewModels
 {
     public class MetricsViewModel : ViewModelBase, IMetricsViewModel
     {
-        private readonly IMonikService _service;
-        private readonly ISourcesCache _cache;
-
         private readonly MetricsModel _model;
 
         private Dictionary<int, MetricDescription> _metricDescriptions = new Dictionary<int, MetricDescription>();
 
         private IDisposable _updateExecutor;
 
-        public MetricsViewModel(IMonikService aService, ISourcesCache aCache)
+        public MetricsViewModel(ISourcesCacheProvider cacheProvider)
         {
-            _service = aService;
-            _cache = aCache;
-
             MetricValuesList = new ReactiveList<MetricValueItem>();
-            _model = new MetricsModel { Caption = "Metrics" };
+            _model = new MetricsModel
+            {
+                Caption = "Metrics",
+                Cache = cacheProvider.CurrentCache
+            };
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -133,7 +131,7 @@ namespace MonikDesktop.ViewModels
 
             try
             {
-                eMetricDescriptions = _service.GetMetricDescriptions();
+                eMetricDescriptions = _model.Cache.Service.GetMetricDescriptions();
             }
             catch
             {
@@ -158,7 +156,7 @@ namespace MonikDesktop.ViewModels
                {
                    Id = (int)eMd.Id,
                    Name = eMd.Name,
-                   Instance = _cache.GetInstance(eMd.InstanceId),
+                   Instance = _model.Cache.GetInstance(eMd.InstanceId),
                    Type = (MetricType)eMd.Aggregation,
                })
                .OrderBy(md => md.Instance.Source.Name)
@@ -188,7 +186,7 @@ namespace MonikDesktop.ViewModels
                 {
                     case MetricTerminalMode.Current:
 
-                        response = _service.GetCurrentMetricValues()
+                        response = _model.Cache.Service.GetCurrentMetricValues()
                            .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
                            .Select(x => new MetricValueItem
                            {
@@ -201,7 +199,7 @@ namespace MonikDesktop.ViewModels
 
                     case MetricTerminalMode.TimeWindow:
 
-                        response = _service.GetWindowMetricValues()
+                        response = _model.Cache.Service.GetWindowMetricValues()
                             .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
                             .Select(x => new MetricValueItem
                             {
@@ -215,7 +213,7 @@ namespace MonikDesktop.ViewModels
 
                         if (SelectedMetric == null) break;
                         var amount = _model.MetricHistoryDepthHours * 12;
-                        var history = _service.GetMetricHistory(SelectedMetric.Description.Id, amount, _model.MetricHistorySkip5Min);
+                        var history = _model.Cache.Service.GetMetricHistory(SelectedMetric.Description.Id, amount, _model.MetricHistorySkip5Min);
 
                         response = history.Values
                             .Select((v, i) => new MetricValueItem()
@@ -269,7 +267,7 @@ namespace MonikDesktop.ViewModels
             if (_model.Instances.Contains(md.Instance.ID))
                 return true;
 
-            var groupId = _cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
+            var groupId = _model.Cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
             return groupId.HasValue && _model.Groups.Contains(groupId.Value);
         }
     }

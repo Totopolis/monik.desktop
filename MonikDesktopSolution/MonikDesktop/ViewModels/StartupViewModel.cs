@@ -17,9 +17,10 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase, IStartupViewModel
     {
+        [Reactive] public string AuthToken { get; set; } = null;
         public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
+        [Reactive] public Uri ServerUrl { get; set; } = null;
         public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
-        public IAppModel App { get; }
         [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
         [Reactive] public string AuthTokenDescription { get; set; }
 
@@ -28,19 +29,17 @@ namespace MonikDesktop.ViewModels
         [Reactive] public bool IsDark { get; set; }
 
         private readonly IShell _shell;
-        private readonly ISourcesCache _cache;
+        private readonly ISourcesCacheProvider _cacheProvider;
         private readonly IDockWindow _window;
-        private bool _isInitialized;
         private bool _isToolsShown;
 
-        public StartupViewModel(IShell shell, ISourcesCache cache, IAppModel app, IDockWindow window)
+        public StartupViewModel(IShell shell, ISourcesCacheProvider cacheProvider, IDockWindow window)
         {
             _shell = shell;
-            _cache = cache;
+            _cacheProvider = cacheProvider;
             _window = window;
             
             Title = "App settings";
-            App = app;
 
             // Title
 
@@ -67,13 +66,16 @@ namespace MonikDesktop.ViewModels
                 .ToArray();
 
             ServerUrls.AddRange(urls);
-            app.ServerUrl = urls.FirstOrDefault();
+            ServerUrl = urls.FirstOrDefault();
 
             ServerUrls.Changed.Subscribe(x =>
             {
                 Settings.Default.ServerUrl = string.Join(";", ServerUrls);
                 Settings.Default.Save();
             });
+
+            this.ObservableForProperty(x => x.ServerUrl)
+                .Subscribe(_ => UpdateSourcesCache());
 
             // Authorization Tokens
 
@@ -83,7 +85,7 @@ namespace MonikDesktop.ViewModels
                 .ToArray();
 
             AuthTokens.AddRange(tokens);
-            App.AuthToken = tokens.FirstOrDefault();
+            AuthToken = tokens.FirstOrDefault();
 
             AuthTokens.Changed.Subscribe(x =>
             {
@@ -91,9 +93,12 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
+            this.ObservableForProperty(x => x.AuthToken)
+                .Subscribe(_ => UpdateSourcesCache());
+
             // Create Commands
 
-            var hasUrl = app.WhenAny(x => x.ServerUrl, x => x.Value != null);
+            var hasUrl = this.WhenAny(x => x.ServerUrl, x => x.Value != null);
             NewLogCommand       = CreateCommandWithInit(NewLog,       hasUrl);
             NewKeepAliveCommand = CreateCommandWithInit(NewKeepAlive, hasUrl);
             NewMetricsCommand   = CreateCommandWithInit(NewMetrics,   hasUrl);
@@ -103,6 +108,9 @@ namespace MonikDesktop.ViewModels
 
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
+
+
+            UpdateSourcesCache();
         }
 
         public ReactiveCommand NewLogCommand       { get; set; }
@@ -115,6 +123,12 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand RemoveUrlCommand    { get; set; }
         public ReactiveCommand RemoveAuthTokenCommand { get; set; }
 
+        public void UpdateSourcesCache()
+        {
+            _cacheProvider.SetCurrentCacheSource(ServerUrl);
+            _cacheProvider.CurrentCache.Service.AuthToken = AuthToken;
+        }
+
         public string UpdateServerUrl
         {
             set
@@ -123,10 +137,10 @@ namespace MonikDesktop.ViewModels
                 // and will be made red by ValidatesOnExceptions
                 var val = new Uri(value);
 
-                if (App.ServerUrl != null && App.ServerUrl == val)
+                if (ServerUrl != null && ServerUrl == val)
                 {
                     // move to the top
-                    var index = ServerUrls.IndexOf(App.ServerUrl);
+                    var index = ServerUrls.IndexOf(ServerUrl);
                     if (index != 0)
                     {
                         using (ServerUrls.SuppressChangeNotifications())
@@ -136,7 +150,7 @@ namespace MonikDesktop.ViewModels
                 else
                 {
                     ServerUrls.Insert(0, val);
-                    App.ServerUrl = val;
+                    ServerUrl = val;
                 }
             }
         }
@@ -161,10 +175,10 @@ namespace MonikDesktop.ViewModels
                     throw;
                 }
 
-                if (App.AuthToken != null && App.AuthToken == value)
+                if (AuthToken != null && AuthToken == value)
                 {
                     // move to the top
-                    var index = AuthTokens.IndexOf(App.AuthToken);
+                    var index = AuthTokens.IndexOf(AuthToken);
                     if (index != 0)
                     {
                         using (AuthTokens.SuppressChangeNotifications())
@@ -174,7 +188,7 @@ namespace MonikDesktop.ViewModels
                 else if (!string.IsNullOrEmpty(value))
                 {
                     AuthTokens.Insert(0, value);
-                    App.AuthToken = value;
+                    AuthToken = value;
                 }
             }
         }
@@ -188,18 +202,20 @@ namespace MonikDesktop.ViewModels
         {
             return async () =>
             {
-                if (_isInitialized || await Initialize())
+                if (await CheckCacheInitialized())
                     act();
             };
         }
 
-        private async Task<bool> Initialize()
+        private async Task<bool> CheckCacheInitialized()
         {
+            if (_cacheProvider.CurrentCache.Initialized)
+                return true;
+
             try
             {
                 IsBusy = true;
-                await Task.Run(() => _cache.Reload());
-                _isInitialized = true;
+                await _cacheProvider.CurrentCache.Initialize();
                 return true;
             }
             catch (WebException e)
