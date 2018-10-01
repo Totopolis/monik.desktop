@@ -69,13 +69,6 @@ namespace MonikDesktop.Common
             return result;
         }
 
-        public IEnumerable<EMetricDescription> GetMetricDescriptions()
-	    {
-	        var json   = GetJson("metrics");
-	        var result = JsonConvert.DeserializeObject<List<EMetricDescription>>(json);
-	        return result;
-        }
-
 	    public EMetricHistory GetMetricHistory(int metricId, int amount, int skip)
 	    {
 	        var json = GetJson($"metrics/{metricId}/history?Amount={amount}&Skip={skip}");

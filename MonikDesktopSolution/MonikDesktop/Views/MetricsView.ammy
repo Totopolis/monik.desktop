@@ -15,22 +15,22 @@ UserControl "MonikDesktop.Views.MetricsView" {
       Columns: [
         DataGridTextColumn {
           Header: "Source"
-          Binding: bind "Description.Instance.Source.Name"
+          Binding: bind "Metric.Instance.Source.Name"
           Width: Auto
         }
         DataGridTextColumn {
           Header: "Instance"
-          Binding: bind "Description.Instance.Name"
+          Binding: bind "Metric.Instance.Name"
           Width: Auto
         }
         DataGridTextColumn {
           Header: "Name"
-          Binding: bind Description.Name
+          Binding: bind Metric.Name
           Width: Auto
         }
         DataGridTextColumn {
           Header: "Type"
-          Binding: bind Description.Type
+          Binding: bind Metric.Aggregation
           Width: Auto
         }
         DataGridTextColumn {

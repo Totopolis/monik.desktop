@@ -2,7 +2,6 @@
 using LiveCharts.Configurations;
 using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
-using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
@@ -20,7 +19,7 @@ namespace MonikDesktop.ViewModels
     {
         private readonly MetricsModel _model;
 
-        private Dictionary<int, MetricDescription> _metricDescriptions = new Dictionary<int, MetricDescription>();
+        private Dictionary<int, Metric> _metrics = new Dictionary<int, Metric>();
 
         private IDisposable _updateExecutor;
 
@@ -99,14 +98,14 @@ namespace MonikDesktop.ViewModels
         private void OnStart()
         {
             MetricValuesList.Clear();
-            _metricDescriptions = GetMetricDescriptions()
+            _metrics = GetMetrics()
                 .Where(IsNeedToShowMetricDescription)
-                .ToDictionary(md => md.Id);
+                .ToDictionary(md => md.ID);
 
             if (_model.MetricTerminalMode == MetricTerminalMode.Diagram)
             {
-                var data = _metricDescriptions.Values
-                    .Select(d => new MetricValueItem() {Description = d});
+                var data = _metrics.Values
+                    .Select(metric => new MetricValueItem() {Metric = metric});
                 MetricValuesList.AddRange(data);
 
                 SelectedMetric = MetricValuesList.FirstOrDefault();
@@ -125,40 +124,9 @@ namespace MonikDesktop.ViewModels
             Model.Online = true;
         }
 
-        private List<MetricDescription> GetMetricDescriptions()
+        private List<Metric> GetMetrics()
         {
-            IEnumerable<EMetricDescription> eMetricDescriptions;
-
-            try
-            {
-                eMetricDescriptions = _model.Cache.Service.GetMetricDescriptions();
-            }
-            catch
-            {
-                return new List<MetricDescription>
-                {
-                    new MetricDescription
-                    {
-                        Id   = -1,
-                        Name = "",
-                        Instance = new Instance
-                        {
-                            ID     = -1,
-                            Name   = "INTERNAL",
-                            Source = new Source {ID = -1, Name = "ERROR"}
-                        },
-                    }
-                };
-            }
-
-            return eMetricDescriptions
-               .Select(eMd => new MetricDescription()
-               {
-                   Id = (int)eMd.Id,
-                   Name = eMd.Name,
-                   Instance = _model.Cache.GetInstance(eMd.InstanceId),
-                   Type = (MetricType)eMd.Aggregation,
-               })
+            return _model.Cache.Metrics
                .OrderBy(md => md.Instance.Source.Name)
                .ThenBy(md => md.Instance.Name)
                .ThenBy(md => md.Name)
@@ -187,10 +155,10 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.Current:
 
                         response = _model.Cache.Service.GetCurrentMetricValues()
-                           .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
+                           .Where(x => _metrics.ContainsKey(x.MetricId))
                            .Select(x => new MetricValueItem
                            {
-                               Description = _metricDescriptions[x.MetricId],
+                               Metric = _metrics[x.MetricId],
                                Value = Math.Round(x.Value, 2),
                                Interval = x.Interval.ToLocalTime()
                            });
@@ -200,10 +168,10 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.TimeWindow:
 
                         response = _model.Cache.Service.GetWindowMetricValues()
-                            .Where(x => _metricDescriptions.ContainsKey(x.MetricId))
+                            .Where(x => _metrics.ContainsKey(x.MetricId))
                             .Select(x => new MetricValueItem
                             {
-                                Description = _metricDescriptions[x.MetricId],
+                                Metric = _metrics[x.MetricId],
                                 Value = Math.Round(x.Value, 2)
                             });
 
@@ -213,13 +181,13 @@ namespace MonikDesktop.ViewModels
 
                         if (SelectedMetric == null) break;
                         var amount = _model.MetricHistoryDepthHours * 12;
-                        var history = _model.Cache.Service.GetMetricHistory(SelectedMetric.Description.Id, amount, _model.MetricHistorySkip5Min);
+                        var history = _model.Cache.Service.GetMetricHistory(SelectedMetric.Metric.ID, amount, _model.MetricHistorySkip5Min);
 
                         response = history.Values
                             .Select((v, i) => new MetricValueItem()
                             {
                                 Interval = history.Interval.AddMinutes(-5 * i).ToLocalTime(),
-                                Description = SelectedMetric.Description,
+                                Metric = SelectedMetric.Metric,
                                 Value = v,
                             });
 
@@ -235,9 +203,9 @@ namespace MonikDesktop.ViewModels
                 {
                     new MetricValueItem
                     {
-                        Description = new MetricDescription
+                        Metric = new Metric
                         {
-                            Id   = -1,
+                            ID   = -1,
                             Name = "",
                             Instance = new Instance
                             {
@@ -251,15 +219,15 @@ namespace MonikDesktop.ViewModels
             }
 
             response = response
-                .OrderBy(x => x.Description.Instance.Source.Name)
-                .ThenBy(x => x.Description.Instance.Name)
-                .ThenBy(x => x.Description.Name)
+                .OrderBy(x => x.Metric.Instance.Source.Name)
+                .ThenBy(x => x.Metric.Instance.Name)
+                .ThenBy(x => x.Metric.Name)
                 .ToList();
 
             return response;
         }
 
-        private bool IsNeedToShowMetricDescription(MetricDescription md)
+        private bool IsNeedToShowMetricDescription(Metric md)
         {
             if (_model.Instances.IsEmpty && _model.Groups.IsEmpty)
                 return true;

@@ -227,7 +227,6 @@
     <Compile Include="Common\ModelsApi\EWindowValue.cs" />
     <Compile Include="Common\ModelsApp\Group.cs" />
     <Compile Include="Common\ModelsApp\Metric.cs" />
-    <Compile Include="Common\ModelsApp\MetricDescription.cs" />
     <Compile Include="Common\ModelsApp\MetricValueItem.cs" />
     <Compile Include="Common\ModelsApp\KeepALiveItem.cs" />
     <Compile Include="Common\ModelsApp\LogItem.cs" />
@@ -268,9 +267,6 @@
     <Compile Include="Views\MetricsChartTooltipView.ammy.cs">
       <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
     </Compile>
-    <Compile Include="Views\MetricsSampleData.xaml.cs">
-      <DependentUpon>MetricsSampleData.ammy</DependentUpon>
-    </Compile>
     <Compile Include="Views\MetricsView.xaml.cs">
       <DependentUpon>MetricsView.ammy</DependentUpon>
     </Compile>
@@ -279,9 +275,6 @@
     </Compile>
     <Compile Include="Views\KeepAliveView.xaml.cs">
       <DependentUpon>KeepAliveView.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\KeepAliveSampleData.xaml.cs">
-      <DependentUpon>KeepAliveSampleData.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\LogsView.xaml.cs">
       <DependentUpon>LogsView.ammy</DependentUpon>
@@ -308,11 +301,9 @@
     <None Include="Views\GroupCreateDialog.ammy" />
     <None Include="Views\ManageGroupsView.ammy" />
     <None Include="Views\MetricsChartTooltipView.ammy" />
-    <None Include="Views\MetricsSampleData.ammy" />
     <None Include="Views\MetricsView.ammy" />
     <None Include="Views\LogDescriptionView.ammy" />
     <None Include="Views\KeepAliveView.ammy" />
-    <None Include="Views\KeepAliveSampleData.ammy" />
     <None Include="Views\LogsView.ammy" />
     <None Include="Views\PropertiesView.ammy" />
     <None Include="Views\RemoveEntitiesView.ammy" />
@@ -387,11 +378,6 @@
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>MetricsChartTooltipView.ammy</DependentUpon>
     </Page>
-    <Page Include="Views\MetricsSampleData.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>MetricsSampleData.ammy</DependentUpon>
-    </Page>
     <Page Include="Views\MetricsView.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -406,11 +392,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>KeepAliveView.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\KeepAliveSampleData.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>KeepAliveSampleData.ammy</DependentUpon>
     </Page>
     <Page Include="Views\LogsView.g.xaml">
       <SubType>Designer</SubType>

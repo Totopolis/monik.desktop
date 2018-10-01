@@ -4,7 +4,7 @@ namespace MonikDesktop.Common.ModelsApp
 {
     public class MetricValueItem
     {
-        public MetricDescription Description { get; set; }
+        public Metric Metric { get; set; }
         public double Value { get; set; }
         public DateTime Interval { get; set; }
     }
