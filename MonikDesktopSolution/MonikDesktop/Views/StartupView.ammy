@@ -1,7 +1,7 @@
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
-using FontAwesome.WPF;
 using MahApps.Metro.Controls;
+using MahApps.Metro.IconPacks;
 
 alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
 {
@@ -90,7 +90,31 @@ UserControl "MonikDesktop.Views.StartupView"
       Separator { Margin: 10 }
 
       Label { "Server Url" }
-      @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "ServerUrl", "UpdateServerUrl") {}
+      Grid 
+      {
+        #TwoColumns("Auto", "*")
+        Button 
+        {
+          Grid.Column: 0
+          Margin: "5,0,5,0"
+          Width: 26
+          Height: 26
+          ToolTip: "Reload cache"
+          Style: resource dyn "MahApps.Metro.Styles.MetroCircleButtonStyle"
+          Command: bind RefreshCommand
+          PackIconModern 
+          {
+            Kind: "Refresh"
+            Height: 12
+            Width: 12
+          }
+        }
+        @ComboBoxWithRemove("Data.RemoveUrlCommand", "ServerUrls", "ServerUrl", "UpdateServerUrl") 
+        {
+          Grid.Column: 1
+        }
+      }
+      
 
       Label { "Actions" }
       Button
@@ -140,17 +164,19 @@ UserControl "MonikDesktop.Views.StartupView"
     }
     Grid
     {
-      Background: "Gray"
-      Opacity: "0.75"
+      Background: resource dyn "WhiteBrush"
+      Opacity: 0.75
       Visibility: bind IsBusy
                   convert (bool isBusy) => isBusy ? Visibility.Visible : Visibility.Collapsed
-      ImageAwesome
+      PackIconModern
       {
-        Icon: "Cog"
-        Spin: "True"
-        Height: "48"
-        Width: "48"
-        SpinDuration: "4"
+        Kind: "Refresh"
+        Spin: true
+        Height: 48
+        Width: 48
+        SpinDuration: 4
+        HorizontalAlignment: Center
+        VerticalAlignment: Center
       }
     }
   }

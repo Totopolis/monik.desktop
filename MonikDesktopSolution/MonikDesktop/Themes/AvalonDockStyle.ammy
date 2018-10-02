@@ -1,20 +1,12 @@
 ﻿using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Controls;
-
 using Xceed.Wpf.AvalonDock.Converters;
-
+using MahApps.Metro.IconPacks;
 
 ResourceDictionary {
   
-  BoolToVisibilityConverter Key="BoolToVisibilityConverter" { }
-  InverseBoolToVisibilityConverter Key="InverseBoolToVisibilityConverter" { }
-  AnchorSideToOrientationConverter Key="AnchorSideToOrientationConverter" { }
-  AnchorSideToAngleConverter Key="AnchorSideToAngleConverter" { }
-  NullToDoNothingConverter Key="NullToDoNothingConverter" { }
-  LayoutItemFromLayoutModelConverter Key="LayoutItemFromLayoutModelConverter" { }
   ActivateCommandLayoutItemFromLayoutModelConverter Key="ActivateCommandLayoutItemFromLayoutModelConverter" { }
-  AnchorableContextMenuHideVisibilityConverter Key="AnchorableContextMenuHideVisibilityConverter" { }
-
+  
    Style Key="AvalonDock_ThemeMetro_ToolButtonStyle" {
     TargetType: "ToggleButton"
     Setter { Property: "Background",  Value: "Transparent" }
@@ -83,7 +75,14 @@ ResourceDictionary {
                   Setter { Property: "Command",  Value: "{Binding Path=., Converter={StaticResource ActivateCommandLayoutItemFromLayoutModelConverter}}" }
                 }
               }
-              Image { Source: "/Themes/Images/PinDocMenu.png" }
+              Opacity: 0.75
+              Margin: 5
+              PackIconModern 
+              {
+                Kind: "ChevronDown"
+                Height: 12
+                Width: 12
+              }
             }
           }
           Border "ContentPanel" {
@@ -109,21 +108,22 @@ ResourceDictionary {
           Trigger {
             Property: "IsMouseOver"
             SourceName: "MenuDropDownButton"
-            Value: "True"
-            Setter {
-              Property: "Content"
-              TargetName: "MenuDropDownButton"
-              Value: Image { Source: "/Themes/Images/PinDocMenu_Black.png" }
-            }
+            Value: true
+            #Setter("Opacity", 1, "MenuDropDownButton")
           }
           Trigger {
             Property: "IsChecked"
             SourceName: "MenuDropDownButton"
-            Value: "True"
+            Value: true
+            #Setter("Opacity", 1, "MenuDropDownButton")
             Setter {
               Property: "Content"
               TargetName: "MenuDropDownButton"
-              Value: Image { Source: "/Themes/Images/PinDocMenu_Black.png" }
+              Value: PackIconModern {
+                Kind: "ChevronUp"
+                Height: 12
+                Width: 12
+              }
             }
           }
           Trigger {
@@ -372,7 +372,6 @@ ResourceDictionary {
   Style {
     TargetType: DockingManager
     #Setter("Control.Background", resource dyn "WhiteBrush")
-    //#Setter("Control.BorderThickness",  10)
     Setter {
       Property: DockingManager.DocumentPaneControlStyle
       Value: resource "AvalonDock_MahApps_DocumentPaneControlStyle"

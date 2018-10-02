@@ -30,16 +30,15 @@ namespace MonikDesktop.Common
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
 		}
 
-	    public bool Initialized { get; private set; }
-	    public async Task Initialize()
+	    public bool Loaded { get; set; }
+	    public async Task Load()
 	    {
-	        await Task.Run(() => Reload());
-	        Initialized = true;
-	    }
+	        await Task.Run(() => LoadSync());
+        }
 
         public IMonikService Service => _service;
 
-        public void Reload()
+        private void LoadSync()
 		{
             var sources = _service.GetSources();
 		    var instances = _service.GetInstances();

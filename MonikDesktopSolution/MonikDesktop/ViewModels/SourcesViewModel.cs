@@ -47,8 +47,6 @@ namespace MonikDesktop.ViewModels
                .Where(v => v.Value != null)
                .Subscribe(v => SelectedHack = v.Value);
 
-            RefreshCommand = ReactiveCommand.Create(Refresh);
-
             this.ObservableForProperty(x => x.FilterText)
                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
                .Subscribe(v => Filter(v.Value));
@@ -56,7 +54,6 @@ namespace MonikDesktop.ViewModels
 
         [Reactive] public ReactiveCommand SelectNoneCommand  { get; set; }
         [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
-        public ReactiveCommand RefreshCommand     { get; set; }
 
         public ReactiveList<SourceItem> FilteredItems { get; }
         public ReactiveList<SourceItem> SourceItems   { get; }
@@ -97,14 +94,6 @@ namespace MonikDesktop.ViewModels
 
             foreach (var x in SourceItems)
                 x.Checked = x.Checked || x.GroupID == SelectedHack.GroupID;
-        }
-
-        private void Refresh()
-        {
-            _model.Cache.Reload();
-
-            FillSourcesTree();
-            SyncCheckStatuses();
         }
 
         private void FillSourcesTree()

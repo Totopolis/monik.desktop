@@ -109,6 +109,7 @@ namespace MonikDesktop.ViewModels
             RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
 
+            RefreshCommand = ReactiveCommand.Create(Refresh, hasUrl);
 
             UpdateSourcesCache();
         }
@@ -122,6 +123,8 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand RemoveUrlCommand    { get; set; }
         public ReactiveCommand RemoveAuthTokenCommand { get; set; }
+
+        public ReactiveCommand RefreshCommand { get; set; }
 
         public void UpdateSourcesCache()
         {
@@ -202,20 +205,27 @@ namespace MonikDesktop.ViewModels
         {
             return async () =>
             {
-                if (await CheckCacheInitialized())
+                if (await CheckCacheLoaded())
                     act();
             };
         }
 
-        private async Task<bool> CheckCacheInitialized()
+        private async Task<bool> CheckCacheLoaded()
         {
-            if (_cacheProvider.CurrentCache.Initialized)
+            if (_cacheProvider.CurrentCache.Loaded)
                 return true;
 
+            var cacheLoaded = await TryToLoadCache();
+            _cacheProvider.CurrentCache.Loaded = cacheLoaded;
+            return cacheLoaded;
+        }
+
+        private async Task<bool> TryToLoadCache()
+        {
             try
             {
                 IsBusy = true;
-                await _cacheProvider.CurrentCache.Initialize();
+                await _cacheProvider.CurrentCache.Load();
                 return true;
             }
             catch (WebException e)
@@ -227,6 +237,11 @@ namespace MonikDesktop.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private async Task Refresh()
+        {
+            await TryToLoadCache();
         }
 
         private void NewLog()

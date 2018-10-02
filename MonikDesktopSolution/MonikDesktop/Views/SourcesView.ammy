@@ -4,32 +4,27 @@ UserControl "MonikDesktop.Views.SourcesView" {
     GroupDescriptions: PropertyGroupDescription { PropertyName: "GroupName" }
   }
   Grid {
-    RowDefinitions: [
-      RowDefinition { Height: "40" }
-      RowDefinition { }
-    ]
-    StackPanel {
-      Orientation: "Horizontal"
-      Grid.Row: "0"
+    #TwoRows(40)
+    @StackPanelHorizontal() {
+      Grid.Row: 0
       Button {
-        Command: "{Binding SelectNoneCommand}"
-        Margin: "5"
+        Command: bind SelectNoneCommand
+        Margin: 5
         "Select None"
       }
       Button {
-        Command: "{Binding SelectGroupCommand}"
-        Margin: "5"
+        Command: bind SelectGroupCommand
+        Margin: 5
         "Select Group"
       }
-      Button {
-        Command: "{Binding RefreshCommand}"
-        Margin: "5"
-        "Refresh"
-      }
       TextBox {
-        Text: "{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        Margin: "5"
-        Width: "150"
+        Text: bind FilterText
+              set [
+                Mode: TwoWay
+                UpdateSourceTrigger: PropertyChanged
+              ]
+        Margin: 5
+        Width: 210
       }
     }
     DataGrid {
@@ -41,13 +36,13 @@ UserControl "MonikDesktop.Views.SourcesView" {
       ScrollViewer.CanContentScroll: true
       EnableRowVirtualization: true
       SelectedItem: bind SelectedItem
-      ItemsSource: "{Binding Source={StaticResource CustomerView}}"
+      ItemsSource: bind from $resource CustomerView
       CanUserAddRows: false
       CanUserDeleteRows: false
       AutoGenerateColumns: false
       GridLinesVisibility: Horizontal
       HorizontalGridLinesBrush: resource dyn "SeperatorBrush"
-      Grid.Row: "1"
+      Grid.Row: 1
       DataGridExtensions.LastColumnFill: true
       Columns: [
         DataGridCheckBoxColumn {

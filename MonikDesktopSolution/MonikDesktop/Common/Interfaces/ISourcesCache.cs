@@ -5,8 +5,8 @@ namespace MonikDesktop.Common.Interfaces
 {
     public interface ISourcesCache
 	{
-        bool Initialized { get; }
-	    Task Initialize();
+        bool Loaded { get; set; }
+	    Task Load();
 
 	    IMonikService Service { get; }
 
@@ -27,7 +27,5 @@ namespace MonikDesktop.Common.Interfaces
 	    void RemoveInstanceFromGroup(Instance i, Group g);
 	    Group CreateGroup(string name, bool isDefault, string description);
 	    void RemoveGroup(Group g);
-
-        void Reload();
 	}
 }
