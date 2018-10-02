@@ -41,10 +41,9 @@ UserControl "MonikDesktop.Views.MetricsView" {
                       convert (bool val) => val ? Visibility.Collapsed : Visibility.Visible
           ElementStyle: Style {
             TargetType: TextBlock
-            Setters: [
-              Setter { Property: "HorizontalAlignment",  Value: "Right" }
-              Setter { Property: "VerticalAlignment",  Value: "Center" }
-            ]
+            #Setter("HorizontalAlignment", "Right")
+            #Setter("VerticalAlignment", "Center")
+            #Visibility_OnBinding(bind HasValue, true)
           }
         }
       ]
@@ -61,7 +60,8 @@ UserControl "MonikDesktop.Views.MetricsView" {
       Series: ColumnSeries
       {
         MaxColumnWidth: double.PositiveInfinity
-        ColumnPadding: bind SeriesColumnPadding
+        ColumnPadding: bind Model.MetricHistoryDepthHours
+                       convert (int v) => v > 5 ? 0 : (v > 2 ? 1 : 2)
         Values: bind SeriesCollection
         Fill: resource dyn "AccentBaseColorBrush"
       }

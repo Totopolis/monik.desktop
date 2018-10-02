@@ -65,5 +65,6 @@ alias SimpleDataGrid(rowHeight="40")
     HorizontalGridLinesBrush: resource dyn "SeperatorBrush"
     VerticalGridLinesBrush: resource dyn "SeperatorBrush"
     GridLinesVisibility: Horizontal
+    SelectionMode: Single
   }
 }

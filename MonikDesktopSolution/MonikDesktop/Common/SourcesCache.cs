@@ -11,12 +11,8 @@ namespace MonikDesktop.Common
     public class SourcesCache : ISourcesCache
     {
         private readonly IMonikService _service;
-        private List<Group> _groups = new List<Group>();
-		private List<Source> _sources = new List<Source>();
-	    private List<Metric> _metrics = new List<Metric>();
-		private Dictionary<int, Instance> _instances= new Dictionary<int, Instance>();
 
-        private List<SourceItem> _sourceItems = new List<SourceItem>();
+        private SourcesCacheState _state;
 
 
         private readonly Source _unknownSource;
@@ -33,72 +29,67 @@ namespace MonikDesktop.Common
 	    public bool Loaded { get; set; }
 	    public async Task Load()
 	    {
-	        await Task.Run(() => LoadSync());
+	        _state = await Task.Run((Func<SourcesCacheState>)LoadCurrentState);
         }
 
         public IMonikService Service => _service;
 
-        private void LoadSync()
+        private SourcesCacheState LoadCurrentState()
 		{
+            var state = new SourcesCacheState();
+
             var sources = _service.GetSources();
 		    var instances = _service.GetInstances();
 		    var metrics = _service.GetMetrics();
             var groups = _service.GetGroups();
 
 
-			_sources = sources.Select(x => new Source
+			state.Sources = sources.Select(x => new Source
 			{
 				ID = x.ID,
 				Name = x.Name
 			}).ToList();
 
-			_instances = new Dictionary<int, Instance>();
-			foreach (var it in instances)
-			{
-				var src = _sources.FirstOrDefault(x => x.ID == it.SourceID) ?? _unknownSource;
+		    state.Instances = instances.ToDictionary(
+		        it => it.ID,
+		        it => new Instance
+		        {
+		            ID = it.ID,
+		            Name = it.Name,
+		            Source = state.Sources.FirstOrDefault(x => x.ID == it.SourceID) ?? _unknownSource
+		        });
 
-				var instance = new Instance
-				{
-					ID = it.ID,
-					Name = it.Name,
-					Source = src
-				};
-
-				_instances.Add(instance.ID, instance);
-			}
-
-		    _metrics = metrics.Select(m =>
+		    state.Metrics = metrics.Select(m =>
 		        new Metric
 		        {
 		            ID = m.ID,
 		            Name = m.Name,
-		            Instance = _instances.ContainsKey(m.InstanceID) ? _instances[m.InstanceID] : _unknownInstance,
+		            Instance = state.Instances.ContainsKey(m.InstanceID) ? state.Instances[m.InstanceID] : _unknownInstance,
 		            Aggregation = m.Aggregation
 		        }
 		    ).ToList();
 
             var instancesInGroup = new HashSet<int>();
 
-			_groups = new List<Group>();
-			foreach (var it in groups)
-			{
-				var gr = new Group
-				{
-					ID = it.ID,
-					IsDefault = it.IsDefault,
-					Name = it.Name,
-					Instances = it.Instances
-						.Where(v => _instances.ContainsKey(v))
-						.Select(v => _instances[v])
-					    .ToList()
-				};
+		    state.Groups = groups.Select(it =>
+		    {
+		        var gr = new Group
+		        {
+		            ID = it.ID,
+		            IsDefault = it.IsDefault,
+		            Name = it.Name,
+		            Instances = it.Instances
+		                .Where(v => state.Instances.ContainsKey(v))
+		                .Select(v => state.Instances[v])
+		                .ToList()
+		        };
 
-                instancesInGroup.UnionWith(it.Instances);
+		        instancesInGroup.UnionWith(it.Instances);
 
-				_groups.Add(gr);
-			}
+		        return gr;
+		    }).ToList();
 
-		    _sourceItems = _groups
+		    state.SourceItems = state.Groups
 		        .SelectMany(gr => gr.Instances,
 		            (gr, inst) => new SourceItem
 		            {
@@ -108,7 +99,7 @@ namespace MonikDesktop.Common
 		                InstanceName = inst.Name,
 		                InstanceID = inst.ID
 		            })
-		        .Concat(_instances.Values
+		        .Concat(state.Instances.Values
 		            .Where(inst => !instancesInGroup.Contains(inst.ID))
 		            .Select(inst => new SourceItem
 		            {
@@ -119,24 +110,26 @@ namespace MonikDesktop.Common
 		                InstanceID = inst.ID
 		            }))
 		        .ToList();
-        }
 
-	    public Group[] Groups => _groups.ToArray();
+		    return state;
+		}
 
-		public Source[] Sources => _sources.ToArray();
+	    public Group[] Groups => _state.Groups.ToArray();
 
-		public Instance[] Instances => _instances.Values.ToArray();
+		public Source[] Sources => _state.Sources.ToArray();
 
-	    public Metric[] Metrics => _metrics.ToArray();
+		public Instance[] Instances => _state.Instances.Values.ToArray();
 
-        public SourceItem[] SourceItems => _sourceItems.ToArray();
+	    public Metric[] Metrics => _state.Metrics.ToArray();
+
+        public SourceItem[] SourceItems => _state.SourceItems.ToArray();
 
 	    public void RemoveSource(Source v)
 	    {
 	        _service.RemoveSource(v.ID);
 	        
-	        _sources.Remove(v);
-            foreach(var ins in _instances.Values.ToArray())
+	        _state.Sources.Remove(v);
+            foreach(var ins in _state.Instances.Values.ToArray())
 	            if (ins.Source == v)
 	                RemoveInstanceFromCache(ins);
 	    }
@@ -150,13 +143,13 @@ namespace MonikDesktop.Common
 	    public void RemoveMetric(Metric v)
 	    {
 	        _service.RemoveMetric(v.ID);
-	        _metrics.Remove(v);
+	        _state.Metrics.Remove(v);
 	    }
 
 	    public Instance GetInstance(int aInstanceId)
 		{
-			return _instances.ContainsKey(aInstanceId)
-				? _instances[aInstanceId]
+			return _state.Instances.ContainsKey(aInstanceId)
+				? _state.Instances[aInstanceId]
 				: _unknownInstance;
 
 			// TODO: if unknown instance then update from api?
@@ -191,26 +184,26 @@ namespace MonikDesktop.Common
 	            Instances = new List<Instance>()
 	        };
 
-            _groups.Add(gr);
+            _state.Groups.Add(gr);
 	        return gr;
 	    }
 
         public void RemoveGroup(Group g)
 	    {
 	        _service.RemoveGroup(g.ID);
-	        _groups.Remove(g);
+	        _state.Groups.Remove(g);
 	    }
 
 
         private void RemoveInstanceFromCache(Instance ins)
 	    {
             // remove from instances
-	        _instances.Remove(ins.ID);
+	        _state.Instances.Remove(ins.ID);
             // cleanup groups
-            foreach (var g in _groups)
+            foreach (var g in _state.Groups)
 	            g.Instances.Remove(ins);
             // claenup metrics
-	        _metrics = _metrics.Where(m => m.Instance != ins).ToList();
+	        _state.Metrics = _state.Metrics.Where(m => m.Instance != ins).ToList();
         }
 
 	} //end of class

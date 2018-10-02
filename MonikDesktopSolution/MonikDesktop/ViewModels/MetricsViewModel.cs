@@ -35,8 +35,9 @@ namespace MonikDesktop.ViewModels
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
-            _model.WhenAnyValue(x => x.MetricHistoryDepthHours)
-                .Subscribe(v => SeriesColumnPadding = v > 5 ? 0 : v > 2 ? 1 : 2);
+            _model.Groups.CountChanged.Subscribe(_ => UpdateSelectedMetrics());
+            _model.Instances.CountChanged.Subscribe(_ => UpdateSelectedMetrics());
+            _model.WhenAnyValue(x => x.MetricTerminalMode).Subscribe(_ => UpdateSelectedMetrics());
 
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
             StartCommand = ReactiveCommand.Create(OnStart, canStart);
@@ -61,7 +62,7 @@ namespace MonikDesktop.ViewModels
             
             UpdateCommand.Subscribe(results =>
             {
-                if (_model.MetricTerminalMode == MetricTerminalMode.Diagram)
+                if (_model.MetricDiagramVisible)
                 {
                     SeriesCollection.Clear();
                     SeriesCollection.AddRange(results);
@@ -90,29 +91,27 @@ namespace MonikDesktop.ViewModels
         public ShowModel Model => _model;
 
         [Reactive] public MetricValueItem SelectedMetric { get; set; }
-        [Reactive] public int SeriesColumnPadding { get; set; }
 
         public Func<double, string> DateTimeFormatter { get; set; }
 
-
-        private void OnStart()
+        private void UpdateSelectedMetrics()
         {
-            MetricValuesList.Clear();
             _metrics = GetMetrics()
                 .Where(IsNeedToShowMetricDescription)
                 .ToDictionary(md => md.ID);
 
-            if (_model.MetricTerminalMode == MetricTerminalMode.Diagram)
-            {
-                var data = _metrics.Values
-                    .Select(metric => new MetricValueItem() {Metric = metric});
-                MetricValuesList.AddRange(data);
-
+            var data = _metrics.Values
+                .Select(metric => new MetricValueItem() {Metric = metric});
+            MetricValuesList.Initialize(data);
+            
+            if (SelectedMetric == null)
                 SelectedMetric = MetricValuesList.FirstOrDefault();
+        }
 
-
+        private void OnStart()
+        {
+            if (_model.MetricDiagramVisible)
                 SeriesCollection.Clear();
-            }
 
             var interval = TimeSpan.FromSeconds(_model.RefreshSec);
 
@@ -160,6 +159,7 @@ namespace MonikDesktop.ViewModels
                            {
                                Metric = _metrics[x.MetricId],
                                Value = Math.Round(x.Value, 2),
+                               HasValue = true,
                                Interval = x.Interval.ToLocalTime()
                            });
 
@@ -172,7 +172,8 @@ namespace MonikDesktop.ViewModels
                             .Select(x => new MetricValueItem
                             {
                                 Metric = _metrics[x.MetricId],
-                                Value = Math.Round(x.Value, 2)
+                                Value = Math.Round(x.Value, 2),
+                                HasValue = true
                             });
 
                         break;
@@ -189,6 +190,7 @@ namespace MonikDesktop.ViewModels
                                 Interval = history.Interval.AddMinutes(-5 * i).ToLocalTime(),
                                 Metric = SelectedMetric.Metric,
                                 Value = v,
+                                HasValue = true
                             });
 
                         break;

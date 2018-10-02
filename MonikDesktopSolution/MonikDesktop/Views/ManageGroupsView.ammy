@@ -23,7 +23,6 @@ alias InstancesData()
     Drop: "GridDrop"
     DragEnter: "GridDragEnter"
     DragOver: "GridDragOver"
-    SelectionMode: Single
     AllowDrop: true
     Columns: [
         DataGridTextColumn

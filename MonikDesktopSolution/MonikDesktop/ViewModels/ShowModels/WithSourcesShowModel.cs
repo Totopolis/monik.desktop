@@ -12,13 +12,16 @@ namespace MonikDesktop.ViewModels.ShowModels
         [Reactive]
         public ReactiveList<int> Instances { get; set; }
 
-        public WithSourcesShowModel()
+        public WithSourcesShowModel(bool disableWhenSourcesChanged = true)
         {
             Groups = new ReactiveList<short> { ChangeTrackingEnabled = true };
             Instances = new ReactiveList<int> { ChangeTrackingEnabled = true };
 
-            Groups.CountChanged.Subscribe(_ => Online = false);
-            Instances.CountChanged.Subscribe(_ => Online = false);
+            if (disableWhenSourcesChanged)
+            {
+                Groups.CountChanged.Subscribe(_ => Online = false);
+                Instances.CountChanged.Subscribe(_ => Online = false);
+            }
         }
     }
 }

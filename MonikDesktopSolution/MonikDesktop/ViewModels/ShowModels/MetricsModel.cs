@@ -6,7 +6,7 @@ namespace MonikDesktop.ViewModels.ShowModels
 {
     public class MetricsModel : WithSourcesShowModel
     {
-        public MetricsModel()
+        public MetricsModel() : base(false)
         {
             this.ObservableForProperty(x => x.MetricTerminalMode)
                .Subscribe(_ =>

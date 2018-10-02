@@ -35,6 +35,7 @@ UserControl "MonikDesktop.Views.SourcesView" {
       VirtualizingPanel.ScrollUnit: Item
       ScrollViewer.CanContentScroll: true
       EnableRowVirtualization: true
+      SelectionMode: Single
       SelectedItem: bind SelectedItem
       ItemsSource: bind from $resource CustomerView
       CanUserAddRows: false
@@ -45,13 +46,21 @@ UserControl "MonikDesktop.Views.SourcesView" {
       Grid.Row: 1
       DataGridExtensions.LastColumnFill: true
       Columns: [
-        DataGridCheckBoxColumn {
+        DataGridTemplateColumn {
           Header: "Checked"
-          Binding: bind Checked
+          SortMemberPath: "Checked"
+          CellTemplate: DataTemplate
+          {
+            CheckBox {
+            HorizontalAlignment: Center
+            VerticalAlignment: Center
+              IsChecked: bind Checked
                    set [
                      Mode: TwoWay
                      UpdateSourceTrigger: PropertyChanged
                    ]
+            }
+          }
         }
         DataGridTextColumn {
           Header: "Source"

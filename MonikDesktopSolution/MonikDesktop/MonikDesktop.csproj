@@ -237,6 +237,7 @@
     <Compile Include="Common\ModelsApi\ELog_.cs" />
     <Compile Include="Common\ModelsApp\Source.cs" />
     <Compile Include="Common\ReactiveExtensions.cs" />
+    <Compile Include="Common\SourcesCacheState.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
     <Compile Include="Common\SourcesCacheProvider.cs" />
