@@ -174,7 +174,7 @@ UserControl "MonikDesktop.Views.StartupView"
         Spin: true
         Height: 48
         Width: 48
-        SpinDuration: 4
+        SpinDuration: 1
         HorizontalAlignment: Center
         VerticalAlignment: Center
       }

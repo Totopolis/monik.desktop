@@ -23,7 +23,7 @@ namespace MonikDesktop.ViewModels
 
             SourceItems = new ReactiveList<SourceItem>();
 
-            FilteredItems = new ReactiveList<SourceItem>();
+            FilteredItems = new ReactiveList<SourceItem> { ChangeTrackingEnabled = true };
 
             FilteredItems
                .ItemChanged
