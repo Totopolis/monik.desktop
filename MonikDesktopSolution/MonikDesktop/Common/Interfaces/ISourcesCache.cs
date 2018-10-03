@@ -1,11 +1,13 @@
 using MonikDesktop.Common.ModelsApp;
+using System;
 using System.Threading.Tasks;
 
 namespace MonikDesktop.Common.Interfaces
 {
     public interface ISourcesCache
 	{
-        bool Loaded { get; set; }
+	    event Action Loaded;
+        bool IsLoaded { get; set; }
 	    Task Load();
 
 	    IMonikService Service { get; }
@@ -21,6 +23,7 @@ namespace MonikDesktop.Common.Interfaces
 	    void RemoveInstance(Instance v);
 	    void RemoveMetric(Metric v);
 
+	    Group GetGroup(short groupId);
 		Instance GetInstance(int aInstanceId);
 
 	    void AddInstanceToGroup(Instance i, Group g);

@@ -23,13 +23,15 @@ namespace MonikDesktop.ViewModels
 
             Title = "Manage Groups";
 
-            ListGroups = new ReactiveList<GroupItem>(_cache.Groups.Select(x => new GroupItem(x)));
-            ListInGroup = _cache.Groups.Length > 0 ? new ReactiveList<Instance>(_cache.Groups[0].Instances) : new ReactiveList<Instance>();
-            ListWithoutGroup = new ReactiveList<Instance>(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
+            ListGroups = new ReactiveList<GroupItem>();
+            ListInGroup = new ReactiveList<Instance>();
+            ListWithoutGroup = new ReactiveList<Instance>();
 
-            SelectedGroup = ListGroups.FirstOrDefault();
             this.ObservableForProperty(x => x.SelectedGroup)
                 .Subscribe(v => ShowGroup(v.Value));
+
+            _cache.Loaded += Refresh;
+            Refresh();
 
             RemoveGroupCommand = ReactiveCommand.Create<GroupItem>(RemoveGroup);
             CreateGroupCommand = ReactiveCommand.Create(CreateGroup);
@@ -42,6 +44,14 @@ namespace MonikDesktop.ViewModels
 
         public ReactiveCommand RemoveGroupCommand { get; set; }
         public ReactiveCommand CreateGroupCommand { get; set; }
+
+        private void Refresh()
+        {
+            ListGroups.Initialize(_cache.Groups.Select(x => new GroupItem(x)));
+            ListWithoutGroup.Initialize(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
+
+            SelectedGroup = ListGroups.FirstOrDefault();
+        }
 
         private void ShowGroup(GroupItem gItem)
         {

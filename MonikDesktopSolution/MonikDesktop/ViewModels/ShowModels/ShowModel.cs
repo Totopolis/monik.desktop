@@ -13,7 +13,25 @@ namespace MonikDesktop.ViewModels.ShowModels
 			this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
 		}
 
-        public ISourcesCache Cache { get; set; }
+	    protected virtual void OnCacheLoaded()
+	    {
+	        Online = false;
+	    }
+	    private ISourcesCache _cache;
+        public ISourcesCache Cache
+        {
+            get => _cache;
+            set
+            {
+                if (_cache != null)
+                    _cache.Loaded -= OnCacheLoaded;
+
+                _cache = value;
+
+                if (_cache != null)
+                    _cache.Loaded += OnCacheLoaded;
+            }
+        }
 
 		[Reactive]
 		public string Caption { get; set; } = "";

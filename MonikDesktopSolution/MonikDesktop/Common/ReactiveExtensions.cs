@@ -7,8 +7,11 @@ namespace MonikDesktop.Common
     {
         public static void Initialize<T>(this ReactiveList<T> r, IEnumerable<T> l)
         {
-            r.Clear();
-            r.AddRange(l);
+            using (r.SuppressChangeNotifications())
+            {
+                r.Clear();
+                r.AddRange(l);
+            }
         }
     }
 }

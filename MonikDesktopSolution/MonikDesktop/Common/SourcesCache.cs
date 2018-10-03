@@ -26,10 +26,12 @@ namespace MonikDesktop.Common
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
 		}
 
-	    public bool Loaded { get; set; }
+        public event Action Loaded;
+        public bool IsLoaded { get; set; }
 	    public async Task Load()
 	    {
 	        _state = await Task.Run((Func<SourcesCacheState>)LoadCurrentState);
+            Loaded?.Invoke();
         }
 
         public IMonikService Service => _service;
@@ -145,6 +147,11 @@ namespace MonikDesktop.Common
 	        _service.RemoveMetric(v.ID);
 	        _state.Metrics.Remove(v);
 	    }
+
+        public Group GetGroup(short groupId)
+        {
+            return _state.Groups.FirstOrDefault(g => g.ID == groupId);
+        }
 
 	    public Instance GetInstance(int aInstanceId)
 		{

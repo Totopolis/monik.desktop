@@ -212,11 +212,11 @@ namespace MonikDesktop.ViewModels
 
         private async Task<bool> CheckCacheLoaded()
         {
-            if (_cacheProvider.CurrentCache.Loaded)
+            if (_cacheProvider.CurrentCache.IsLoaded)
                 return true;
 
             var cacheLoaded = await TryToLoadCache();
-            _cacheProvider.CurrentCache.Loaded = cacheLoaded;
+            _cacheProvider.CurrentCache.IsLoaded = cacheLoaded;
             return cacheLoaded;
         }
 

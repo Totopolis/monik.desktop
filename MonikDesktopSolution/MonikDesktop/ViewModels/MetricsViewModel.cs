@@ -35,10 +35,9 @@ namespace MonikDesktop.ViewModels
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
-            _model.Groups.CountChanged.Subscribe(_ => UpdateSelectedMetrics());
-            _model.Instances.CountChanged.Subscribe(_ => UpdateSelectedMetrics());
-            _model.WhenAnyValue(x => x.MetricTerminalMode).Subscribe(_ => UpdateSelectedMetrics());
-
+            _model.SelectedSourcesChanged.Subscribe(_ => UpdateSelectedMetrics());
+            UpdateSelectedMetrics();
+            
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
             StartCommand = ReactiveCommand.Create(OnStart, canStart);
 
@@ -231,7 +230,7 @@ namespace MonikDesktop.ViewModels
 
         private bool IsNeedToShowMetricDescription(Metric md)
         {
-            if (_model.Instances.IsEmpty && _model.Groups.IsEmpty)
+            if (!_model.Instances.Any() && !_model.Groups.Any())
                 return true;
 
             if (_model.Instances.Contains(md.Instance.ID))
