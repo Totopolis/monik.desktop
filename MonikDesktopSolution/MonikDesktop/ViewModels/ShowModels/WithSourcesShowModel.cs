@@ -87,5 +87,14 @@ namespace MonikDesktop.ViewModels.ShowModels
 
             _selectedSourcesChanged.OnNext(Unit.Default);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                _selectedSourcesChanged.Dispose();
+            }
+        }
     }
 }

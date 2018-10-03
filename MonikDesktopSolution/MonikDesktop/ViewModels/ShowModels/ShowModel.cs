@@ -5,7 +5,7 @@ using System;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
-    public class ShowModel : ReactiveObject
+    public class ShowModel : ReactiveObject, IDisposable
 	{
 		protected ShowModel()
 		{
@@ -44,5 +44,22 @@ namespace MonikDesktop.ViewModels.ShowModels
 
         [Reactive]
 		public string DateTimeFormat { get; set; } = "HH:mm:ss";
+
+
+
+	    protected virtual void Dispose(bool disposing)
+	    {
+	        if (disposing)
+	        {
+	            if (_cache != null)
+	                _cache.Loaded -= OnCacheLoaded;
+	        }
+	    }
+
+	    public void Dispose()
+	    {
+	        Dispose(true);
+	        GC.SuppressFinalize(this);
+	    }
 	}
 }

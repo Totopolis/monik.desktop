@@ -239,5 +239,11 @@ namespace MonikDesktop.ViewModels
             var groupId = _model.Cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
             return groupId.HasValue && _model.Groups.Contains(groupId.Value);
         }
+
+        protected override void Closed(ViewModelCloseQueryArgs args)
+        {
+            base.Closed(args);
+            _model.Dispose();
+        }
     }
 }

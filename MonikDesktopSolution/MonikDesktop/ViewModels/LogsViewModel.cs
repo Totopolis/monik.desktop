@@ -179,5 +179,11 @@ namespace MonikDesktop.ViewModels
 	        });
 	        return result;
 	    }
+
+	    protected override void Closed(ViewModelCloseQueryArgs args)
+	    {
+	        base.Closed(args);
+	        _model.Dispose();
+	    }
     }
 }
