@@ -3,34 +3,58 @@ using MonikDesktop.Common.Converters;
 
 UserControl "MonikDesktop.Views.LogsView" {
   Resources: [
+    BindingProxy Key="Proxy" { Data: bind }
     SeverityToNameConverter Key="SeverityToName" { }
     LevelToNameConverter Key="LevelToName" { }
   ]
   Grid {
-    DataGrid "MainGrid" {
-      CanUserAddRows: "False"
-      CanUserDeleteRows: "False"
-      AutoGenerateColumns: "False"
-      RowHeight: "20"
-      HorizontalGridLinesBrush: "Silver"
-      VerticalGridLinesBrush: "Silver"
-      GridLinesVisibility: "Horizontal"
+    @SimpleDataGrid(20) "MainGrid" {
       SelectedItem: "{Binding Model.SelectedItem}"
       ItemsSource: "{Binding LogsList}"
       RowStyle: Style {
+        BasedOn: resource "MetroDataGridRow"
         TargetType: DataGridRow
-        Triggers: [
-          DataTrigger {
-            Binding: "{Binding Severity}"
-            Value: "10"
+        combine Triggers: [
+          MultiDataTrigger {
+            Conditions: [
+              Condition {
+                Binding: bind Severity
+                Value: 10
+              }
+              Condition {
+                Binding: bind "Data.Model.Colorized" from $resource Proxy
+                Value: true
+              }
+            ]
             Setter { Property: "Foreground",  Value: "White" }
             Setter { Property: "Background",  Value: "#FFFF5959" }
           }
-          DataTrigger {
-            Binding: "{Binding Severity}"
-            Value: "20"
+          MultiDataTrigger {
+            Conditions: [
+              Condition {
+                Binding: bind Severity
+                Value: 20
+              }
+              Condition {
+                Binding: bind "Data.Model.Colorized" from $resource Proxy
+                Value: true
+              }
+            ]
             Setter { Property: "Foreground",  Value: "Black" } 
             Setter { Property: "Background",  Value: "#FFFFFF64" }
+          }
+          DataTrigger {
+            Binding: bind IsSelected from $this
+            Value: true
+            #Setter("Background", resource dyn "MetroDataGrid.HighlightBrush")
+            #Setter("BorderBrush", resource dyn "MetroDataGrid.HighlightBrush")
+            #Setter("Foreground", resource dyn "MetroDataGrid.HighlightTextBrush")
+          }
+          DataTrigger {
+            Binding: bind IsMouseOver from $this
+            Value: true
+            #Setter("Background", resource dyn "MetroDataGrid.MouseOverHighlightBrush")
+            #Setter("BorderBrush", resource dyn "MetroDataGrid.MouseOverHighlightBrush")
           }
         ]
       }

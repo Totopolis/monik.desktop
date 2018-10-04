@@ -91,17 +91,18 @@ UserControl "MonikDesktop.Views.PropertiesView"
       }
       StackPanel
       {
-        Orientation: "Vertical"
+        Orientation: Vertical
         Margin: "0"
-        Visibility: bind LogsVisibility
-        Label
-        {
-          Visibility: bind Model.DuplicatedSettingsVisibility
-          "Duplicated Datetime format"
+        Style: Style {
+          TargetType: StackPanel
+          Triggers: [
+            @CollapsedIf_DataTrigger(bind LogsVisibility, false)
+            @CollapsedIf_DataTrigger(bind Model.GroupDuplicatingItems, false)
+          ]
         }
+        Label { "Duplicated Datetime format" }
         ComboBox
         {
-          Visibility: bind Model.DuplicatedSettingsVisibility
           ItemsSource: bind DatetimeFormats
           SelectedValue: bind Model.DuplicatedDateTimeFormat
         }

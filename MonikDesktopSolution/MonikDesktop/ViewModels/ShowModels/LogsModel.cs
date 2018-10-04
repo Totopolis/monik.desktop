@@ -1,13 +1,12 @@
-using System;
-using System.Windows;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
-	public class LogsModel : WithSourcesShowModel
+    public class LogsModel : WithSourcesShowModel
 	{
 		// at offline mode
 		//DateTime From { get; set; }
@@ -20,18 +19,11 @@ namespace MonikDesktop.ViewModels.ShowModels
 
 		public LogsModel()
 		{
-            this.ObservableForProperty(x => x.Colorized).Subscribe(_ => Online = false);
-
             this.ObservableForProperty(x => x.Level)                        .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.Top)                          .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.SeverityCutoff)               .Subscribe(_ => Online = false);
-			this.ObservableForProperty(x => x.GroupDuplicatingItems)        .Subscribe(_ =>
-			{
-			    Online = false;
-			    DuplicatedSettingsVisibility = GroupDuplicatingItems ? Visibility.Visible : Visibility.Collapsed;
-			});
+			this.ObservableForProperty(x => x.GroupDuplicatingItems)        .Subscribe(_ => Online = false);
 			this.ObservableForProperty(x => x.DuplicatedDateTimeFormat)     .Subscribe(_ => Online = false);
-			this.ObservableForProperty(x => x.DuplicatedSettingsVisibility) .Subscribe(_ => Online = false);
 		}
 
 	    [Reactive]
@@ -54,8 +46,5 @@ namespace MonikDesktop.ViewModels.ShowModels
 
 	    [Reactive]
 	    public string DuplicatedDateTimeFormat { get; set; } = "HH:mm:**";
-
-        [Reactive]
-        public Visibility DuplicatedSettingsVisibility { get; set; } = Visibility.Visible;
     }
 }
