@@ -137,11 +137,10 @@ namespace MonikDesktop.ViewModels
             _window.ShowWebExceptionMessage(e);
         }
 
-        protected override void Closed(ViewModelCloseQueryArgs args)
+        protected override void DisposeInternals()
         {
-            base.Closed(args);
+            base.DisposeInternals();
             _cache.Loaded -= Refresh;
         }
-
     }
 }

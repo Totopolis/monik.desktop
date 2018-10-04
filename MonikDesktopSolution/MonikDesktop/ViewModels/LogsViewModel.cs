@@ -29,6 +29,7 @@ namespace MonikDesktop.ViewModels
 		        Caption = "Logs",
 		        Cache = cacheProvider.CurrentCache
 		    };
+            Disposables.Add(_model);
 
 			_model.WhenAnyValue(x => x.Caption, x => x.Online)
 				.Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -178,12 +179,6 @@ namespace MonikDesktop.ViewModels
 	            return firstIn5Sec;
 	        });
 	        return result;
-	    }
-
-	    protected override void Closed(ViewModelCloseQueryArgs args)
-	    {
-	        base.Closed(args);
-	        _model.Dispose();
 	    }
     }
 }

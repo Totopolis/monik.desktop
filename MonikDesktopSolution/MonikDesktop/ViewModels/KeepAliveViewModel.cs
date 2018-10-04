@@ -26,6 +26,7 @@ namespace MonikDesktop.ViewModels
                 Caption = "KeepAlives",
                 Cache = cacheProvider.CurrentCache
             };
+            Disposables.Add(_model);
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -132,12 +133,6 @@ namespace MonikDesktop.ViewModels
             });
 
             return result.ToArray();
-        }
-
-        protected override void Closed(ViewModelCloseQueryArgs args)
-        {
-            base.Closed(args);
-            _model.Dispose();
         }
     }
 }

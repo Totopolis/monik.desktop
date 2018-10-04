@@ -31,6 +31,7 @@ namespace MonikDesktop.ViewModels
                 Caption = "Metrics",
                 Cache = cacheProvider.CurrentCache
             };
+            Disposables.Add(_model);
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
@@ -238,12 +239,6 @@ namespace MonikDesktop.ViewModels
 
             var groupId = _model.Cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
             return groupId.HasValue && _model.Groups.Contains(groupId.Value);
-        }
-
-        protected override void Closed(ViewModelCloseQueryArgs args)
-        {
-            base.Closed(args);
-            _model.Dispose();
         }
     }
 }
