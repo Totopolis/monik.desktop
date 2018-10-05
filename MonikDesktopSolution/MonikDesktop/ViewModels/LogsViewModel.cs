@@ -34,13 +34,31 @@ namespace MonikDesktop.ViewModels
 			_model.WhenAnyValue(x => x.Caption, x => x.Online)
 				.Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
+		    _model.ObservableForProperty(x => x.Online)
+		        .Subscribe(p =>
+		        {
+		            if (p.Value)
+		            {
+		                LastId = null;
+		                LogsList.Clear();
+
+		                var interval = TimeSpan.FromSeconds(_model.RefreshSec);
+		                _updateExecutor = Observable
+		                    .Timer(interval, interval)
+		                    .Select(_ => Unit.Default)
+		                    .InvokeCommand(UpdateCommand);
+                    }
+                    else
+		                _updateExecutor?.Dispose();
+		        });
+
 			var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
-			StartCommand = ReactiveCommand.Create(OnStart, canStart);
+			StartCommand = ReactiveCommand.Create(() => _model.Online = true, canStart);
 
 			var canStop = _model.WhenAny(x => x.Online, x => x.Value);
-			StopCommand = ReactiveCommand.Create(OnStop, canStop);
+			StopCommand = ReactiveCommand.Create(() => _model.Online = false, canStop);
 
-			UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
+			UpdateCommand = ReactiveCommand.Create(OnUpdate);
 			UpdateCommand.Subscribe(results =>
 			{
 				foreach (var it in results)
@@ -59,13 +77,6 @@ namespace MonikDesktop.ViewModels
 					var desc = aShell.Container.Resolve<ILogDescriptionViewModel>();
 					desc.SelectedItem = v.Value;
 				});
-
-			/*_model
-			  .WhenAnyValue(x => x.Online)
-			  .Where(v => v)
-			  .Throttle(TimeSpan.FromSeconds(1), RxApp.MainThreadScheduler)
-			  .Select(_ => Unit.Default)
-			  .InvokeCommand(StartCommand);*/
 		}
 
 		// TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
@@ -78,31 +89,6 @@ namespace MonikDesktop.ViewModels
 
 		public ReactiveCommand StartCommand { get; set; }
 		public ReactiveCommand StopCommand { get; set; }
-
-        private void OnStart()
-		{
-			LastId = null;
-			LogsList.Clear();
-
-			var interval = TimeSpan.FromSeconds(_model.RefreshSec);
-			_updateExecutor = Observable
-				.Timer(interval, interval)
-				.Select(_ => Unit.Default)
-				.InvokeCommand(UpdateCommand);
-
-		    _model.Online = true;
-		}
-
-		private void OnStop()
-		{
-			if (_updateExecutor == null)
-				return;
-
-			_updateExecutor.Dispose();
-			_updateExecutor = null;
-
-			_model.Online = false;
-		}
 
 		private LogItem[] OnUpdate()
 		{
@@ -180,5 +166,11 @@ namespace MonikDesktop.ViewModels
 	        });
 	        return result;
 	    }
-    }
+
+	    protected override void DisposeInternals()
+	    {
+	        base.DisposeInternals();
+            _updateExecutor?.Dispose();
+	    }
+	}
 }
