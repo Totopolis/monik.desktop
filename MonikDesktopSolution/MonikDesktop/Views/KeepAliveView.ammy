@@ -7,15 +7,7 @@ UserControl "MonikDesktop.Views.KeepAliveView" {
     LevelToNameConverter Key="LevelToName" { }
   ]
   Grid {
-    DataGrid "MainGrid" {
-      CanUserAddRows: "False"
-      CanUserDeleteRows: "False"
-      AutoGenerateColumns: "False"
-      RowHeight: "20"
-      HorizontalGridLinesBrush: "Silver"
-      VerticalGridLinesBrush: "Silver"
-      GridLinesVisibility: "Horizontal"
-      Foreground: "Black"
+    @SimpleDataGrid(20) "MainGrid" {
       ItemsSource: "{Binding KeepALiveList}"
       Columns: [
         DataGridTextColumn {
@@ -49,10 +41,9 @@ UserControl "MonikDesktop.Views.KeepAliveView" {
           }
           ElementStyle: Style {
             TargetType: TextBlock
-            Setters: [
-              Setter { Property: "TextBlock.TextAlignment",  Value: "Center" }
-              Setter { Property: "VerticalAlignment",  Value: "Center" }
-            ]
+            #Setter("TextAlignment", "Center")
+            #Setter("VerticalAlignment", "Center")
+            #Setter("Foreground", "Black")
           }
         }
         DataGridTextColumn {

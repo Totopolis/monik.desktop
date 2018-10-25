@@ -359,6 +359,11 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="App.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>App.ammy</DependentUpon>
+    </Page>
     <Page Include="Themes\AvalonDockStyle.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
