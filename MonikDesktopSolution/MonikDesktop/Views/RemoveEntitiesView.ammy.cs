@@ -1,25 +1,13 @@
-﻿using MonikDesktop.Common.Interfaces;
-using Ui.Wpf.Common.ShowOptions;
-using Ui.Wpf.Common.ViewModels;
+﻿using MonikDesktop.ViewModels;
 
 namespace MonikDesktop.Views
 {
-    public partial class RemoveEntitiesView : IRemoveEntitiesView
+    public partial class RemoveEntitiesView : ViewUserControl
     {
-        public RemoveEntitiesView(IRemoveEntitiesViewModel viewModel)
+        public RemoveEntitiesView(RemoveEntitiesViewModel vm)
+            : base(vm)
         {
             InitializeComponent();
-
-            ViewModel = viewModel;
-            DataContext = viewModel;
-        }
-
-
-        public IViewModel ViewModel { get; set; }
-
-        public void Configure(UiShowOptions options)
-        {
-            ViewModel.Title = options.Title;
         }
     }
 }

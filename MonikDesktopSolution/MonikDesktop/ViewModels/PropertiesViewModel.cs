@@ -1,6 +1,7 @@
 ﻿using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels.ShowModels;
+using MonikDesktop.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -13,7 +14,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class PropertiesViewModel : ViewModelBase, IPropertiesViewModel
+    public class PropertiesViewModel : ViewModelBase
     {
         public PropertiesViewModel(IShell shell)
         {
@@ -60,17 +61,17 @@ namespace MonikDesktop.ViewModels
         {
             switch (aWindow)
             {
-                case ILogsView _:
+                case LogsView _:
                     LogsVisibility       = Visibility.Visible;
                     KeepAlivesVisibility = Visibility.Collapsed;
                     MetricsVisibility    = Visibility.Collapsed;
                     break;
-                case IKeepAliveView _:
+                case KeepAliveView _:
                     LogsVisibility       = Visibility.Collapsed;
                     KeepAlivesVisibility = Visibility.Visible;
                     MetricsVisibility    = Visibility.Collapsed;
                     break;
-                case IMetricsView _:
+                case MetricsView _:
                     LogsVisibility       = Visibility.Collapsed;
                     KeepAlivesVisibility = Visibility.Collapsed;
                     MetricsVisibility    = Visibility.Visible;

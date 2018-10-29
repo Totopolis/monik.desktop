@@ -20,28 +20,29 @@ namespace MonikDesktop
 		    builder.RegisterType<SourcesCache>().As<ISourcesCache>();
 		    builder.RegisterType<SourcesCacheProvider>().As<ISourcesCacheProvider>().SingleInstance();
 
-            // ViewModels
-			builder.RegisterType<LogsViewModel>().As<ILogsViewModel>();
-			builder.RegisterType<KeepAliveViewModel>().As<IKeepAliveViewModel>();
-			builder.RegisterType<MetricsViewModel>().As<IMetricsViewModel>();
-			builder.RegisterType<SourcesViewModel>().As<ISourcesViewModel>().SingleInstance();
-			builder.RegisterType<PropertiesViewModel>().As<IPropertiesViewModel>().SingleInstance();
-			builder.RegisterType<StartupViewModel>().As<IStartupViewModel>().SingleInstance();
-			builder.RegisterType<LogDescriptionViewModel>().As<ILogDescriptionViewModel>().SingleInstance();
-		    builder.RegisterType<RemoveEntitiesViewModel>().As<IRemoveEntitiesViewModel>();
-		    builder.RegisterType<ManageGroupsViewModel>().As<IManageGroupsViewModel>();
+            // Views and ViewModels
+		    builder.RegisterType<StartupView>();
+		    builder.RegisterType<StartupViewModel>();
 
-            // Views
-            builder.RegisterType<StartupView>().As<IStartupView>().SingleInstance();
-		    builder.RegisterType<LogsView>().As<ILogsView>();
-		    builder.RegisterType<KeepAliveView>().As<IKeepAliveView>();
-		    builder.RegisterType<MetricsView>().As<IMetricsView>();
-		    builder.RegisterType<PropertiesView>().As<IPropertiesView>().SingleInstance();
-		    builder.RegisterType<SourcesView>().As<ISourcesView>().SingleInstance();
-		    builder.RegisterType<LogDescriptionView>().As<ILogDescriptionView>().SingleInstance();
-		    builder.RegisterType<RemoveEntitiesView>().As<IRemoveEntitiesView>();
-		    builder.RegisterType<ManageGroupsView>().As<IManageGroupsView>();
+		    builder.RegisterType<LogsView>();
+            builder.RegisterType<LogsViewModel>();
+		    builder.RegisterType<KeepAliveView>();
+            builder.RegisterType<KeepAliveViewModel>();
+		    builder.RegisterType<MetricsView>();
+            builder.RegisterType<MetricsViewModel>();
 
+		    builder.RegisterType<PropertiesView>();
+		    builder.RegisterType<PropertiesViewModel>();
+            builder.RegisterType<SourcesView>();
+            builder.RegisterType<SourcesViewModel>();
+		    builder.RegisterType<LogDescriptionView>();
+            builder.RegisterType<LogDescriptionViewModel>();
+
+		    builder.RegisterType<RemoveEntitiesView>();
+            builder.RegisterType<RemoveEntitiesViewModel>();
+		    builder.RegisterType<ManageGroupsView>();
+            builder.RegisterType<ManageGroupsViewModel>();
+		    
             var container = builder.Build();
 
 			var shell = container.Resolve<IShell>();

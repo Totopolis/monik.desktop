@@ -1,28 +1,19 @@
 ﻿using MonikDesktop.Common.Interfaces;
-using Ui.Wpf.Common.ShowOptions;
-using Ui.Wpf.Common.ViewModels;
+using MonikDesktop.ViewModels;
 
 namespace MonikDesktop.Views
 {
     /// <summary>
     ///     Interaction logic for LogsView.xaml
     /// </summary>
-    public partial class LogsView : ILogsView
-	{
-		public LogsView(ILogsViewModel viewModel)
-		{
-			InitializeComponent();
+    public partial class LogsView : ViewUserControl, IShowView
+    {
+        public LogsView(LogsViewModel vm)
+            : base(vm)
+        {
+            InitializeComponent();
+        }
 
-	        ViewModel = viewModel;
-	        DataContext = viewModel;
-	    }
-
-	    public IViewModel ViewModel { get; set; }
-	    public IShowViewModel ShowViewModel => ViewModel as IShowViewModel;
-
-        public void Configure(UiShowOptions options)
-	    {
-	        ViewModel.Title = options.Title;
-	    }
-	}
+        public IShowViewModel ShowViewModel => ViewModel as IShowViewModel;
+    }
 }

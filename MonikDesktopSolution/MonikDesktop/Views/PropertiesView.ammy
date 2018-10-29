@@ -1,6 +1,7 @@
+using MonikDesktop.Views;
 using MahApps.Metro.Controls;
 
-UserControl "MonikDesktop.Views.PropertiesView"
+ViewUserControl "MonikDesktop.Views.PropertiesView"
 {
   Grid
   {

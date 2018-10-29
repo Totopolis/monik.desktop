@@ -22,7 +22,7 @@ namespace MonikDesktop.Views
 
         public TooltipData Data
         {
-            get { return _data; }
+            get => _data;
             set
             {
                 _data = value;
@@ -34,8 +34,7 @@ namespace MonikDesktop.Views
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
-            if (PropertyChanged != null)
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

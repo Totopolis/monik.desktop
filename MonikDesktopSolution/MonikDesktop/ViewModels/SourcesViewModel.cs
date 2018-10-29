@@ -13,7 +13,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class SourcesViewModel : ViewModelBase, ISourcesViewModel
+    public class SourcesViewModel : ViewModelBase
     {
         private WithSourcesShowModel _model;
 

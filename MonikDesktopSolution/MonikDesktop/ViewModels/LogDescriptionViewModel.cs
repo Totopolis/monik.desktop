@@ -1,5 +1,5 @@
-﻿using MonikDesktop.Common.Interfaces;
-using MonikDesktop.Common.ModelsApp;
+﻿using MonikDesktop.Common.ModelsApp;
+using MonikDesktop.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -9,17 +9,17 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class LogDescriptionViewModel : ViewModelBase, ILogDescriptionViewModel
-	{
-		public LogDescriptionViewModel(IShell shell)
-		{
-			Title = "Log Description";
+    public class LogDescriptionViewModel : ViewModelBase
+    {
+        public LogDescriptionViewModel(IShell shell)
+        {
+            Title = "Log Description";
 
             shell.WhenAnyValue(x => x.SelectedView)
                 .Where(v => !(v is IToolView))
-                .Subscribe(v => IsEnabled = v is ILogsView);
+                .Subscribe(v => IsEnabled = v is LogsView);
         }
 
-        [Reactive] public LogItem         SelectedItem    { get; set; } = null;
-	} //end of class
+        [Reactive] public LogItem SelectedItem { get; set; } = null;
+    } //end of class
 }

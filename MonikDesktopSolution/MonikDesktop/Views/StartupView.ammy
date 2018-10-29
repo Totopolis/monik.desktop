@@ -1,3 +1,4 @@
+using MonikDesktop.Views;
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Interfaces;
 using MahApps.Metro.Controls;
@@ -39,7 +40,7 @@ alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
   }
 }
 
-UserControl "MonikDesktop.Views.StartupView"
+ViewUserControl "MonikDesktop.Views.StartupView"
 {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }

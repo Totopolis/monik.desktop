@@ -12,7 +12,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class KeepAliveViewModel : ViewModelBase, IKeepAliveViewModel
+    public class KeepAliveViewModel : ViewModelBase, IShowViewModel
     {
         private readonly KeepAliveModel _model;
 

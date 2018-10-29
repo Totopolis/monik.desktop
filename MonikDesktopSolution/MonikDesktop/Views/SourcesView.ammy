@@ -1,4 +1,7 @@
-UserControl "MonikDesktop.Views.SourcesView" {
+using MonikDesktop.Common.Extensions;
+using MonikDesktop.Views;
+
+ViewUserControl "MonikDesktop.Views.SourcesView" {
   Resources: CollectionViewSource Key="CustomerView" {
     Source: "{Binding Path=FilteredItems}"
     GroupDescriptions: PropertyGroupDescription { PropertyName: "GroupName" }

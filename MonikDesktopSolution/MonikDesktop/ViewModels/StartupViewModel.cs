@@ -2,6 +2,7 @@
 using MahApps.Metro;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
+using MonikDesktop.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -15,7 +16,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class StartupViewModel : ViewModelBase, IStartupViewModel
+    public class StartupViewModel : ViewModelBase
     {
         [Reactive] public string AuthToken { get; set; } = null;
         public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
@@ -246,19 +247,19 @@ namespace MonikDesktop.ViewModels
 
         private void NewLog()
         {
-            _shell.ShowView<ILogsView>();
+            _shell.ShowView<LogsView>();
             ShowTools();
         }
 
         private void NewKeepAlive()
         {
-            _shell.ShowView<IKeepAliveView>();
+            _shell.ShowView<KeepAliveView>();
             ShowTools();
         }
 
         private void NewMetrics()
         {
-            _shell.ShowView<IMetricsView>();
+            _shell.ShowView<MetricsView>();
             ShowTools();
         }
 
@@ -267,24 +268,24 @@ namespace MonikDesktop.ViewModels
             if (!_isToolsShown)
             {
                 _isToolsShown = true;
-                _shell.ShowTool<IPropertiesView>();
-                _shell.ShowTool<ISourcesView>();
-                _shell.ShowTool<ILogDescriptionView>();
+                _shell.ShowTool<PropertiesView>();
+                _shell.ShowTool<SourcesView>();
+                _shell.ShowTool<LogDescriptionView>();
             }
 
-            _shell.SelectedView = _shell.Container.Resolve<IPropertiesView>();
+            _shell.SelectedView = _shell.Container.Resolve<PropertiesView>();
         }
 
         private void RemoveEntities()
         {
-            _shell.ShowView<IRemoveEntitiesView>();
-            _shell.SelectedView = _shell.Container.Resolve<IStartupView>();
+            _shell.ShowView<RemoveEntitiesView>();
+            _shell.SelectedView = _shell.Container.Resolve<StartupView>();
         }
 
         private void ManageGroups()
         {
-            _shell.ShowView<IManageGroupsView>();
-            _shell.SelectedView = _shell.Container.Resolve<IStartupView>();
+            _shell.ShowView<ManageGroupsView>();
+            _shell.SelectedView = _shell.Container.Resolve<StartupView>();
         }
 
         private void UpdateTheme(bool needToSave = true)

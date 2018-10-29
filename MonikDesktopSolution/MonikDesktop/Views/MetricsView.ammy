@@ -1,8 +1,9 @@
+using MonikDesktop.Views;
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.ModelsApp;
 using LiveCharts.Wpf;
 
-UserControl "MonikDesktop.Views.MetricsView" {
+ViewUserControl "MonikDesktop.Views.MetricsView" {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
   ]

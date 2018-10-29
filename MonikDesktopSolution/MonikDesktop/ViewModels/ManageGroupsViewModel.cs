@@ -11,7 +11,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class ManageGroupsViewModel : ViewModelBase, IManageGroupsViewModel
+    public class ManageGroupsViewModel : ViewModelBase
     {
         private readonly ISourcesCache _cache;
         private readonly IDockWindow _window;

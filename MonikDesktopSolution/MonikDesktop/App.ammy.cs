@@ -1,5 +1,5 @@
 ﻿using AmmySidekick;
-using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Views;
 using System;
 using System.Windows;
 using Ui.Wpf.Common;
@@ -24,7 +24,7 @@ namespace MonikDesktop
             base.OnStartup(e);
 
             var shell = UiStarter.Start<IDockWindow>(new Bootstrap());
-            shell.ShowTool<IStartupView>();
+            shell.ShowTool<StartupView>();
         }
     }
 }

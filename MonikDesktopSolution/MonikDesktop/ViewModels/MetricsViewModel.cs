@@ -15,7 +15,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class MetricsViewModel : ViewModelBase, IMetricsViewModel
+    public class MetricsViewModel : ViewModelBase, IShowViewModel
     {
         private readonly MetricsModel _model;
 

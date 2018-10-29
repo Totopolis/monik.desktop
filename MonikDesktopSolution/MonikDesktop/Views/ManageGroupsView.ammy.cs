@@ -1,29 +1,20 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
+using MonikDesktop.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Ui.Wpf.Common.ShowOptions;
-using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.Views
 {
-    public partial class ManageGroupsView : IManageGroupsView
+    public partial class ManageGroupsView : ViewUserControl
     {
-        public ManageGroupsView(IManageGroupsViewModel viewModel)
+        public ManageGroupsView(ManageGroupsViewModel vm)
+            : base(vm)
         {
             InitializeComponent();
-            ViewModel = viewModel;
-            DataContext = viewModel;
-        }
-
-        public IViewModel ViewModel { get; set; }
-
-        public void Configure(UiShowOptions options)
-        {
-            ViewModel.Title = options.Title;
         }
 
         private Point DragStartPoint { get; set; }
@@ -42,15 +33,15 @@ namespace MonikDesktop.Views
 
             if (e.LeftButton == MouseButtonState.Pressed &&
                 (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
+                 Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
             {
-                var grid = (DataGrid)sender;
-                var gridRow = FindAnchestor<DataGridRow>((DependencyObject)e.OriginalSource);
+                var grid = (DataGrid) sender;
+                var gridRow = FindAnchestor<DataGridRow>((DependencyObject) e.OriginalSource);
 
                 if (gridRow == null)
                     return;
 
-                var instance = (Instance)grid.ItemContainerGenerator.ItemFromContainer(gridRow);
+                var instance = (Instance) grid.ItemContainerGenerator.ItemFromContainer(gridRow);
 
                 var dragData = new DataObject();
                 dragData.SetData("Instance", instance);
@@ -65,7 +56,7 @@ namespace MonikDesktop.Views
             {
                 var instance = (Instance) e.Data.GetData("Instance");
                 var grid = (DataGrid) sender;
-                var view = (IManageGroupsViewModel) ViewModel;
+                var view = (ManageGroupsViewModel) ViewModel;
                 switch (grid.Tag)
                 {
                     case "InGroup":
@@ -78,8 +69,15 @@ namespace MonikDesktop.Views
             }
         }
 
-        private void GridDragEnter(object sender, DragEventArgs e) { ValidateDrag(sender, e); }
-        private void GridDragOver(object sender, DragEventArgs e) { ValidateDrag(sender, e); }
+        private void GridDragEnter(object sender, DragEventArgs e)
+        {
+            ValidateDrag(sender, e);
+        }
+
+        private void GridDragOver(object sender, DragEventArgs e)
+        {
+            ValidateDrag(sender, e);
+        }
 
         private static void ValidateDrag(object sender, DragEventArgs e)
         {

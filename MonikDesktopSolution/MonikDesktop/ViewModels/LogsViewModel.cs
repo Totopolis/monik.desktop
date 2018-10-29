@@ -15,7 +15,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class LogsViewModel : ViewModelBase, ILogsViewModel
+    public class LogsViewModel : ViewModelBase, IShowViewModel
 	{
 		private readonly LogsModel _model;
 		
@@ -74,7 +74,7 @@ namespace MonikDesktop.ViewModels
 			_model.ObservableForProperty(x => x.SelectedItem)
 				.Subscribe(v =>
 				{
-					var desc = aShell.Container.Resolve<ILogDescriptionViewModel>();
+					var desc = aShell.Container.Resolve<LogDescriptionViewModel>();
 					desc.SelectedItem = v.Value;
 				});
 		}

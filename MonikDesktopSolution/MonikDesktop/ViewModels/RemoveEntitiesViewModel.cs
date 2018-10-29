@@ -12,7 +12,7 @@ using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
 {
-    public class RemoveEntitiesViewModel : ViewModelBase, IRemoveEntitiesViewModel
+    public class RemoveEntitiesViewModel : ViewModelBase
     {
         private readonly ISourcesCache _cache;
         private readonly IDockWindow _window;

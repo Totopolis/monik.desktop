@@ -1,4 +1,6 @@
-﻿alias HeaderText(text)
+﻿using MonikDesktop.Views;
+
+alias HeaderText(text)
 {
   Border
   {
@@ -106,7 +108,7 @@ alias PlusButton(bindingCommand, bindingCommandParameter=none)
 }
 
 
-UserControl "MonikDesktop.Views.ManageGroupsView"
+ViewUserControl "MonikDesktop.Views.ManageGroupsView"
 {
   Resources: [ BindingProxy Key="Proxy" { Data: bind } ]
   Grid 

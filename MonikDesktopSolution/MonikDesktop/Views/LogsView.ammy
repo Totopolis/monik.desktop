@@ -1,7 +1,8 @@
+using MonikDesktop.Views;
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.Converters;
 
-UserControl "MonikDesktop.Views.LogsView" {
+ViewUserControl "MonikDesktop.Views.LogsView" {
   Resources: [
     BindingProxy Key="Proxy" { Data: bind }
     SeverityToNameConverter Key="SeverityToName" { }
