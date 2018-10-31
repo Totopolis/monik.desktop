@@ -291,8 +291,9 @@ namespace MonikDesktop.ViewModels
                 _shell.ShowTool<SourcesView>();
                 _shell.ShowTool<LogDescriptionView>();
             }
-            else
-                _shell.ShowTool<PropertiesView>(new ViewRequest("props"));
+
+            //make Properties active
+            _shell.ShowTool<PropertiesView>(new ViewRequest("props"));
         }
 
         private void RemoveEntities()

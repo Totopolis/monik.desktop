@@ -26,6 +26,8 @@ namespace MonikDesktop.ViewModels
 
         public LogsViewModel(IShell aShell, ISourcesCacheProvider cacheProvider)
         {
+            ScrollTo = new Interaction<LogItem, Unit>();
+
             LogsSource = new SourceList<LogItem>();
 
             LogsSource
@@ -70,7 +72,17 @@ namespace MonikDesktop.ViewModels
             StopCommand = ReactiveCommand.Create(() => _model.Online = false, canStop);
 
             UpdateCommand = ReactiveCommand.Create(OnUpdate);
-            UpdateCommand.Subscribe(LogsSource.AddRange);
+            UpdateCommand.Subscribe(result =>
+            {
+                LogsSource.AddRange(result);
+
+                if (_model.AutoScroll)
+                {
+                    var last = result.LastOrDefault();
+                    if (last != null)
+                        ScrollTo.Handle(last).Wait();
+                }
+            });
 
             UpdateCommand.ThrownExceptions
                 .Subscribe(ex =>
@@ -86,6 +98,7 @@ namespace MonikDesktop.ViewModels
                 });
         }
 
+        public Interaction<LogItem, Unit> ScrollTo { get; set; }
         public SourceList<LogItem> LogsSource { get; set; }
         public ReadOnlyObservableCollection<LogItem> LogsList { get; set; }
         public ReactiveCommand<Unit, LogItem[]> UpdateCommand { get; set; }

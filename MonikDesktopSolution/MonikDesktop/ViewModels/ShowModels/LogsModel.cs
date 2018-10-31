@@ -27,6 +27,9 @@ namespace MonikDesktop.ViewModels.ShowModels
 		}
 
 	    [Reactive]
+	    public bool AutoScroll { get; set; } = true;
+
+        [Reactive]
 	    public bool Colorized { get; set; } = true;
 
         [Reactive]

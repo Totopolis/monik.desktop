@@ -65,24 +65,24 @@ ViewUserControl "MonikDesktop.Views.PropertiesView"
           SelectedValue: bind Model.Top
                          set [ Mode: TwoWay ]
         }
-        @StackPanelHorizontal()
+        CheckBox
         {
           Margin: "5,10,0,0"
-          CheckBox
-          {
-            IsChecked: bind Model.Colorized
-          }
-          Label { "Colorized" }
+          IsChecked: bind Model.AutoScroll
+          "AutoScroll"
         }
-        @StackPanelHorizontal()
+        CheckBox
         {
-          Margin: "5,0,0,10"
-          CheckBox
-          {
-            IsChecked: bind Model.GroupDuplicatingItems
-                       set [ Mode: TwoWay ]
-          }
-          Label { "GroupDoublingLogs" }
+          Margin: "5,5,0,0"
+          IsChecked: bind Model.Colorized
+          "Colorized"
+        }
+        CheckBox
+        {
+          Margin: "5,5,0,5"
+          IsChecked: bind Model.GroupDuplicatingItems
+                     set [ Mode: TwoWay ]
+          "GroupDoublingLogs"
         }
       }
       Label { "Datetime format" }

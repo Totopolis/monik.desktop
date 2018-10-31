@@ -1,5 +1,6 @@
 ﻿using MonikDesktop.Common.Interfaces;
 using MonikDesktop.ViewModels;
+using System.Reactive;
 
 namespace MonikDesktop.Views
 {
@@ -12,6 +13,12 @@ namespace MonikDesktop.Views
             : base(vm)
         {
             InitializeComponent();
+
+            vm.ScrollTo.RegisterHandler(x =>
+            {
+                MainGrid.ScrollIntoView(x.Input);
+                x.SetOutput(Unit.Default);
+            });
         }
 
         public IShowViewModel ShowViewModel => ViewModel as IShowViewModel;
