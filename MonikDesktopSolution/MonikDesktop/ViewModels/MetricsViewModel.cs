@@ -49,8 +49,8 @@ namespace MonikDesktop.ViewModels
                 .DisposeWith(Disposables);
 
             observable
-                .Transform(x => new MetricValueItem() {Metric = x})
-                .Bind(out _metricValuesList)
+                .Transform(x => new MetricValueItem {Metric = x})
+                .Bind(out var metricValuesStatic)
                 .Subscribe()
                 .DisposeWith(Disposables);
 
@@ -58,9 +58,20 @@ namespace MonikDesktop.ViewModels
                 .Connect()
                 .DisposeWith(Disposables);
 
+            var metricValuesDynamicSource = new SourceList<MetricValueItem>()
+                .DisposeWith(Disposables);
+            metricValuesDynamicSource
+                .Connect()
+                .Bind(out var metricValuesDynamic)
+                .Subscribe()
+                .DisposeWith(Disposables);
+
+            _model.WhenAnyValue(x => x.MetricDiagramVisible)
+                .Subscribe(x => MetricValuesList = x ? metricValuesStatic : metricValuesDynamic);
+
             _model.SelectedSourcesChanged.Subscribe(_ => UpdateSelectedMetrics());
             UpdateSelectedMetrics();
-            
+
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
             StartCommand = ReactiveCommand.Create(OnStart, canStart);
 
@@ -68,7 +79,6 @@ namespace MonikDesktop.ViewModels
             StopCommand = ReactiveCommand.Create(OnStop, canStop);
 
             UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
-
 
             var mapper = Mappers.Xy<MetricValueItem>()
                 .X(item => (double) item.Interval.Ticks / TimeSpan.FromMinutes(5).Ticks)
@@ -87,19 +97,22 @@ namespace MonikDesktop.ViewModels
                 if (_model.MetricDiagramVisible)
                 {
                     SeriesCollection.Clear();
-                    SeriesCollection.AddRange(results);
+                    if (results != null)
+                        SeriesCollection.AddRange(results);
                 }
-                // ToDo
-                //else
-                //{
-                //    MetricValuesList.Initialize(results);
-                //}
+                else
+                {
+                    metricValuesDynamicSource.Edit(innerList =>
+                    {
+                        innerList.Clear();
+                        innerList.AddRange(results);
+                    });
+                }
             });
         }
 
         private readonly IObservableCache<Metric, int> _metricsCache;
-        private readonly ReadOnlyObservableCollection<MetricValueItem> _metricValuesList;
-        public ReadOnlyObservableCollection<MetricValueItem> MetricValuesList => _metricValuesList;
+        [Reactive] public ReadOnlyObservableCollection<MetricValueItem> MetricValuesList { get; set; }
         public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand { get; set; }
         public ReactiveCommand StartCommand { get; set; }
         public ReactiveCommand StopCommand { get; set; }
@@ -223,7 +236,7 @@ namespace MonikDesktop.ViewModels
                 };
             }
 
-            response = response
+            response = response?
                 .OrderBy(x => x.Metric.Instance.Source.Name)
                 .ThenBy(x => x.Metric.Instance.Name)
                 .ThenBy(x => x.Metric.Name)
