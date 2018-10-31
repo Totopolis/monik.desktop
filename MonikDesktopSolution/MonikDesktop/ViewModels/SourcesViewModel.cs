@@ -58,11 +58,8 @@ namespace MonikDesktop.ViewModels
                 foreach (var it in innerCache.Items)
                 {
                     var val = condition(it);
-                    if (it.Checked == val)
-                        continue;
-
-                    it.Checked = val;
-                    innerCache.Refresh(it);
+                    if (it.Checked != val)
+                        it.Checked = val;
                 }
             });
         }
@@ -101,12 +98,8 @@ namespace MonikDesktop.ViewModels
 
             var refreshSubscription = _model.Cache.SourceItems
                 .Connect()
-                .WhereReasonsAre(ChangeReason.Refresh)
-                .Subscribe(x =>
-                {
-                    foreach (var change in x)
-                        _model.OnSourceItemChanged(change.Current);
-                });
+                .WhenPropertyChanged(x => x.Checked)
+                .Subscribe(x => _model.OnSourceItemChanged(x.Sender));
 
             _itemsSubscription = Disposable.Create(() =>
             {

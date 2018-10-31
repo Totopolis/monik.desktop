@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.Common.ModelsApp
 {
@@ -10,6 +11,6 @@ namespace MonikDesktop.Common.ModelsApp
 		public string InstanceName { get; set; }
 		public int InstanceID { get; set; }
 
-		public bool Checked { get; set; }
+		[Reactive] public bool Checked { get; set; }
 	}
 }

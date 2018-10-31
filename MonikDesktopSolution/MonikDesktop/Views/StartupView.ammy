@@ -34,7 +34,6 @@ alias ComboBoxWithRemove(removeCommand, itemsSource, selectedValue, updateValue)
           set
           [
             UpdateSourceTrigger: LostFocus
-            Mode: OneWayToSource
             ValidatesOnExceptions: true
           ]
   }

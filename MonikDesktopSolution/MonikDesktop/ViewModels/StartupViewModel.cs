@@ -9,6 +9,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Ui.Wpf.Common;
@@ -75,7 +76,8 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
-            this.ObservableForProperty(x => x.ServerUrl)
+            this.WhenAnyValue(x => x.ServerUrl)
+                .Skip(1)
                 .Subscribe(_ => UpdateSourcesCache());
 
             // Authorization Tokens
@@ -94,7 +96,8 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             });
 
-            this.ObservableForProperty(x => x.AuthToken)
+            this.WhenAnyValue(x => x.AuthToken)
+                .Skip(1)
                 .Subscribe(_ => UpdateSourcesCache());
 
             // Create Commands
@@ -135,6 +138,7 @@ namespace MonikDesktop.ViewModels
 
         public string UpdateServerUrl
         {
+            get => ServerUrl.ToString();
             set
             {
                 // will throw if Uri is incorrect
@@ -161,6 +165,7 @@ namespace MonikDesktop.ViewModels
 
         public string UpdateAuthToken
         {
+            get => AuthToken;
             set
             {
                 try
