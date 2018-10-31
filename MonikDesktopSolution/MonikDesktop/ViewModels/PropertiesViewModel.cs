@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Windows;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -21,8 +20,8 @@ namespace MonikDesktop.ViewModels
             Title = "Properties";
 
             shell.WhenAnyValue(x => x.SelectedView)
-               .Where(v => !(v is IToolView))
-               .Subscribe(v =>
+                .Where(v => !(v is IToolView))
+                .Subscribe(v =>
                 {
                     if (v is IShowView showView)
                     {
@@ -34,13 +33,18 @@ namespace MonikDesktop.ViewModels
                 });
         }
 
-        [Reactive] public ShowModel   Model      { get; private set; }
+        [Reactive] public ShowModel Model { get; private set; }
         [Reactive] public IShowViewModel ShowWindow { get; private set; }
 
-        public IList<TopType>            TopTypes            => Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList();
-        public IList<SeverityCutoffType> SeverityCutoffTypes => Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList();
-        public IList<MetricTerminalMode> MetricTerminalModes => Enum.GetValues(typeof(MetricTerminalMode)).Cast<MetricTerminalMode>().ToList();
-        public IList<LevelType>          LevelTypes          => Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList();
+        public IList<TopType> TopTypes => Enum.GetValues(typeof(TopType)).Cast<TopType>().ToList();
+
+        public IList<SeverityCutoffType> SeverityCutoffTypes =>
+            Enum.GetValues(typeof(SeverityCutoffType)).Cast<SeverityCutoffType>().ToList();
+
+        public IList<MetricTerminalMode> MetricTerminalModes =>
+            Enum.GetValues(typeof(MetricTerminalMode)).Cast<MetricTerminalMode>().ToList();
+
+        public IList<LevelType> LevelTypes => Enum.GetValues(typeof(LevelType)).Cast<LevelType>().ToList();
 
         public IList<string> DatetimeFormats =>
             new[]
@@ -53,32 +57,32 @@ namespace MonikDesktop.ViewModels
                 "dd.MM HH:mm:**"
             };
 
-        [Reactive] public Visibility LogsVisibility       { get; set; } = Visibility.Collapsed;
-        [Reactive] public Visibility KeepAlivesVisibility { get; set; } = Visibility.Collapsed;
-        [Reactive] public Visibility MetricsVisibility    { get; set; } = Visibility.Collapsed;
+        [Reactive] public bool LogsVisible { get; set; }
+        [Reactive] public bool KeepAlivesVisible { get; set; }
+        [Reactive] public bool MetricsVisible { get; set; }
 
         private void OnSelectedShowView(IShowView aWindow)
         {
             switch (aWindow)
             {
                 case LogsView _:
-                    LogsVisibility       = Visibility.Visible;
-                    KeepAlivesVisibility = Visibility.Collapsed;
-                    MetricsVisibility    = Visibility.Collapsed;
+                    LogsVisible = true;
+                    KeepAlivesVisible = false;
+                    MetricsVisible = false;
                     break;
                 case KeepAliveView _:
-                    LogsVisibility       = Visibility.Collapsed;
-                    KeepAlivesVisibility = Visibility.Visible;
-                    MetricsVisibility    = Visibility.Collapsed;
+                    LogsVisible = false;
+                    KeepAlivesVisible = true;
+                    MetricsVisible = false;
                     break;
                 case MetricsView _:
-                    LogsVisibility       = Visibility.Collapsed;
-                    KeepAlivesVisibility = Visibility.Collapsed;
-                    MetricsVisibility    = Visibility.Visible;
+                    LogsVisible = false;
+                    KeepAlivesVisible = false;
+                    MetricsVisible = true;
                     break;
             }
 
-            Model      = aWindow.ShowViewModel.Model;
+            Model = aWindow.ShowViewModel.Model;
             ShowWindow = aWindow.ShowViewModel;
         }
     }

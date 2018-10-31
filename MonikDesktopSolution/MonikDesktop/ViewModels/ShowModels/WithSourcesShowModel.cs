@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace MonikDesktop.ViewModels.ShowModels
 {
     public class WithSourcesShowModel : ShowModel
     {
+        private IDisposable _cacheSubscriptions;
         private readonly Subject<Unit> _selectedSourcesChanged;
         public IObservable<Unit> SelectedSourcesChanged => _selectedSourcesChanged.AsObservable();
         public HashSet<short> Groups { get; }
@@ -27,26 +29,40 @@ namespace MonikDesktop.ViewModels.ShowModels
 
             if (disableWhenSourcesChanged)
                 SelectedSourcesChanged.Subscribe(_ => Online = false);
+        }
 
-            Cache.Groups
-                .Connect()
-                .WhereReasonsAre(ChangeReason.Remove)
-                .Subscribe(_ =>
-                {
-                    Groups.Clear();
-                    _selectedSourcesChanged.OnNext(Unit.Default);
-                })
-                .DisposeWith(Disposables);
+        public override ISourcesCache Cache
+        {
+            get => base.Cache;
+            set
+            {
+                _cacheSubscriptions?.Dispose();
 
-            Cache.Instances
-                .Connect()
-                .WhereReasonsAre(ChangeReason.Remove)
-                .Subscribe(_ =>
+                base.Cache = value;
+
+                var groupsSubscription = Cache.Groups
+                    .Connect()
+                    .WhereReasonsAre(ChangeReason.Remove)
+                    .Subscribe(_ =>
+                    {
+                        Groups.Clear();
+                        _selectedSourcesChanged.OnNext(Unit.Default);
+                    });
+                var instancesSubscription = Cache.Instances
+                    .Connect()
+                    .WhereReasonsAre(ChangeReason.Remove)
+                    .Subscribe(_ =>
+                    {
+                        Instances.Clear();
+                        _selectedSourcesChanged.OnNext(Unit.Default);
+                    });
+
+                _cacheSubscriptions = Disposable.Create(() =>
                 {
-                    Instances.Clear();
-                    _selectedSourcesChanged.OnNext(Unit.Default);
-                })
-                .DisposeWith(Disposables);
+                    groupsSubscription.Dispose();
+                    instancesSubscription.Dispose();
+                });
+            }
         }
 
         public void SelectedSourcesClear()

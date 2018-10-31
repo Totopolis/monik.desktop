@@ -3,7 +3,7 @@ using MonikDesktop.Views;
 
 ViewUserControl "MonikDesktop.Views.SourcesView" {
   Resources: CollectionViewSource Key="CustomerView" {
-    Source: "{Binding Path=FilteredItems}"
+    Source: "{Binding Path=Items}"
     GroupDescriptions: PropertyGroupDescription { PropertyName: "GroupName" }
   }
   Grid {

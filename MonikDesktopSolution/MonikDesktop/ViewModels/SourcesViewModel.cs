@@ -1,12 +1,14 @@
 ﻿using DynamicData;
+using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.ObjectModel;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using MonikDesktop.Common;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -18,13 +20,7 @@ namespace MonikDesktop.ViewModels
 
         public SourcesViewModel(IShell shell)
         {
-            Title  = "Sources";
-
-            FilteredItems = new ReactiveList<SourceItem> { ChangeTrackingEnabled = true };
-
-            FilteredItems
-               .ItemChanged
-               .Subscribe(x => _model.OnSourceItemChanged(x.Sender));
+            Title = "Sources";
 
             shell.WhenAnyValue(x => x.SelectedView)
                 .Where(v => !(v is IToolView))
@@ -41,23 +37,16 @@ namespace MonikDesktop.ViewModels
                 });
 
             this.ObservableForProperty(x => x.SelectedItem)
-               .Where(v => v.Value != null)
-               .Subscribe(v => SelectedHack = v.Value);
-
-            var dynamicFilter = this.ObservableForProperty(x => x.FilterText)
-               .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
-               .Select(v => Filters.CreateFilterSourceItem(v.Value));
-
-            _model.Cache.SourceItems
-                .Connect()
-                .Filter(dynamicFilter);
+                .Where(v => v.Value != null)
+                .Subscribe(v => SelectedHack = v.Value);
         }
 
-        [Reactive] public ReactiveCommand SelectNoneCommand  { get; set; }
+        [Reactive] public ReactiveCommand SelectNoneCommand { get; set; }
         [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
 
-        public ReactiveList<SourceItem> FilteredItems { get; }
-        
+        private IDisposable _itemsSubscription;
+        [Reactive] public ReadOnlyObservableCollection<SourceItem> Items { get; set; }
+
         [Reactive] public SourceItem SelectedHack { get; set; }
         [Reactive] public SourceItem SelectedItem { get; set; }
         [Reactive] public string FilterText { get; set; }
@@ -67,7 +56,14 @@ namespace MonikDesktop.ViewModels
             _model.Cache.SourceItems.Edit(innerCache =>
             {
                 foreach (var it in innerCache.Items)
-                    it.Checked = condition(it);
+                {
+                    var val = condition(it);
+                    if (it.Checked == val)
+                        continue;
+
+                    it.Checked = val;
+                    innerCache.Refresh(it);
+                }
             });
         }
 
@@ -86,9 +82,37 @@ namespace MonikDesktop.ViewModels
             SetChecked(x => x.Checked || x.GroupID == SelectedHack.GroupID);
         }
 
-        private void FillSourcesTree()
+        private void Reset()
         {
+            _itemsSubscription?.Dispose();
             FilterText = "";
+
+            var dynamicFilter = this.WhenAnyValue(x => x.FilterText)
+                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
+                .Select(Filters.CreateFilterSourceItem);
+
+            var itemsSubscription = _model.Cache.SourceItems
+                .Connect()
+                .Filter(dynamicFilter)
+                .Bind(out var items)
+                .Subscribe();
+
+            Items = items;
+
+            var refreshSubscription = _model.Cache.SourceItems
+                .Connect()
+                .WhereReasonsAre(ChangeReason.Refresh)
+                .Subscribe(x =>
+                {
+                    foreach (var change in x)
+                        _model.OnSourceItemChanged(change.Current);
+                });
+
+            _itemsSubscription = Disposable.Create(() =>
+            {
+                itemsSubscription.Dispose();
+                refreshSubscription.Dispose();
+            });
         }
 
         private void SyncCheckStatuses()
@@ -115,7 +139,7 @@ namespace MonikDesktop.ViewModels
             SelectGroupCommand?.Dispose();
 
             if (cacheIsChanged)
-                FillSourcesTree();
+                Reset();
 
             SyncCheckStatuses();
 

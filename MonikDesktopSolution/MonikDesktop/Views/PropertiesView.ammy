@@ -42,7 +42,8 @@ ViewUserControl "MonikDesktop.Views.PropertiesView"
       {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: bind LogsVisibility
+        Visibility: bind LogsVisible
+                    convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
         Label { "Level filter" }
         ComboBox
         {
@@ -97,7 +98,7 @@ ViewUserControl "MonikDesktop.Views.PropertiesView"
         Style: Style {
           TargetType: StackPanel
           Triggers: [
-            @CollapsedIf_DataTrigger(bind LogsVisibility, false)
+            @CollapsedIf_DataTrigger(bind LogsVisible, false)
             @CollapsedIf_DataTrigger(bind Model.GroupDuplicatingItems, false)
           ]
         }
@@ -112,7 +113,8 @@ ViewUserControl "MonikDesktop.Views.PropertiesView"
       {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: bind KeepAlivesVisibility
+        Visibility: bind KeepAlivesVisible
+                    convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
         Label { "Keep Alive Warning period (sec.)" }
         NumericUpDown
         {
@@ -123,7 +125,8 @@ ViewUserControl "MonikDesktop.Views.PropertiesView"
       {
         Orientation: "Vertical"
         Margin: "0"
-        Visibility: bind MetricsVisibility
+        Visibility: bind MetricsVisible
+                    convert (bool val) => val ? Visibility.Visible : Visibility.Collapsed
         Label { "Metrics Mode" }
         ComboBox
         {
