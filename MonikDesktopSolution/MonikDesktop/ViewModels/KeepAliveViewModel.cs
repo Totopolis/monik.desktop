@@ -29,7 +29,7 @@ namespace MonikDesktop.ViewModels
                 .Bind(out var keepAliveItems)
                 .Subscribe()
                 .DisposeWith(Disposables);
-            KeepALiveList = keepAliveItems;
+            KeepAliveList = keepAliveItems;
 
             _model = new KeepAliveModel
             {
@@ -58,7 +58,7 @@ namespace MonikDesktop.ViewModels
         }
 
         public SourceList<KeepAliveItem> KeepAliveSource { get; set; }
-        public ReadOnlyObservableCollection<KeepAliveItem> KeepALiveList { get; set; }
+        public ReadOnlyObservableCollection<KeepAliveItem> KeepAliveList { get; set; }
         public ReactiveCommand<Unit, KeepAliveItem[]> UpdateCommand { get; set; }
 
         public long? LastId { get; private set; }
