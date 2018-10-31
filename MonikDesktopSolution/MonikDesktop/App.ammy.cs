@@ -3,6 +3,7 @@ using MonikDesktop.Views;
 using System;
 using System.Windows;
 using Ui.Wpf.Common;
+using Ui.Wpf.Common.ShowOptions;
 
 namespace MonikDesktop
 {
@@ -23,8 +24,9 @@ namespace MonikDesktop
         {
             base.OnStartup(e);
 
-            var shell = UiStarter.Start<IDockWindow>(new Bootstrap());
-            shell.ShowTool<StartupView>();
+            var shell = UiStarter.Start<IDockWindow>(new Bootstrap(),
+                new UiShowStartWindowOptions {Title = "Monik.Desktop"});
+            shell.ShowTool<StartupView>(new ViewRequest("startup"));
         }
     }
 }

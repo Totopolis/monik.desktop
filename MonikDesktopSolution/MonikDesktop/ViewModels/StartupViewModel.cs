@@ -1,4 +1,4 @@
-﻿using Autofac;
+﻿using DynamicData;
 using MahApps.Metro;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Properties;
@@ -6,6 +6,8 @@ using MonikDesktop.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
@@ -19,14 +21,18 @@ namespace MonikDesktop.ViewModels
 {
     public class StartupViewModel : ViewModelBase
     {
-        [Reactive] public string AuthToken { get; set; } = null;
-        public ReactiveList<string> AuthTokens { get; } = new ReactiveList<string>();
-        [Reactive] public Uri ServerUrl { get; set; } = null;
-        public ReactiveList<Uri> ServerUrls { get; } = new ReactiveList<Uri>();
-        [Reactive] public string AppTitle { get; set; } = "Monik Desktop";
+        [Reactive] public string AuthToken { get; set; }
+        private SourceList<string> AuthTokensSource { get; }
+        private readonly ReadOnlyObservableCollection<string> _authTokens;
+        public ReadOnlyObservableCollection<string> AuthTokens => _authTokens;
+        [Reactive] public Uri ServerUrl { get; set; }
+        private SourceList<Uri> ServerUrlsSource { get; }
+        private readonly ReadOnlyObservableCollection<Uri> _serverUrls;
+        public ReadOnlyObservableCollection<Uri> ServerUrls => _serverUrls;
+        [Reactive] public string AppTitle { get; set; }
         [Reactive] public string AuthTokenDescription { get; set; }
 
-        public ReactiveList<string> Accents { get; } = new ReactiveList<string>(ThemeManager.Accents.Select(a => a.Name));
+        public List<string> Accents { get; } = ThemeManager.Accents.Select(a => a.Name).ToList();
         [Reactive] public string Accent { get; set; }
         [Reactive] public bool IsDark { get; set; }
 
@@ -45,6 +51,7 @@ namespace MonikDesktop.ViewModels
 
             // Title
 
+            AppTitle = shell.Title;
             this.WhenAnyValue(x => x.AppTitle)
                 .Subscribe(x => shell.Title = x);
 
@@ -67,14 +74,19 @@ namespace MonikDesktop.ViewModels
                 .Where(x => x != null)
                 .ToArray();
 
-            ServerUrls.AddRange(urls);
+            ServerUrlsSource = new SourceList<Uri>();
+            ServerUrlsSource.AddRange(urls);
             ServerUrl = urls.FirstOrDefault();
 
-            ServerUrls.Changed.Subscribe(x =>
-            {
-                Settings.Default.ServerUrl = string.Join(";", ServerUrls);
-                Settings.Default.Save();
-            });
+            ServerUrlsSource
+                .Connect()
+                .Bind(out _serverUrls)
+                .ToCollection()
+                .Subscribe(items =>
+                {
+                    Settings.Default.ServerUrl = string.Join(";", items);
+                    Settings.Default.Save();
+                });
 
             this.WhenAnyValue(x => x.ServerUrl)
                 .Skip(1)
@@ -87,14 +99,19 @@ namespace MonikDesktop.ViewModels
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToArray();
 
-            AuthTokens.AddRange(tokens);
+            AuthTokensSource = new SourceList<string>();
+            AuthTokensSource.AddRange(tokens);
             AuthToken = tokens.FirstOrDefault();
 
-            AuthTokens.Changed.Subscribe(x =>
-            {
-                Settings.Default.AuthToken = string.Join(";", AuthTokens);
-                Settings.Default.Save();
-            });
+            AuthTokensSource
+                .Connect()
+                .Bind(out _authTokens)
+                .ToCollection()
+                .Subscribe(items =>
+                {
+                    Settings.Default.AuthToken = string.Join(";", items);
+                    Settings.Default.Save();
+                });
 
             this.WhenAnyValue(x => x.AuthToken)
                 .Skip(1)
@@ -110,8 +127,8 @@ namespace MonikDesktop.ViewModels
             RemoveEntitiesCommand = CreateCommandWithInit(RemoveEntities, hasUrl);
             ManageGroupsCommand = CreateCommandWithInit(ManageGroups, hasUrl);
 
-            RemoveUrlCommand    = ReactiveCommand.Create<Uri>(url => ServerUrls.Remove(url));
-            RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokens.Remove(token));
+            RemoveUrlCommand = ReactiveCommand.Create<Uri>(url => ServerUrlsSource.Remove(url));
+            RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokensSource.Remove(token));
 
             RefreshCommand = ReactiveCommand.Create(Refresh, hasUrl);
 
@@ -148,16 +165,13 @@ namespace MonikDesktop.ViewModels
                 if (ServerUrl != null && ServerUrl == val)
                 {
                     // move to the top
-                    var index = ServerUrls.IndexOf(ServerUrl);
+                    var index = ServerUrlsSource.Items.IndexOf(ServerUrl);
                     if (index != 0)
-                    {
-                        using (ServerUrls.SuppressChangeNotifications())
-                            (ServerUrls[index], ServerUrls[0]) = (ServerUrls[0], ServerUrls[index]);
-                    }
+                        ServerUrlsSource.Move(index, 0);
                 }
                 else
                 {
-                    ServerUrls.Insert(0, val);
+                    ServerUrlsSource.Insert(0, val);
                     ServerUrl = val;
                 }
             }
@@ -187,16 +201,13 @@ namespace MonikDesktop.ViewModels
                 if (AuthToken != null && AuthToken == value)
                 {
                     // move to the top
-                    var index = AuthTokens.IndexOf(AuthToken);
+                    var index = AuthTokensSource.Items.IndexOf(AuthToken);
                     if (index != 0)
-                    {
-                        using (AuthTokens.SuppressChangeNotifications())
-                            (AuthTokens[index], AuthTokens[0]) = (AuthTokens[0], AuthTokens[index]);
-                    }
+                        AuthTokensSource.Move(index, 0);
                 }
                 else if (!string.IsNullOrEmpty(value))
                 {
-                    AuthTokens.Insert(0, value);
+                    AuthTokensSource.Insert(0, value);
                     AuthToken = value;
                 }
             }
@@ -245,6 +256,9 @@ namespace MonikDesktop.ViewModels
             }
         }
 
+        private string CurrentCacheUrl => _cacheProvider.CurrentCache.Service.ServerUrl.ToString();
+
+
         private async Task Refresh()
         {
             await TryToLoadCache();
@@ -252,20 +266,20 @@ namespace MonikDesktop.ViewModels
 
         private void NewLog()
         {
-            _shell.ShowView<LogsView>();
             ShowTools();
+            _shell.ShowView<LogsView>(new ViewRequest($"logs_{CurrentCacheUrl}"));
         }
 
         private void NewKeepAlive()
         {
-            _shell.ShowView<KeepAliveView>();
             ShowTools();
+            _shell.ShowView<KeepAliveView>(new ViewRequest($"keep-alive_{CurrentCacheUrl}"));
         }
 
         private void NewMetrics()
         {
-            _shell.ShowView<MetricsView>();
             ShowTools();
+            _shell.ShowView<MetricsView>(new ViewRequest($"metrics_{CurrentCacheUrl}"));
         }
 
         private void ShowTools()
@@ -273,24 +287,24 @@ namespace MonikDesktop.ViewModels
             if (!_isToolsShown)
             {
                 _isToolsShown = true;
-                _shell.ShowTool<PropertiesView>();
+                _shell.ShowTool<PropertiesView>(new ViewRequest("props"));
                 _shell.ShowTool<SourcesView>();
                 _shell.ShowTool<LogDescriptionView>();
             }
-
-            _shell.SelectedView = _shell.Container.Resolve<PropertiesView>();
+            else
+                _shell.ShowTool<PropertiesView>(new ViewRequest("props"));
         }
 
         private void RemoveEntities()
         {
-            _shell.ShowView<RemoveEntitiesView>();
-            _shell.SelectedView = _shell.Container.Resolve<StartupView>();
+            _shell.ShowView<RemoveEntitiesView>(new ViewRequest($"remove-entities_{CurrentCacheUrl}"));
+            _shell.ShowTool<StartupView>(new ViewRequest("startup"));
         }
 
         private void ManageGroups()
         {
-            _shell.ShowView<ManageGroupsView>();
-            _shell.SelectedView = _shell.Container.Resolve<StartupView>();
+            _shell.ShowView<ManageGroupsView>(new ViewRequest($"manage-groups_{CurrentCacheUrl}"));
+            _shell.ShowTool<StartupView>(new ViewRequest("startup"));
         }
 
         private void UpdateTheme(bool needToSave = true)

@@ -3,7 +3,7 @@ using System;
 
 namespace MonikDesktop.Common.ModelsApp
 {
-    public class KeepALiveItem
+    public class KeepAliveItem
     {
         public Instance Instance    { get; set; }
         public DateTime Created     { get; set; }

@@ -1,12 +1,14 @@
-﻿using MonikDesktop.Common;
+﻿using DynamicData;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common.ViewModels;
 
@@ -20,7 +22,15 @@ namespace MonikDesktop.ViewModels
 
         public KeepAliveViewModel(ISourcesCacheProvider cacheProvider)
         {
-            KeepALiveList = new ReactiveList<KeepALiveItem>();
+            KeepAliveSource = new SourceList<KeepAliveItem>();
+
+            KeepAliveSource
+                .Connect()
+                .Bind(out var keepAliveItems)
+                .Subscribe()
+                .DisposeWith(Disposables);
+            KeepALiveList = keepAliveItems;
+
             _model = new KeepAliveModel
             {
                 Caption = "KeepAlives",
@@ -29,7 +39,7 @@ namespace MonikDesktop.ViewModels
             Disposables.Add(_model);
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
-               .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
+                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
             StartCommand = ReactiveCommand.Create(OnStart, canStart);
@@ -39,37 +49,36 @@ namespace MonikDesktop.ViewModels
 
             UpdateCommand = ReactiveCommand.Create(OnUpdate, canStop);
 
-            UpdateCommand.Subscribe(results => KeepALiveList.Initialize(results));
-
-            UpdateCommand.ThrownExceptions
-               .Subscribe(ex =>
+            UpdateCommand.Subscribe(results =>
+                KeepAliveSource.Edit(innerList =>
                 {
-                    // TODO: handle
-                });
+                    innerList.Clear();
+                    innerList.AddRange(results);
+                }));
         }
 
-        // TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
-        public ReactiveList<KeepALiveItem>            KeepALiveList { get; set; }
-        public ReactiveCommand<Unit, KeepALiveItem[]> UpdateCommand { get; set; }
+        public SourceList<KeepAliveItem> KeepAliveSource { get; set; }
+        public ReadOnlyObservableCollection<KeepAliveItem> KeepALiveList { get; set; }
+        public ReactiveCommand<Unit, KeepAliveItem[]> UpdateCommand { get; set; }
 
         public long? LastId { get; private set; }
 
         public ShowModel Model => _model;
 
         public ReactiveCommand StartCommand { get; set; }
-        public ReactiveCommand StopCommand  { get; set; }
+        public ReactiveCommand StopCommand { get; set; }
 
         private void OnStart()
         {
             LastId = null;
-            KeepALiveList.Clear();
+            KeepAliveSource.Clear();
 
             var interval = TimeSpan.FromSeconds(_model.RefreshSec);
 
             _updateExecutor = Observable
-               .Timer(interval, interval)
-               .Select(_ => Unit.Default)
-               .InvokeCommand(UpdateCommand);
+                .Timer(interval, interval)
+                .Select(_ => Unit.Default)
+                .InvokeCommand(UpdateCommand);
 
             Model.Online = true;
         }
@@ -85,7 +94,7 @@ namespace MonikDesktop.ViewModels
             _model.Online = false;
         }
 
-        private KeepALiveItem[] OnUpdate()
+        private KeepAliveItem[] OnUpdate()
         {
             var req = new EKeepAliveRequest();
 
@@ -99,12 +108,12 @@ namespace MonikDesktop.ViewModels
             {
                 return new[]
                 {
-                    new KeepALiveItem
+                    new KeepAliveItem
                     {
                         Instance = new Instance
                         {
-                            ID     = -1,
-                            Name   = "INTERNAL",
+                            ID = -1,
+                            Name = "INTERNAL",
                             Source = new Source {ID = -1, Name = "ERROR"}
                         },
                         Created = DateTime.Now
@@ -115,20 +124,21 @@ namespace MonikDesktop.ViewModels
             if (response.Length > 0)
                 LastId = response.Max(x => x.ID);
 
-            response = response.GroupBy(x => _model.Cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key).SelectMany(g => g.OrderBy(x => _model.Cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
+            response = response.GroupBy(x => _model.Cache.GetInstance(x.InstanceID).Name).OrderBy(g => g.Key)
+                .SelectMany(g => g.OrderBy(x => _model.Cache.GetInstance(x.InstanceID).Source.Name)).ToArray();
 
             var result = response.Select(x =>
             {
-                var created    = x.Created.ToLocalTime();
+                var created = x.Created.ToLocalTime();
                 var statusIsOk = (DateTime.Now - x.Created.ToLocalTime()).TotalSeconds < _model.KeepAliveWarningPeriod;
 
-                return new KeepALiveItem
+                return new KeepAliveItem
                 {
-                    Created    = created,
+                    Created = created,
                     CreatedStr = created.ToString(_model.DateTimeFormat),
-                    Instance   = _model.Cache.GetInstance(x.InstanceID),
+                    Instance = _model.Cache.GetInstance(x.InstanceID),
                     StatusIsOk = statusIsOk,
-                    Status     = statusIsOk ? "OK" : "ERROR"
+                    Status = statusIsOk ? "OK" : "ERROR"
                 };
             });
 

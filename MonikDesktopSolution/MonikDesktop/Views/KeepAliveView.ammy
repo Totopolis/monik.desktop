@@ -9,7 +9,7 @@ ViewUserControl "MonikDesktop.Views.KeepAliveView" {
   ]
   Grid {
     @SimpleDataGrid(20) "MainGrid" {
-      ItemsSource: "{Binding KeepALiveList}"
+      ItemsSource: "{Binding KeepAliveList}"
       Columns: [
         DataGridTextColumn {
           Header: "Source"
