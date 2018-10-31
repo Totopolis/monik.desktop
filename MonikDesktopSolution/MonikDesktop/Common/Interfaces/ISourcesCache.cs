@@ -1,23 +1,22 @@
+using DynamicData;
 using MonikDesktop.Common.ModelsApp;
-using System;
 using System.Threading.Tasks;
 
 namespace MonikDesktop.Common.Interfaces
 {
     public interface ISourcesCache
 	{
-	    event Action Loaded;
-        bool IsLoaded { get; set; }
+	    bool IsLoaded { get; set; }
 	    Task Load();
 
 	    IMonikService Service { get; }
 
-		Group[] Groups { get; }
-		Source[] Sources { get; }
-		Instance[] Instances { get; }
-        Metric[] Metrics { get; }
-
-        SourceItem[] SourceItems { get; }
+	    SourceCache<Group, short> Groups { get; }
+	    SourceCache<Source, short> Sources { get; }
+	    SourceCache<Metric, int> Metrics { get; }
+	    SourceCache<Instance, int> Instances { get; }
+        SourceCache<Instance, int> InstancesWithoutGroup { get; }
+	    SourceCache<SourceItem, int> SourceItems { get; }
 
 	    void RemoveSource(Source v);
 	    void RemoveInstance(Instance v);

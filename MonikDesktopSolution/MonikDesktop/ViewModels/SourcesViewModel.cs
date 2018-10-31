@@ -1,13 +1,12 @@
-﻿using MonikDesktop.Common;
+﻿using DynamicData;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using MonikDesktop.ViewModels.ShowModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
+using MonikDesktop.Common;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -45,45 +44,31 @@ namespace MonikDesktop.ViewModels
                .Where(v => v.Value != null)
                .Subscribe(v => SelectedHack = v.Value);
 
-            this.ObservableForProperty(x => x.FilterText)
+            var dynamicFilter = this.ObservableForProperty(x => x.FilterText)
                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
-               .Subscribe(v => Filter(v.Value));
+               .Select(v => Filters.CreateFilterSourceItem(v.Value));
+
+            _model.Cache.SourceItems
+                .Connect()
+                .Filter(dynamicFilter);
         }
 
         [Reactive] public ReactiveCommand SelectNoneCommand  { get; set; }
         [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
 
         public ReactiveList<SourceItem> FilteredItems { get; }
-        private SourceItem[] SourceItems => _model.Cache.SourceItems;
-
+        
         [Reactive] public SourceItem SelectedHack { get; set; }
         [Reactive] public SourceItem SelectedItem { get; set; }
         [Reactive] public string FilterText { get; set; }
 
-        private void Filter(string aFilter)
-        {
-            aFilter = aFilter.ToLower();
-
-            IEnumerable<SourceItem> tmp;
-
-            if (string.IsNullOrWhiteSpace(aFilter))
-                tmp = SourceItems;
-            else
-                tmp = SourceItems
-                   .Where(x => x.SourceName.ToLower().Contains(aFilter) ||
-                               x.InstanceName.ToLower().Contains(aFilter));
-            
-            FilteredItems.Initialize(tmp);
-        }
-
         private void SetChecked(Func<SourceItem, bool> condition)
         {
-            // using(FilteredItems.SuppressChangeNotifications())
-            // - is faster, but will cause additional update
-            FilteredItems.ChangeTrackingEnabled = false;
-            foreach (var it in SourceItems)
-                it.Checked = condition(it);
-            FilteredItems.ChangeTrackingEnabled = true;
+            _model.Cache.SourceItems.Edit(innerCache =>
+            {
+                foreach (var it in innerCache.Items)
+                    it.Checked = condition(it);
+            });
         }
 
         private void SelectNone()
@@ -104,7 +89,6 @@ namespace MonikDesktop.ViewModels
         private void FillSourcesTree()
         {
             FilterText = "";
-            FilteredItems.Initialize(SourceItems);
         }
 
         private void SyncCheckStatuses()
@@ -118,21 +102,8 @@ namespace MonikDesktop.ViewModels
                 return;
 
             var cacheIsChanged = _model == null || model == null || _model.Cache != model.Cache;
-            if (cacheIsChanged)
-            {
-                if (_model != null)
-                    _model.Cache.Loaded -= OnCacheLoaded;
-                if (model != null)
-                    model.Cache.Loaded += OnCacheLoaded;
-            }
-
             _model = model;
             Refresh(cacheIsChanged);
-        }
-
-        private void OnCacheLoaded()
-        {
-            Refresh(true);
         }
 
         private void Refresh(bool cacheIsChanged)

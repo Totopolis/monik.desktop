@@ -1,4 +1,6 @@
-﻿using MonikDesktop.Common.Interfaces;
+﻿using DynamicData;
+using DynamicData.Kernel;
+using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using System;
@@ -12,8 +14,12 @@ namespace MonikDesktop.Common
     {
         private readonly IMonikService _service;
 
-        private SourcesCacheState _state;
-
+        public SourceCache<Group, short> Groups { get; set; }
+        public SourceCache<Source, short> Sources { get; set; }
+        public SourceCache<Metric, int> Metrics { get; set; }
+        public SourceCache<Instance, int> Instances { get; set; }
+        public SourceCache<Instance, int> InstancesWithoutGroup { get; set; }
+        public SourceCache<SourceItem, int> SourceItems { get; set; }
 
         private readonly Source _unknownSource;
 		private readonly Instance _unknownInstance;
@@ -22,116 +28,137 @@ namespace MonikDesktop.Common
 		{
 			_service = serviceFactory(url);
 
+            Groups = new SourceCache<Group, short>(x => x.ID);
+		    Sources = new SourceCache<Source, short>(x => x.ID);
+		    Metrics = new SourceCache<Metric, int>(x => x.ID);
+		    Instances = new SourceCache<Instance, int>(x => x.ID);
+		    InstancesWithoutGroup = new SourceCache<Instance, int>(x => x.ID);
+		    SourceItems = new SourceCache<SourceItem, int>(x => x.InstanceID);
+
 			_unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
 			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
 		}
 
-        public event Action Loaded;
         public bool IsLoaded { get; set; }
 	    public async Task Load()
 	    {
-	        _state = await Task.Run((Func<SourcesCacheState>)LoadCurrentState);
-            Loaded?.Invoke();
+	        await Task.Run(() => LoadCurrentState());
         }
 
         public IMonikService Service => _service;
 
-        private SourcesCacheState LoadCurrentState()
+        private void LoadCurrentState()
 		{
-            var state = new SourcesCacheState();
-
             var sources = _service.GetSources();
 		    var instances = _service.GetInstances();
 		    var metrics = _service.GetMetrics();
             var groups = _service.GetGroups();
 
 
-			state.Sources = sources.Select(x => new Source
-			{
-				ID = x.ID,
-				Name = x.Name
-			}).ToList();
-
-		    state.Instances = instances.ToDictionary(
-		        it => it.ID,
-		        it => new Instance
+		    Sources.Edit(innerCache =>
+		    {
+		        var items = sources.Select(x => new Source
 		        {
-		            ID = it.ID,
-		            Name = it.Name,
-		            Source = state.Sources.FirstOrDefault(x => x.ID == it.SourceID) ?? _unknownSource
+		            ID = x.ID,
+		            Name = x.Name
 		        });
 
-		    state.Metrics = metrics.Select(m =>
-		        new Metric
-		        {
-		            ID = m.ID,
-		            Name = m.Name,
-		            Instance = state.Instances.ContainsKey(m.InstanceID) ? state.Instances[m.InstanceID] : _unknownInstance,
-		            Aggregation = m.Aggregation
-		        }
-		    ).ToList();
+		        innerCache.Clear();
+		        innerCache.AddOrUpdate(items);
+		    });
 
-            var instancesInGroup = new HashSet<int>();
-
-		    state.Groups = groups.Select(it =>
+		    Instances.Edit(innerCache =>
 		    {
-		        var gr = new Group
+		        var items = instances.Select(x => new Instance
 		        {
-		            ID = it.ID,
-		            IsDefault = it.IsDefault,
-		            Name = it.Name,
-		            Instances = it.Instances
-		                .Where(v => state.Instances.ContainsKey(v))
-		                .Select(v => state.Instances[v])
+		            ID = x.ID,
+		            Name = x.Name,
+		            Source = Sources.Lookup((short) x.SourceID).ValueOr(() => _unknownSource)
+		        });
+
+		        innerCache.Clear();
+		        innerCache.AddOrUpdate(items);
+		    });
+
+		    InstancesWithoutGroup.Edit(innerCache =>
+		    {
+		        var idsInGroup = groups
+		            .SelectMany(x => x.Instances)
+		            .Distinct();
+		        var idsWithoutGroup = instances
+		            .Select(x => x.ID)
+		            .Except(idsInGroup);
+
+		        var items = idsWithoutGroup.Select(id => Instances.Lookup(id).Value);
+
+                innerCache.Clear();
+                innerCache.AddOrUpdate(items);
+            });
+
+		    Metrics.Edit(innerCache =>
+		    {
+		        var items = metrics.Select(x => new Metric
+		        {
+		            ID = x.ID,
+		            Name = x.Name,
+		            Instance = Instances.Lookup(x.InstanceID).ValueOr(() => _unknownInstance),
+		            Aggregation = x.Aggregation
+		        });
+
+		        innerCache.Clear();
+                innerCache.AddOrUpdate(items);
+		    });
+
+		    Groups.Edit(innerCache =>
+		    {
+		        var items = groups.Select(x => new Group
+		        {
+		            ID = x.ID,
+		            IsDefault = x.IsDefault,
+		            Name = x.Name,
+		            Instances = x.Instances
+		                .Select(v => Instances.Lookup(v).ValueOrDefault())
+		                .Where(v => v != null)
 		                .ToList()
-		        };
+		        });
 
-		        instancesInGroup.UnionWith(it.Instances);
+		        innerCache.Clear();
+                innerCache.AddOrUpdate(items);
+		    });
 
-		        return gr;
-		    }).ToList();
+            SourceItems.Edit(innerCache =>
+            {
+                var itemsInGroup = Groups.Items.SelectMany(
+                    x => x.Instances,
+                    (g, i) => new SourceItem
+                    {
+                        GroupID = g.ID,
+                        GroupName = g.Name,
+                        SourceName = i.Source.Name,
+                        InstanceName = i.Name,
+                        InstanceID = i.ID
+                    }).ToList();
+                var itemsWithoutGroup = InstancesWithoutGroup.Items.Select(i => new SourceItem
+                {
+                    GroupID = 0,
+                    GroupName = "[NOGROUP]",
+                    SourceName = i.Source.Name,
+                    InstanceName = i.Name,
+                    InstanceID = i.ID
+                });
 
-		    state.SourceItems = state.Groups
-		        .SelectMany(gr => gr.Instances,
-		            (gr, inst) => new SourceItem
-		            {
-		                GroupID = gr.ID,
-		                GroupName = gr.Name,
-		                SourceName = inst.Source.Name,
-		                InstanceName = inst.Name,
-		                InstanceID = inst.ID
-		            })
-		        .Concat(state.Instances.Values
-		            .Where(inst => !instancesInGroup.Contains(inst.ID))
-		            .Select(inst => new SourceItem
-		            {
-		                GroupID = 0,
-		                GroupName = "[NOGROUP]",
-		                SourceName = inst.Source.Name,
-		                InstanceName = inst.Name,
-		                InstanceID = inst.ID
-		            }))
-		        .ToList();
-
-		    return state;
+                innerCache.Clear();
+                innerCache.AddOrUpdate(itemsInGroup);
+                innerCache.AddOrUpdate(itemsWithoutGroup);
+            });
 		}
-
-	    public Group[] Groups => _state.Groups.ToArray();
-
-		public Source[] Sources => _state.Sources.ToArray();
-
-		public Instance[] Instances => _state.Instances.Values.ToArray();
-
-	    public Metric[] Metrics => _state.Metrics.ToArray();
-
-        public SourceItem[] SourceItems => _state.SourceItems.ToArray();
 
 	    public void RemoveSource(Source v)
 	    {
 	        _service.RemoveSource(v.ID);
 	        
-	        _state.Sources.Remove(v);
-            foreach(var ins in _state.Instances.Values.ToArray())
+	        Sources.Remove(v);
+            foreach(var ins in Instances.Items)
 	            if (ins.Source == v)
 	                RemoveInstanceFromCache(ins);
 	    }
@@ -145,34 +172,34 @@ namespace MonikDesktop.Common
 	    public void RemoveMetric(Metric v)
 	    {
 	        _service.RemoveMetric(v.ID);
-	        _state.Metrics.Remove(v);
+	        Metrics.Remove(v);
 	    }
 
         public Group GetGroup(short groupId)
         {
-            return _state.Groups.FirstOrDefault(g => g.ID == groupId);
+            return Groups.Lookup(groupId).ValueOrDefault();
         }
 
 	    public Instance GetInstance(int aInstanceId)
 		{
-			return _state.Instances.ContainsKey(aInstanceId)
-				? _state.Instances[aInstanceId]
-				: _unknownInstance;
-
-			// TODO: if unknown instance then update from api?
+			return Instances.Lookup(aInstanceId).ValueOr(() => _unknownInstance);
 		}
 
 	    public void AddInstanceToGroup(Instance i, Group g)
 	    {
 	        _service.AddInstanceToGroup(i.ID, g.ID);
             g.Instances.Add(i);
+            Groups.Refresh(g);
+            InstancesWithoutGroup.Remove(i);
 	    }
 
 	    public void RemoveInstanceFromGroup(Instance i, Group g)
 	    {
 	        _service.RemoveInstanceFromGroup(i.ID, g.ID);
 	        g.Instances.Remove(i);
-	    }
+	        Groups.Refresh(g);
+            InstancesWithoutGroup.AddOrUpdate(i);
+        }
 
 	    public Group CreateGroup(string name, bool isDefault, string description)
 	    {
@@ -191,26 +218,33 @@ namespace MonikDesktop.Common
 	            Instances = new List<Instance>()
 	        };
 
-            _state.Groups.Add(gr);
+            Groups.AddOrUpdate(gr);
 	        return gr;
 	    }
 
         public void RemoveGroup(Group g)
 	    {
 	        _service.RemoveGroup(g.ID);
-	        _state.Groups.Remove(g);
+	        Groups.Remove(g);
 	    }
 
 
         private void RemoveInstanceFromCache(Instance ins)
 	    {
             // remove from instances
-	        _state.Instances.Remove(ins.ID);
+	        Instances.Remove(ins.ID);
             // cleanup groups
-            foreach (var g in _state.Groups)
-	            g.Instances.Remove(ins);
+            Groups.Edit(innerCache =>
+            {
+                foreach (var g in innerCache.Items)
+                {
+                    var removed = g.Instances.Remove(ins);
+                    if (removed)
+                        innerCache.Refresh(g);
+                }
+            });
             // claenup metrics
-	        _state.Metrics = _state.Metrics.Where(m => m.Instance != ins).ToList();
+	        Metrics.Remove(Metrics.Items.Where(m => m.Instance == ins));
         }
 
 	} //end of class

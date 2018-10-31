@@ -8,9 +8,12 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using DynamicData;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -19,13 +22,10 @@ namespace MonikDesktop.ViewModels
     {
         private readonly MetricsModel _model;
 
-        private Dictionary<int, Metric> _metrics = new Dictionary<int, Metric>();
-
         private IDisposable _updateExecutor;
 
         public MetricsViewModel(ISourcesCacheProvider cacheProvider)
         {
-            MetricValuesList = new ReactiveList<MetricValueItem>();
             _model = new MetricsModel
             {
                 Caption = "Metrics",
@@ -35,6 +35,28 @@ namespace MonikDesktop.ViewModels
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
+
+            var dynamicFilter = _model.SelectedSourcesChanged
+                .Select(_ => Filters.CreateFilterMetricBySources(_model));
+
+            var observable = _model.Cache.Metrics
+                .Connect()
+                .Filter(dynamicFilter)
+                .Publish();
+
+            _metricsCache = observable
+                .AsObservableCache()
+                .DisposeWith(Disposables);
+
+            observable
+                .Transform(x => new MetricValueItem() {Metric = x})
+                .Bind(out _metricValuesList)
+                .Subscribe()
+                .DisposeWith(Disposables);
+
+            observable
+                .Connect()
+                .DisposeWith(Disposables);
 
             _model.SelectedSourcesChanged.Subscribe(_ => UpdateSelectedMetrics());
             UpdateSelectedMetrics();
@@ -67,21 +89,17 @@ namespace MonikDesktop.ViewModels
                     SeriesCollection.Clear();
                     SeriesCollection.AddRange(results);
                 }
-                else
-                {
-                    MetricValuesList.Initialize(results);
-                }
+                // ToDo
+                //else
+                //{
+                //    MetricValuesList.Initialize(results);
+                //}
             });
-
-            UpdateCommand.ThrownExceptions
-               .Subscribe(ex =>
-                {
-                    // TODO: handle
-                });
         }
 
-        // TODO: alert if receivedtime < createdtime or receivedtime >> createdtime
-        public ReactiveList<MetricValueItem> MetricValuesList { get; set; }
+        private readonly IObservableCache<Metric, int> _metricsCache;
+        private readonly ReadOnlyObservableCollection<MetricValueItem> _metricValuesList;
+        public ReadOnlyObservableCollection<MetricValueItem> MetricValuesList => _metricValuesList;
         public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand { get; set; }
         public ReactiveCommand StartCommand { get; set; }
         public ReactiveCommand StopCommand { get; set; }
@@ -96,14 +114,6 @@ namespace MonikDesktop.ViewModels
 
         private void UpdateSelectedMetrics()
         {
-            _metrics = GetMetrics()
-                .Where(IsNeedToShowMetricDescription)
-                .ToDictionary(md => md.ID);
-
-            var data = _metrics.Values
-                .Select(metric => new MetricValueItem() {Metric = metric});
-            MetricValuesList.Initialize(data);
-            
             if (SelectedMetric == null)
                 SelectedMetric = MetricValuesList.FirstOrDefault();
         }
@@ -121,15 +131,6 @@ namespace MonikDesktop.ViewModels
                .InvokeCommand(UpdateCommand);
 
             Model.Online = true;
-        }
-
-        private List<Metric> GetMetrics()
-        {
-            return _model.Cache.Metrics
-               .OrderBy(md => md.Instance.Source.Name)
-               .ThenBy(md => md.Instance.Name)
-               .ThenBy(md => md.Name)
-               .ToList();
         }
 
         private void OnStop()
@@ -154,13 +155,14 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.Current:
 
                         response = _model.Cache.Service.GetCurrentMetricValues()
-                           .Where(x => _metrics.ContainsKey(x.MetricId))
+                           .Select(x => new {m = _metricsCache.Lookup(x.MetricId), v = x})
+                           .Where(x => x.m.HasValue)
                            .Select(x => new MetricValueItem
                            {
-                               Metric = _metrics[x.MetricId],
-                               Value = Math.Round(x.Value, 2),
+                               Metric = x.m.Value,
+                               Value = Math.Round(x.v.Value, 2),
                                HasValue = true,
-                               Interval = x.Interval.ToLocalTime()
+                               Interval = x.v.Interval.ToLocalTime()
                            });
 
                         break;
@@ -168,11 +170,12 @@ namespace MonikDesktop.ViewModels
                     case MetricTerminalMode.TimeWindow:
 
                         response = _model.Cache.Service.GetWindowMetricValues()
-                            .Where(x => _metrics.ContainsKey(x.MetricId))
+                            .Select(x => new { m = _metricsCache.Lookup(x.MetricId), v = x })
+                            .Where(x => x.m.HasValue)
                             .Select(x => new MetricValueItem
                             {
-                                Metric = _metrics[x.MetricId],
-                                Value = Math.Round(x.Value, 2),
+                                Metric = x.m.Value,
+                                Value = Math.Round(x.v.Value, 2),
                                 HasValue = true
                             });
 
@@ -199,7 +202,7 @@ namespace MonikDesktop.ViewModels
                         throw new NotImplementedException();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new[]
                 {
@@ -227,18 +230,6 @@ namespace MonikDesktop.ViewModels
                 .ToList();
 
             return response;
-        }
-
-        private bool IsNeedToShowMetricDescription(Metric md)
-        {
-            if (!_model.Instances.Any() && !_model.Groups.Any())
-                return true;
-
-            if (_model.Instances.Contains(md.Instance.ID))
-                return true;
-
-            var groupId = _model.Cache.Groups.FirstOrDefault(x => x.Instances.Contains(md.Instance))?.ID;
-            return groupId.HasValue && _model.Groups.Contains(groupId.Value);
         }
     }
 }

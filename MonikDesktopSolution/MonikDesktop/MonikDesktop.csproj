@@ -196,6 +196,7 @@
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Common\Converters\LevelToNameConverter.cs" />
     <Compile Include="Common\Extensions\DataGridExtensions.cs" />
+    <Compile Include="Common\Filters.cs" />
     <Compile Include="Common\Interfaces\IShowView.cs" />
     <Compile Include="Common\Interfaces\IShowViewModel.cs" />
     <Compile Include="Common\Interfaces\ISourcesCache.cs" />
@@ -223,7 +224,6 @@
     <Compile Include="Common\ModelsApi\ELog_.cs" />
     <Compile Include="Common\ModelsApp\Source.cs" />
     <Compile Include="Common\ReactiveExtensions.cs" />
-    <Compile Include="Common\SourcesCacheState.cs" />
     <Compile Include="Common\SourcesCache.cs" />
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
     <Compile Include="Common\SourcesCacheProvider.cs" />
@@ -234,7 +234,6 @@
     <Compile Include="ViewModels\MetricsViewModel.cs" />
     <Compile Include="ViewModels\LogDescriptionViewModel.cs" />
     <Compile Include="ViewModels\KeepAliveViewModel.cs" />
-    <Compile Include="ViewModels\RemovableEntities.cs" />
     <Compile Include="ViewModels\RemoveEntitiesViewModel.cs" />
     <Compile Include="ViewModels\ShowModels\MetricsModel.cs" />
     <Compile Include="ViewModels\ShowModels\KeepAliveModel.cs" />

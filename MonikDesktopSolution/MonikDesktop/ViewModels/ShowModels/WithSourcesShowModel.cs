@@ -1,8 +1,10 @@
-﻿using MonikDesktop.Common.ModelsApp;
+﻿using DynamicData;
+using MonikDesktop.Common.ModelsApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -17,13 +19,34 @@ namespace MonikDesktop.ViewModels.ShowModels
 
         public WithSourcesShowModel(bool disableWhenSourcesChanged = true)
         {
-            _selectedSourcesChanged = new Subject<Unit>();
+            _selectedSourcesChanged = new Subject<Unit>()
+                .DisposeWith(Disposables);
 
             Groups = new HashSet<short>();
             Instances = new HashSet<int>();
 
             if (disableWhenSourcesChanged)
                 SelectedSourcesChanged.Subscribe(_ => Online = false);
+
+            Cache.Groups
+                .Connect()
+                .WhereReasonsAre(ChangeReason.Remove)
+                .Subscribe(_ =>
+                {
+                    Groups.Clear();
+                    _selectedSourcesChanged.OnNext(Unit.Default);
+                })
+                .DisposeWith(Disposables);
+
+            Cache.Instances
+                .Connect()
+                .WhereReasonsAre(ChangeReason.Remove)
+                .Subscribe(_ =>
+                {
+                    Instances.Clear();
+                    _selectedSourcesChanged.OnNext(Unit.Default);
+                })
+                .DisposeWith(Disposables);
         }
 
         public void SelectedSourcesClear()
@@ -44,12 +67,6 @@ namespace MonikDesktop.ViewModels.ShowModels
             _selectedSourcesChanged.OnNext(Unit.Default);
         }
 
-        protected override void OnCacheLoaded()
-        {
-            base.OnCacheLoaded();
-            SelectedSourcesClear();
-        }
-
         /// <summary>
         ///     Manage instance and group lists. Join to groups if needed.
         /// </summary>
@@ -62,7 +79,7 @@ namespace MonikDesktop.ViewModels.ShowModels
 
             if (!item.Checked && item.GroupID > 0 && Groups.Contains(item.GroupID))
             {
-                var checkedItems = Cache.SourceItems
+                var checkedItems = Cache.SourceItems.Items
                     .Where(x => x.GroupID == item.GroupID && x.Checked)
                     .Select(x => x.InstanceID);
 
@@ -74,7 +91,7 @@ namespace MonikDesktop.ViewModels.ShowModels
             {
                 var itemsInGroup = Cache.GetGroup(item.GroupID).Instances;
 
-                var checkedItems = Cache.SourceItems
+                var checkedItems = Cache.SourceItems.Items
                     .Where(x => (x.GroupID == item.GroupID) && x.Checked)
                     .ToList();
 
@@ -86,15 +103,6 @@ namespace MonikDesktop.ViewModels.ShowModels
             }
 
             _selectedSourcesChanged.OnNext(Unit.Default);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                _selectedSourcesChanged.Dispose();
-            }
         }
     }
 }

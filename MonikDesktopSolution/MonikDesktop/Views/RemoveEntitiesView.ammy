@@ -1,5 +1,6 @@
 ﻿using MonikDesktop.Views;
 using MonikDesktop.ViewModels;
+using MonikDesktop.Common.ModelsApp;
 
 alias NodeView(type, color, removeCommand)
 {
@@ -132,19 +133,19 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
             Resources: [
               HierarchicalDataTemplate
               {
-                DataType: NodeSource
+                DataType: Source
                 ItemsSource: bind Instances
                 @NodeView("Source", DeepSkyBlue, bind Data.RemoveNodeSourceCommand from $resource Proxy) {}
               }
               HierarchicalDataTemplate
               {
-                DataType: NodeInstance
+                DataType: Instance
                 ItemsSource: bind Metrics
                 @NodeView("Instance", LimeGreen, bind Data.RemoveNodeInstanceCommand from $resource Proxy) {}
               }
               DataTemplate
               {
-                DataType: NodeMetric
+                DataType: Metric
                 @NodeView("Metric", OrangeRed, bind Data.RemoveNodeMetricCommand from $resource Proxy) {}
               }
             ]

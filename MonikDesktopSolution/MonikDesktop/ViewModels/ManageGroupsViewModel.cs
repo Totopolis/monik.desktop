@@ -1,13 +1,17 @@
-﻿using MonikDesktop.Common;
+﻿using DynamicData;
+using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
-using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
+using Instance = MonikDesktop.Common.ModelsApp.Instance;
 
 namespace MonikDesktop.ViewModels
 {
@@ -23,43 +27,47 @@ namespace MonikDesktop.ViewModels
 
             Title = "Manage Groups";
 
-            ListGroups = new ReactiveList<GroupItem>();
-            ListInGroup = new ReactiveList<Instance>();
-            ListWithoutGroup = new ReactiveList<Instance>();
+            _cache.Groups
+                .Connect()
+                .Transform(x => new GroupItem(x))
+                .Bind(out _listGroups)
+                .Subscribe()
+                .DisposeWith(Disposables);
 
-            this.ObservableForProperty(x => x.SelectedGroup)
-                .Subscribe(v => ShowGroup(v.Value));
+            _cache.InstancesWithoutGroup
+                .Connect()
+                .Bind(out _listWithoutGroup)
+                .Subscribe()
+                .DisposeWith(Disposables);
 
-            _cache.Loaded += Refresh;
-            Refresh();
+            var dynamicInListFilter = this
+                .WhenAnyValue(x => x.SelectedGroup)
+                .Select(Filters.CreateFilterSelectedGroup);
+
+            _cache.Groups
+                .Connect()
+                .Filter(dynamicInListFilter)
+                .TransformMany(x => x.Instances, x => x.ID)
+                .Bind(out _listInGroup)
+                .Subscribe()
+                .DisposeWith(Disposables);
+
+            SelectedGroup = ListGroups.FirstOrDefault();
 
             RemoveGroupCommand = ReactiveCommand.Create<GroupItem>(RemoveGroup);
             CreateGroupCommand = ReactiveCommand.Create(CreateGroup);
         }
 
         [Reactive] public GroupItem SelectedGroup { get; set; }
-        public ReactiveList<GroupItem> ListGroups { get; set; }
-        public ReactiveList<Instance> ListInGroup { get; set; }
-        public ReactiveList<Instance> ListWithoutGroup { get; set; }
+        private readonly ReadOnlyObservableCollection<GroupItem> _listGroups;
+        public ReadOnlyObservableCollection<GroupItem> ListGroups => _listGroups;
+        private readonly ReadOnlyObservableCollection<Instance> _listWithoutGroup;
+        public ReadOnlyObservableCollection<Instance> ListWithoutGroup => _listWithoutGroup;
+        private readonly ReadOnlyObservableCollection<Instance> _listInGroup;
+        public ReadOnlyObservableCollection<Instance> ListInGroup => _listInGroup;
 
         public ReactiveCommand RemoveGroupCommand { get; set; }
         public ReactiveCommand CreateGroupCommand { get; set; }
-
-        private void Refresh()
-        {
-            ListGroups.Initialize(_cache.Groups.Select(x => new GroupItem(x)));
-            ListWithoutGroup.Initialize(_cache.Instances.Where(ins => _cache.Groups.All(g => !g.Instances.Contains(ins))));
-
-            SelectedGroup = ListGroups.FirstOrDefault();
-        }
-
-        private void ShowGroup(GroupItem gItem)
-        {
-            if (gItem == null)
-                ListInGroup.Clear();
-            else
-                ListInGroup.Initialize(gItem.Group.Instances);
-        }
 
         private void RemoveGroup(GroupItem gItem)
         {
@@ -67,7 +75,6 @@ namespace MonikDesktop.ViewModels
             {
                 _cache.RemoveGroup(gItem.Group);
 
-                ListGroups.Remove(gItem);
                 ListWithoutGroup.AddRange(gItem.Group.Instances);
 
                 if (SelectedGroup == gItem)
@@ -90,9 +97,8 @@ namespace MonikDesktop.ViewModels
             {
                 var group = _cache.CreateGroup(result.Name, result.IsDeafult, result.Description);
 
-                var gItem = new GroupItem(group);
-                ListGroups.Add(gItem);
-                SelectedGroup = gItem;
+                // ToDo: Select created group in view
+                //SelectedGroup = gItem;
             }
             catch (WebException e)
             {
@@ -105,10 +111,6 @@ namespace MonikDesktop.ViewModels
             try
             {
                 _cache.AddInstanceToGroup(instance, SelectedGroup.Group);
-                SelectedGroup.UpdateAmount();
-
-                ListWithoutGroup.Remove(instance);
-                ListInGroup.Add(instance);
             }
             catch (WebException e)
             {
@@ -121,10 +123,6 @@ namespace MonikDesktop.ViewModels
             try
             {
                 _cache.RemoveInstanceFromGroup(instance, SelectedGroup.Group);
-                SelectedGroup.UpdateAmount();
-
-                ListInGroup.Remove(instance);
-                ListWithoutGroup.Add(instance);
             }
             catch (WebException e)
             {
@@ -135,12 +133,6 @@ namespace MonikDesktop.ViewModels
         private void ShowPopupWebException(WebException e)
         {
             _window.ShowWebExceptionMessage(e);
-        }
-
-        protected override void DisposeInternals()
-        {
-            base.DisposeInternals();
-            _cache.Loaded -= Refresh;
         }
     }
 }

@@ -6,5 +6,7 @@ namespace MonikDesktop.Common.ModelsApp
     {
         public short ID { get; set; }
         public string Name { get; set; }
+
+        public List<Instance> Instances { get; set; }
     }
 }

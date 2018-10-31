@@ -2,6 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Reactive.Disposables;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
@@ -13,27 +14,9 @@ namespace MonikDesktop.ViewModels.ShowModels
 			this.ObservableForProperty(x => x.DateTimeFormat).Subscribe(_ => Online = false);
 		}
 
-	    protected virtual void OnCacheLoaded()
-	    {
-	        Online = false;
-	    }
-	    private ISourcesCache _cache;
-        public ISourcesCache Cache
-        {
-            get => _cache;
-            set
-            {
-                if (_cache != null)
-                    _cache.Loaded -= OnCacheLoaded;
+	    public ISourcesCache Cache { get; set; }
 
-                _cache = value;
-
-                if (_cache != null)
-                    _cache.Loaded += OnCacheLoaded;
-            }
-        }
-
-		[Reactive]
+	    [Reactive]
 		public string Caption { get; set; } = "";
 
 		[Reactive]
@@ -45,21 +28,11 @@ namespace MonikDesktop.ViewModels.ShowModels
         [Reactive]
 		public string DateTimeFormat { get; set; } = "HH:mm:ss";
 
-
-
-	    protected virtual void Dispose(bool disposing)
-	    {
-	        if (disposing)
-	        {
-	            if (_cache != null)
-	                _cache.Loaded -= OnCacheLoaded;
-	        }
-	    }
-
+        protected CompositeDisposable Disposables = new CompositeDisposable();
+        
 	    public void Dispose()
 	    {
-	        Dispose(true);
-	        GC.SuppressFinalize(this);
+	        Disposables?.Dispose();
 	    }
 	}
 }
