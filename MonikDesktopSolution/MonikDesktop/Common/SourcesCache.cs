@@ -39,7 +39,6 @@ namespace MonikDesktop.Common
 		    {
 		        ID = -1,
 		        Name = "_UNKNOWN_",
-		        Source = _unknownSource,
 		        Metrics = new ObservableCollection<Metric>()
 		    };
             _unknownSource = new Source
@@ -48,6 +47,7 @@ namespace MonikDesktop.Common
 		        Name = "_UNKNOWN_",
 		        Instances = new ObservableCollection<Instance>(new [] {_unknownInstance})
 		    };
+		    _unknownInstance.Source = _unknownSource;
 		}
 
         public bool IsLoaded { get; set; }
