@@ -84,12 +84,6 @@ namespace MonikDesktop.ViewModels
                 }
             });
 
-            UpdateCommand.ThrownExceptions
-                .Subscribe(ex =>
-                {
-                    // TODO: handle
-                });
-
             _model.ObservableForProperty(x => x.SelectedItem)
                 .Subscribe(v =>
                 {

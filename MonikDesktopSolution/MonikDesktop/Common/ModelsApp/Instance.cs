@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 
 namespace MonikDesktop.Common.ModelsApp
 {
@@ -8,6 +8,6 @@ namespace MonikDesktop.Common.ModelsApp
         public string Name   { get; set; }
         public Source Source { get; set; }
 
-        public List<Metric> Metrics { get; set; }
+        public ObservableCollection<Metric> Metrics { get; set; }
     }
 }

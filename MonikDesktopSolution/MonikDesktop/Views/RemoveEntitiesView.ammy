@@ -1,6 +1,7 @@
 ﻿using MonikDesktop.Views;
 using MonikDesktop.ViewModels;
 using MonikDesktop.Common.ModelsApp;
+using MahApps.Metro.Controls;
 
 alias NodeView(type, color, removeCommand)
 {
@@ -25,13 +26,13 @@ alias NodeView(type, color, removeCommand)
     {
       VerticalAlignment: Center
       Margin: "0,0,10,0"
-      Text: bind Value.Name
+      Text: bind Name
     }
     TextBlock
     {
       VerticalAlignment: Center
       Foreground: LightGray
-      Text: bind Value.ID set [ StringFormat: "(id: {0})"]
+      Text: bind ID set [ StringFormat: "(id: {0})"]
     }
 
     @RemoveButton($removeCommand, bind)
@@ -57,108 +58,64 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
       Grid.Row: 1
       #TwoRows("Auto", "*")
       Margin: 5
-      Grid
+      TextBox
       {
         Grid.Row: 0
-        #TwoColumns("Auto", "*")
-        Margin: "0 10 0 10"
-        Label
-        {
-          Grid.Column: 0
-          Margin: "0 0 5 0"
-          "Search:"
-        }
-        TextBox
-        {
-          Grid.Column: 1
-          Text: bind FilterText
-                set [
-                  Mode: TwoWay
-                  UpdateSourceTrigger: PropertyChanged
-                ]
-        }
+        Margin: "10,0,10,0"
+        TextBoxHelper.ClearTextButton: true
+        TextBoxHelper.Watermark: "Search..."
+        TextBoxHelper.UseFloatingWatermark: true
+        Text: bind FilterText
+              set [
+                Mode: TwoWay
+                UpdateSourceTrigger: PropertyChanged
+              ]
       }
-      TabControl
+      MetroAnimatedTabControl
       {
         Grid.Row: 1
         Margin: "10"
-        BorderBrush: resource dyn "AccentBaseColorBrush"
-        Resources: Style
+        TabControlHelper.Underlined: TabPanel
+        TabStripPlacement: Top
+        MetroTabItem
         {
-          TargetType: "TabItem"
-          Setter
-          {
-            Property: "Template"
-            Value: ControlTemplate
-            {
-              TargetType: "TabItem"
-              Border "Border"
-              {
-                CornerRadius: "3,3,0,0"
-                Margin: "2,0"
-                ContentPresenter "ContentSite"
-                {
-                  VerticalAlignment: Center
-                  HorizontalAlignment: Center
-                  ContentSource: "Header"
-                  Margin: "10,3"
-                  TextBlock.Foreground: resource dyn "BlackBrush"
-                }
-              }
-              Triggers: [
-                Trigger
-                {
-                  Property: "IsSelected"
-                  Value: true
-                  #Setter("Background", resource dyn "AccentBaseColorBrush", "Border")
-                }
-                Trigger
-                {
-                  Property: "IsSelected"
-                  Value: false
-                  #Setter("Background", resource dyn "AccentColorBrush3", "Border")
-                }
-              ]
-            }
-          }
-        }
-        TabItem
-        {
+          ControlsHelper.HeaderFontSize: 16
           Header: "Tree View"
           TreeView "RemovableEntities"
           {
             VirtualizingPanel.IsVirtualizing: true
             VirtualizingPanel.VirtualizationMode: "Recycling"
-            ItemsSource: bind SourcesTree
+            ItemsSource: bind Sources
             Resources: [
               HierarchicalDataTemplate
               {
                 DataType: Source
                 ItemsSource: bind Instances
-                @NodeView("Source", DeepSkyBlue, bind Data.RemoveNodeSourceCommand from $resource Proxy) {}
+                @NodeView("Source", DeepSkyBlue, bind Data.RemoveSourceCommand from $resource Proxy) {}
               }
               HierarchicalDataTemplate
               {
                 DataType: Instance
                 ItemsSource: bind Metrics
-                @NodeView("Instance", LimeGreen, bind Data.RemoveNodeInstanceCommand from $resource Proxy) {}
+                @NodeView("Instance", LimeGreen, bind Data.RemoveInstanceCommand from $resource Proxy) {}
               }
               DataTemplate
               {
                 DataType: Metric
-                @NodeView("Metric", OrangeRed, bind Data.RemoveNodeMetricCommand from $resource Proxy) {}
+                @NodeView("Metric", OrangeRed, bind Data.RemoveMetricCommand from $resource Proxy) {}
               }
             ]
           }
         }
-        TabItem
+        MetroTabItem
         {
+          ControlsHelper.HeaderFontSize: 16
           Header: "Sources"
           @SimpleDataGrid() "SourcesGrid"
           {
             VirtualizingPanel.IsVirtualizing: true
             VirtualizingPanel.VirtualizationMode: "Recycling"
-            ItemsSource: bind SourcesFiltered
+            ItemsSource: bind Sources
             Columns: [
               DataGridTextColumn
               {
@@ -187,14 +144,15 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
             ]
           }
         }
-        TabItem
+        MetroTabItem
         {
+          ControlsHelper.HeaderFontSize: 16
           Header: "Instances"
           @SimpleDataGrid() "InstancesGrid"
           {
             VirtualizingPanel.IsVirtualizing: true
             VirtualizingPanel.VirtualizationMode: "Recycling"
-            ItemsSource: bind InstancesFiltered
+            ItemsSource: bind Instances
             Columns: [
               DataGridTextColumn
               {
@@ -229,14 +187,15 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
             ]
           }
         }
-        TabItem
+        MetroTabItem
         {
+          ControlsHelper.HeaderFontSize: 16
           Header: "Metrics"
           @SimpleDataGrid "MetricsGrid"
           {
             VirtualizingPanel.IsVirtualizing: true
             VirtualizingPanel.VirtualizationMode: "Recycling"
-            ItemsSource: bind MetricsFiltered
+            ItemsSource: bind Metrics
             Columns: [
               DataGridTextColumn
               {

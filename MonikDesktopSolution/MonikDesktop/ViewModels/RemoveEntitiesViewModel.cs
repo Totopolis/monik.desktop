@@ -30,16 +30,16 @@ namespace MonikDesktop.ViewModels
             RemoveInstanceCommand = ReactiveCommand.Create<Instance>(RemoveInstance);
             RemoveMetricCommand = ReactiveCommand.Create<Metric>(RemoveMetric);
 
-            var filter = this.ObservableForProperty(x => x.FilterText)
-                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
+            var filter = this.WhenAnyValue(x => x.FilterText)
+                .Throttle(TimeSpan.FromSeconds(.3))
                 .Publish();
 
             var dynamicFilterSource = filter
-                .Select(v => Filters.CreateFilterSource(v.Value));
+                .Select(Filters.CreateFilterSource);
             var dynamicFilterInstance = filter
-                .Select(v => Filters.CreateFilterInstance(v.Value));
+                .Select(Filters.CreateFilterInstance);
             var dynamicFilterMetric = filter
-                .Select(v => Filters.CreateFilterMetric(v.Value));
+                .Select(Filters.CreateFilterMetric);
             
             filter.Connect()
                 .DisposeWith(Disposables);
@@ -47,6 +47,7 @@ namespace MonikDesktop.ViewModels
             _cache.Sources
                 .Connect()
                 .Filter(dynamicFilterSource)
+                .ObserveOnDispatcher()
                 .Bind(out _sources)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -54,6 +55,7 @@ namespace MonikDesktop.ViewModels
             _cache.Instances
                 .Connect()
                 .Filter(dynamicFilterInstance)
+                .ObserveOnDispatcher()
                 .Bind(out _instances)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -61,6 +63,7 @@ namespace MonikDesktop.ViewModels
             _cache.Metrics
                 .Connect()
                 .Filter(dynamicFilterMetric)
+                .ObserveOnDispatcher()
                 .Bind(out _metrics)
                 .Subscribe()
                 .DisposeWith(Disposables);

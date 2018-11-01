@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MonikDesktop.Common.ModelsApp
 {
@@ -7,6 +7,6 @@ namespace MonikDesktop.Common.ModelsApp
         public short ID { get; set; }
         public string Name { get; set; }
 
-        public List<Instance> Instances { get; set; }
+        public ObservableCollection<Instance> Instances { get; set; }
     }
 }

@@ -35,8 +35,19 @@ namespace MonikDesktop.Common
 		    InstancesWithoutGroup = new SourceCache<Instance, int>(x => x.ID);
 		    SourceItems = new SourceCache<SourceItem, int>(x => x.InstanceID);
 
-			_unknownSource = new Source {ID = -1, Name = "_UNKNOWN_"};
-			_unknownInstance = new Instance {ID = -1, Name = "_UNKNOWN_", Source = _unknownSource};
+		    _unknownInstance = new Instance
+		    {
+		        ID = -1,
+		        Name = "_UNKNOWN_",
+		        Source = _unknownSource,
+		        Metrics = new ObservableCollection<Metric>()
+		    };
+            _unknownSource = new Source
+		    {
+		        ID = -1,
+		        Name = "_UNKNOWN_",
+		        Instances = new ObservableCollection<Instance>(new [] {_unknownInstance})
+		    };
 		}
 
         public bool IsLoaded { get; set; }
@@ -60,24 +71,34 @@ namespace MonikDesktop.Common
 		        var items = sources.Select(x => new Source
 		        {
 		            ID = x.ID,
-		            Name = x.Name
+		            Name = x.Name,
+                    Instances = new ObservableCollection<Instance>()
 		        });
 
 		        innerCache.Clear();
 		        innerCache.AddOrUpdate(items);
-		    });
+		        innerCache.AddOrUpdate(_unknownSource);
+            });
 
 		    Instances.Edit(innerCache =>
 		    {
-		        var items = instances.Select(x => new Instance
+		        var items = instances.Select(x =>
 		        {
-		            ID = x.ID,
-		            Name = x.Name,
-		            Source = Sources.Lookup((short) x.SourceID).ValueOr(() => _unknownSource)
+		            var source = Sources.Lookup((short) x.SourceID).ValueOr(() => _unknownSource);
+		            var instance = new Instance
+		            {
+		                ID = x.ID,
+		                Name = x.Name,
+		                Source = source,
+                        Metrics = new ObservableCollection<Metric>()
+		            };
+                    source.Instances.Add(instance);
+		            return instance;
 		        });
 
 		        innerCache.Clear();
 		        innerCache.AddOrUpdate(items);
+                innerCache.AddOrUpdate(_unknownInstance);
 		    });
 
 		    InstancesWithoutGroup.Edit(innerCache =>
@@ -97,12 +118,18 @@ namespace MonikDesktop.Common
 
 		    Metrics.Edit(innerCache =>
 		    {
-		        var items = metrics.Select(x => new Metric
+		        var items = metrics.Select(x =>
 		        {
-		            ID = x.ID,
-		            Name = x.Name,
-		            Instance = Instances.Lookup(x.InstanceID).ValueOr(() => _unknownInstance),
-		            Aggregation = x.Aggregation
+		            var instance = Instances.Lookup(x.InstanceID).ValueOr(() => _unknownInstance);
+                    var metric = new Metric
+		            {
+		                ID = x.ID,
+		                Name = x.Name,
+		                Instance = instance,
+		                Aggregation = x.Aggregation
+		            };
+                    instance.Metrics.Add(metric);
+                    return metric;
 		        });
 
 		        innerCache.Clear();
@@ -154,7 +181,15 @@ namespace MonikDesktop.Common
 
 	    public void RemoveSource(Source v)
 	    {
-	        _service.RemoveSource(v.ID);
+	        if (v == _unknownSource)
+	        {
+	            foreach (var instance in v.Instances)
+	                RemoveInstance(instance);
+
+	            return;
+	        }
+
+            _service.RemoveSource(v.ID);
 	        
 	        Sources.Remove(v);
             foreach(var ins in Instances.Items)
@@ -164,6 +199,14 @@ namespace MonikDesktop.Common
 
 	    public void RemoveInstance(Instance v)
 	    {
+	        if (v == _unknownInstance)
+	        {
+	            foreach (var metric in v.Metrics)
+	                RemoveMetric(metric);
+
+	            return;
+	        }
+
 	        _service.RemoveInstance(v.ID);
 	        RemoveInstanceFromCache(v);
 	    }
@@ -172,6 +215,7 @@ namespace MonikDesktop.Common
 	    {
 	        _service.RemoveMetric(v.ID);
 	        Metrics.Remove(v);
+	        v.Instance.Metrics.Remove(v);
 	    }
 
         public Group GetGroup(short groupId)
@@ -228,7 +272,9 @@ namespace MonikDesktop.Common
 
 
         private void RemoveInstanceFromCache(Instance ins)
-	    {
+        {
+            // remove from parent
+            ins.Source.Instances.Remove(ins);
             // remove from instances
 	        Instances.Remove(ins.ID);
             // cleanup groups
