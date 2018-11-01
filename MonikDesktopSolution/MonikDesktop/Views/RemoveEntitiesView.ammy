@@ -3,7 +3,7 @@ using MonikDesktop.ViewModels;
 using MonikDesktop.Common.ModelsApp;
 using MahApps.Metro.Controls;
 
-alias NodeView(type, color, removeCommand)
+alias NodeView(type, color, removeCommand, amount=none)
 {
   @StackPanelHorizontal()
   {
@@ -34,7 +34,28 @@ alias NodeView(type, color, removeCommand)
       Foreground: LightGray
       Text: bind ID set [ StringFormat: "(id: {0})"]
     }
-
+    Border 
+    {
+      MinWidth: 19
+      Margin: "10,0,10,0"
+      Padding: "5, 1, 5, 2"
+      Background: Gold
+      CornerRadius: 10
+      TextBlock "AmountText"
+      {
+        VerticalAlignment: Center
+        HorizontalAlignment: Center
+        FontSize: 10
+        FontWeight: Bold
+        Foreground: Black
+        Text: $amount
+      }
+      Visibility: bind Text from "AmountText"
+                  convert (string val) =>
+                    string.IsNullOrEmpty(val) || val == "0"
+                      ? Visibility.Collapsed
+                      : Visibility.Visible
+    }
     @RemoveButton($removeCommand, bind)
     {
       Margin: "10,0,0,0"
@@ -91,13 +112,13 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
               {
                 DataType: Source
                 ItemsSource: bind Instances
-                @NodeView("Source", DeepSkyBlue, bind Data.RemoveSourceCommand from $resource Proxy) {}
+                @NodeView("Source", DeepSkyBlue, bind Data.RemoveSourceCommand from $resource Proxy, bind Instances.Count) {}
               }
               HierarchicalDataTemplate
               {
                 DataType: Instance
                 ItemsSource: bind Metrics
-                @NodeView("Instance", LimeGreen, bind Data.RemoveInstanceCommand from $resource Proxy) {}
+                @NodeView("Instance", LimeGreen, bind Data.RemoveInstanceCommand from $resource Proxy, bind Metrics.Count) {}
               }
               DataTemplate
               {
@@ -127,6 +148,12 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
               {
                 Header: "Source"
                 Binding: bind Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Instances"
+                Binding: bind Instances.Count
                 Width: Auto
               }
               DataGridTemplateColumn
@@ -170,6 +197,12 @@ ViewUserControl "MonikDesktop.Views.RemoveEntitiesView"
               {
                 Header: "Instance"
                 Binding: bind Name
+                Width: Auto
+              }
+              DataGridTextColumn
+              {
+                Header: "Metrics"
+                Binding: bind Metrics.Count
                 Width: Auto
               }
               DataGridTemplateColumn
