@@ -7,6 +7,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common;
@@ -44,6 +45,7 @@ namespace MonikDesktop.ViewModels
         [Reactive] public ReactiveCommand SelectNoneCommand { get; set; }
         [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
 
+        private bool _syncCheckStatusesInProcess;
         private IDisposable _itemsSubscription;
         [Reactive] public ReadOnlyObservableCollection<SourceItem> Items { get; set; }
 
@@ -99,6 +101,7 @@ namespace MonikDesktop.ViewModels
             var refreshSubscription = _model.Cache.SourceItems
                 .Connect()
                 .WhenPropertyChanged(x => x.Checked)
+                .Where(_ => !_syncCheckStatusesInProcess)
                 .Subscribe(x => _model.OnSourceItemChanged(x.Sender));
 
             _itemsSubscription = Disposable.Create(() =>
@@ -110,7 +113,9 @@ namespace MonikDesktop.ViewModels
 
         private void SyncCheckStatuses()
         {
+            _syncCheckStatusesInProcess = true;
             SetChecked(x => _model.Groups.Contains(x.GroupID) || _model.Instances.Contains(x.InstanceID));
+            _syncCheckStatusesInProcess = false;
         }
 
         private void UpdateModel(WithSourcesShowModel model)
@@ -138,6 +143,7 @@ namespace MonikDesktop.ViewModels
 
             // Select None Command
             var canSelectNone = _model.SelectedSourcesChanged
+                .StartWith(Unit.Default)
                 .Select(_ => _model.Instances.Count > 0 || _model.Groups.Count > 0);
 
             SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
