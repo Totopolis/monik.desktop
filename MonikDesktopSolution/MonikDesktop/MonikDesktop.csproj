@@ -257,7 +257,6 @@
     <Compile Include="Common\Converters\SeverityToNameConverter.cs" />
     <Compile Include="Common\SourcesCacheProvider.cs" />
     <Compile Include="ViewModels\GroupCreateDialogResult.cs" />
-    <Compile Include="ViewModels\GroupItem.cs" />
     <Compile Include="ViewModels\MainWindowExtensions.cs" />
     <Compile Include="ViewModels\ManageGroupsViewModel.cs" />
     <Compile Include="ViewModels\MetricsViewModel.cs" />

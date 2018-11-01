@@ -4,7 +4,7 @@ using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
 using MonikDesktop.Common.ModelsApp;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -116,10 +116,9 @@ namespace MonikDesktop.Common
 		            ID = x.ID,
 		            IsDefault = x.IsDefault,
 		            Name = x.Name,
-		            Instances = x.Instances
+		            Instances = new ObservableCollection<Instance>(x.Instances
 		                .Select(v => Instances.Lookup(v).ValueOrDefault())
-		                .Where(v => v != null)
-		                .ToList()
+		                .Where(v => v != null))
 		        });
 
 		        innerCache.Clear();
@@ -189,7 +188,6 @@ namespace MonikDesktop.Common
 	    {
 	        _service.AddInstanceToGroup(i.ID, g.ID);
             g.Instances.Add(i);
-            Groups.Refresh(g);
             InstancesWithoutGroup.Remove(i);
 	    }
 
@@ -197,7 +195,6 @@ namespace MonikDesktop.Common
 	    {
 	        _service.RemoveInstanceFromGroup(i.ID, g.ID);
 	        g.Instances.Remove(i);
-	        Groups.Refresh(g);
             InstancesWithoutGroup.AddOrUpdate(i);
         }
 
@@ -215,7 +212,7 @@ namespace MonikDesktop.Common
 	            ID = newGroup.ID,
 	            IsDefault = newGroup.IsDefault,
 	            Name = newGroup.Name,
-	            Instances = new List<Instance>()
+	            Instances = new ObservableCollection<Instance>()
 	        };
 
             Groups.AddOrUpdate(gr);
@@ -226,7 +223,8 @@ namespace MonikDesktop.Common
 	    {
 	        _service.RemoveGroup(g.ID);
 	        Groups.Remove(g);
-	    }
+	        InstancesWithoutGroup.AddOrUpdate(g.Instances);
+        }
 
 
         private void RemoveInstanceFromCache(Instance ins)

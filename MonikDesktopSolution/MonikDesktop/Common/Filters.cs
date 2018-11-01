@@ -1,8 +1,7 @@
 ﻿using MonikDesktop.Common.ModelsApp;
+using MonikDesktop.ViewModels.ShowModels;
 using System;
 using System.Linq;
-using MonikDesktop.ViewModels;
-using MonikDesktop.ViewModels.ShowModels;
 
 namespace MonikDesktop.Common
 {
@@ -67,14 +66,6 @@ namespace MonikDesktop.Common
                 var groupId = model.Cache.Groups.Items.FirstOrDefault(x => x.Instances.Contains(metric.Instance))?.ID;
                 return groupId.HasValue && model.Groups.Contains(groupId.Value);
             };
-        }
-
-        public static Func<Group, bool> CreateFilterSelectedGroup(GroupItem gi)
-        {
-            if (gi == null)
-                return _ => false;
-
-            return g => g.ID == gi.Group.ID;
         }
     }
 }

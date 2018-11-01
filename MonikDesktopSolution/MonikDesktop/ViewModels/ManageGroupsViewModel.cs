@@ -1,6 +1,6 @@
 ﻿using DynamicData;
-using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
+using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -11,7 +11,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
-using Instance = MonikDesktop.Common.ModelsApp.Instance;
 
 namespace MonikDesktop.ViewModels
 {
@@ -29,7 +28,6 @@ namespace MonikDesktop.ViewModels
 
             _cache.Groups
                 .Connect()
-                .Transform(x => new GroupItem(x))
                 .Bind(out _listGroups)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -42,7 +40,7 @@ namespace MonikDesktop.ViewModels
 
             var dynamicInListFilter = this
                 .WhenAnyValue(x => x.SelectedGroup)
-                .Select(Filters.CreateFilterSelectedGroup);
+                .Select(g => (Func<Group, bool>) (x => g != null && x.ID == g.ID));
 
             _cache.Groups
                 .Connect()
@@ -54,13 +52,13 @@ namespace MonikDesktop.ViewModels
 
             SelectedGroup = ListGroups.FirstOrDefault();
 
-            RemoveGroupCommand = ReactiveCommand.Create<GroupItem>(RemoveGroup);
+            RemoveGroupCommand = ReactiveCommand.Create<Group>(RemoveGroup);
             CreateGroupCommand = ReactiveCommand.Create(CreateGroup);
         }
 
-        [Reactive] public GroupItem SelectedGroup { get; set; }
-        private readonly ReadOnlyObservableCollection<GroupItem> _listGroups;
-        public ReadOnlyObservableCollection<GroupItem> ListGroups => _listGroups;
+        [Reactive] public Group SelectedGroup { get; set; }
+        private readonly ReadOnlyObservableCollection<Group> _listGroups;
+        public ReadOnlyObservableCollection<Group> ListGroups => _listGroups;
         private readonly ReadOnlyObservableCollection<Instance> _listWithoutGroup;
         public ReadOnlyObservableCollection<Instance> ListWithoutGroup => _listWithoutGroup;
         private readonly ReadOnlyObservableCollection<Instance> _listInGroup;
@@ -69,14 +67,11 @@ namespace MonikDesktop.ViewModels
         public ReactiveCommand RemoveGroupCommand { get; set; }
         public ReactiveCommand CreateGroupCommand { get; set; }
 
-        private void RemoveGroup(GroupItem gItem)
+        private void RemoveGroup(Group gItem)
         {
             try
             {
-                _cache.RemoveGroup(gItem.Group);
-
-                ListWithoutGroup.AddRange(gItem.Group.Instances);
-
+                _cache.RemoveGroup(gItem);
                 if (SelectedGroup == gItem)
                     SelectedGroup = ListGroups.FirstOrDefault();
             }
@@ -95,10 +90,8 @@ namespace MonikDesktop.ViewModels
 
             try
             {
-                var group = _cache.CreateGroup(result.Name, result.IsDeafult, result.Description);
-
-                // ToDo: Select created group in view
-                //SelectedGroup = gItem;
+                var newGroup = _cache.CreateGroup(result.Name, result.IsDeafult, result.Description);
+                SelectedGroup = newGroup;
             }
             catch (WebException e)
             {
@@ -108,9 +101,12 @@ namespace MonikDesktop.ViewModels
 
         public void AddInstanceToCurrentGroup(Instance instance)
         {
+            if (SelectedGroup == null)
+                return;
+
             try
             {
-                _cache.AddInstanceToGroup(instance, SelectedGroup.Group);
+                _cache.AddInstanceToGroup(instance, SelectedGroup);
             }
             catch (WebException e)
             {
@@ -120,9 +116,12 @@ namespace MonikDesktop.ViewModels
 
         public void RemoveInstanceFromCurrentGroup(Instance instance)
         {
+            if (SelectedGroup == null)
+                return;
+
             try
             {
-                _cache.RemoveInstanceFromGroup(instance, SelectedGroup.Group);
+                _cache.RemoveInstanceFromGroup(instance, SelectedGroup);
             }
             catch (WebException e)
             {

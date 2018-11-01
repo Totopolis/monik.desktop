@@ -193,19 +193,19 @@ ViewUserControl "MonikDesktop.Views.ManageGroupsView"
         DataGridTextColumn
         {
           Header: "ID"
-          Binding: bind Group.ID
+          Binding: bind ID
           Width: Auto
         }
         DataGridTextColumn
         {
           Header: "Group"
-          Binding: bind Group.Name
+          Binding: bind Name
           Width: Auto
         }
         DataGridTextColumn
         {
           Header: "Default"
-          Binding: bind Group.IsDefault convert (bool val) => val ? "Default" : ""
+          Binding: bind IsDefault convert (bool val) => val ? "Default" : ""
           Width: Auto
         }
         DataGridTextColumn
@@ -217,7 +217,7 @@ ViewUserControl "MonikDesktop.Views.ManageGroupsView"
             #Setter("HorizontalAlignment", "Right")
             #Setter("Margin", "10")
           }
-          Binding: bind InstancesAmount set [ Mode: TwoWay ]
+          Binding: bind Instances.Count
           Width: "*"
         }
       ]
