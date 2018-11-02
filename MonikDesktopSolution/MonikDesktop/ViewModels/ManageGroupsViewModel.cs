@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using DynamicData.Binding;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
 using ReactiveUI;
@@ -28,12 +29,16 @@ namespace MonikDesktop.ViewModels
 
             _cache.Groups
                 .Connect()
+                .Sort(SortExpressionComparer<Group>
+                    .Ascending(x => x.ID))
                 .Bind(out _listGroups)
                 .Subscribe()
                 .DisposeWith(Disposables);
 
             _cache.InstancesWithoutGroup
                 .Connect()
+                .Sort(SortExpressionComparer<Instance>
+                    .Ascending(x => x.ID))
                 .Bind(out _listWithoutGroup)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -46,6 +51,8 @@ namespace MonikDesktop.ViewModels
                 .Connect()
                 .Filter(dynamicInListFilter)
                 .TransformMany(x => x.Instances, x => x.ID)
+                .Sort(SortExpressionComparer<Instance>
+                    .Ascending(x => x.ID))
                 .Bind(out _listInGroup)
                 .Subscribe()
                 .DisposeWith(Disposables);

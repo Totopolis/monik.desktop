@@ -1,4 +1,6 @@
-﻿using LiveCharts;
+﻿using DynamicData;
+using DynamicData.Binding;
+using LiveCharts;
 using LiveCharts.Configurations;
 using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
@@ -13,7 +15,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using DynamicData;
 using Ui.Wpf.Common.ViewModels;
 
 namespace MonikDesktop.ViewModels
@@ -50,6 +51,10 @@ namespace MonikDesktop.ViewModels
 
             observable
                 .Transform(x => new MetricValueItem {Metric = x})
+                .Sort(SortExpressionComparer<MetricValueItem>
+                    .Ascending(x => x.Metric.Instance.Source.Name)
+                    .ThenByAscending(x => x.Metric.Instance.Name)
+                    .ThenByAscending(x => x.Metric.Name))
                 .Bind(out var metricValuesStatic)
                 .Subscribe()
                 .DisposeWith(Disposables);

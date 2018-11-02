@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using DynamicData.Binding;
 using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
@@ -47,6 +48,8 @@ namespace MonikDesktop.ViewModels
             _cache.Sources
                 .Connect()
                 .Filter(dynamicFilterSource)
+                .Sort(SortExpressionComparer<Source>
+                    .Ascending(x => x.ID))
                 .ObserveOnDispatcher()
                 .Bind(out _sources)
                 .Subscribe()
@@ -55,6 +58,8 @@ namespace MonikDesktop.ViewModels
             _cache.Instances
                 .Connect()
                 .Filter(dynamicFilterInstance)
+                .Sort(SortExpressionComparer<Instance>
+                    .Ascending(x => x.ID))
                 .ObserveOnDispatcher()
                 .Bind(out _instances)
                 .Subscribe()
@@ -63,6 +68,8 @@ namespace MonikDesktop.ViewModels
             _cache.Metrics
                 .Connect()
                 .Filter(dynamicFilterMetric)
+                .Sort(SortExpressionComparer<Metric>
+                    .Ascending(x => x.ID))
                 .ObserveOnDispatcher()
                 .Bind(out _metrics)
                 .Subscribe()

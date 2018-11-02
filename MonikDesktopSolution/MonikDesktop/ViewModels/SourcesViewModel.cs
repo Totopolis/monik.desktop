@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using DynamicData.Binding;
 using MonikDesktop.Common;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApp;
@@ -7,7 +8,6 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common;
@@ -90,6 +90,10 @@ namespace MonikDesktop.ViewModels
             var itemsSubscription = _model.Cache.SourceItems
                 .Connect()
                 .Filter(dynamicFilter)
+                .Sort(SortExpressionComparer<SourceItem>
+                    .Ascending(x => x.GroupName)
+                    .ThenByAscending(x => x.SourceName)
+                    .ThenByAscending(x => x.InstanceName))
                 .Bind(out var items)
                 .Subscribe();
 
