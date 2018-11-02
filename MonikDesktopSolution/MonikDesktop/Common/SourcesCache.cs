@@ -45,9 +45,11 @@ namespace MonikDesktop.Common
 		    {
 		        ID = -1,
 		        Name = "_UNKNOWN_",
-		        Instances = new ObservableCollection<Instance>(new [] {_unknownInstance})
+		        Instances = new ObservableCollection<Instance>()
 		    };
+
 		    _unknownInstance.Source = _unknownSource;
+            _unknownSource.Instances.Add(_unknownInstance);
 		}
 
         public bool IsLoaded { get; set; }
@@ -154,24 +156,13 @@ namespace MonikDesktop.Common
 
             SourceItems.Edit(innerCache =>
             {
-                var itemsInGroup = Groups.Items.SelectMany(
-                    x => x.Instances,
-                    (g, i) => new SourceItem
-                    {
-                        GroupID = g.ID,
-                        GroupName = g.Name,
-                        SourceName = i.Source.Name,
-                        InstanceName = i.Name,
-                        InstanceID = i.ID
-                    }).ToList();
-                var itemsWithoutGroup = InstancesWithoutGroup.Items.Select(i => new SourceItem
-                {
-                    GroupID = 0,
-                    GroupName = "[NOGROUP]",
-                    SourceName = i.Source.Name,
-                    InstanceName = i.Name,
-                    InstanceID = i.ID
-                });
+                var itemsInGroup = Groups.Items
+                    .SelectMany(
+                        x => x.Instances,
+                        (g, i) => CreateSourceItem(i, g))
+                    .ToList();
+                var itemsWithoutGroup = InstancesWithoutGroup.Items
+                    .Select(i => CreateSourceItem(i));
 
                 innerCache.Clear();
                 innerCache.AddOrUpdate(itemsInGroup);
@@ -233,6 +224,7 @@ namespace MonikDesktop.Common
 	        _service.AddInstanceToGroup(i.ID, g.ID);
             g.Instances.Add(i);
             InstancesWithoutGroup.Remove(i);
+            SourceItems.AddOrUpdate(CreateSourceItem(i, g));
 	    }
 
 	    public void RemoveInstanceFromGroup(Instance i, Group g)
@@ -240,6 +232,7 @@ namespace MonikDesktop.Common
 	        _service.RemoveInstanceFromGroup(i.ID, g.ID);
 	        g.Instances.Remove(i);
             InstancesWithoutGroup.AddOrUpdate(i);
+	        SourceItems.AddOrUpdate(CreateSourceItem(i));
         }
 
 	    public Group CreateGroup(string name, bool isDefault, string description)
@@ -268,6 +261,7 @@ namespace MonikDesktop.Common
 	        _service.RemoveGroup(g.ID);
 	        Groups.Remove(g);
 	        InstancesWithoutGroup.AddOrUpdate(g.Instances);
+	        SourceItems.AddOrUpdate(g.Instances.Select(i => CreateSourceItem(i)));
         }
 
 
@@ -281,14 +275,38 @@ namespace MonikDesktop.Common
             Groups.Edit(innerCache =>
             {
                 foreach (var g in innerCache.Items)
-                {
-                    var removed = g.Instances.Remove(ins);
-                    if (removed)
-                        innerCache.Refresh(g);
-                }
+                    g.Instances.Remove(ins);
             });
+            // cleanup sources
+            SourceItems.Remove(ins.ID);
             // claenup metrics
 	        Metrics.Remove(Metrics.Items.Where(m => m.Instance == ins));
+        }
+
+        private static SourceItem CreateSourceItem(Instance i, Group g = null)
+        {
+            if (g == null)
+            {
+                return new SourceItem
+                {
+                    GroupID = 0,
+                    GroupName = "[NOGROUP]",
+                    SourceName = i.Source.Name,
+                    InstanceName = i.Name,
+                    InstanceID = i.ID
+                };
+            }
+            else
+            {
+                return new SourceItem
+                {
+                    GroupID = g.ID,
+                    GroupName = g.Name,
+                    SourceName = i.Source.Name,
+                    InstanceName = i.Name,
+                    InstanceID = i.ID
+                };
+            }
         }
 
 	} //end of class

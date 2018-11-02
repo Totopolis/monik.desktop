@@ -14,14 +14,14 @@ namespace MonikDesktop.ViewModels.ShowModels
     public class WithSourcesShowModel : ShowModel
     {
         private IDisposable _cacheSubscriptions;
-        private readonly Subject<Unit> _selectedSourcesChanged;
-        public IObservable<Unit> SelectedSourcesChanged => _selectedSourcesChanged.AsObservable();
+        private readonly Subject<bool> _selectedSourcesChanged;
+        public IObservable<bool> SelectedSourcesChanged => _selectedSourcesChanged.AsObservable();
         public HashSet<short> Groups { get; }
         public HashSet<int> Instances { get; }
 
         public WithSourcesShowModel(bool disableWhenSourcesChanged = true)
         {
-            _selectedSourcesChanged = new Subject<Unit>()
+            _selectedSourcesChanged = new Subject<bool>()
                 .DisposeWith(Disposables);
 
             Groups = new HashSet<short>();
@@ -43,18 +43,20 @@ namespace MonikDesktop.ViewModels.ShowModels
                 var groupsSubscription = Cache.Groups
                     .Connect()
                     .WhereReasonsAre(ChangeReason.Remove)
-                    .Subscribe(_ =>
+                    .Subscribe(changes =>
                     {
-                        Groups.Clear();
-                        _selectedSourcesChanged.OnNext(Unit.Default);
+                        var ids = changes.Select(x => x.Current.ID);
+                        Groups.ExceptWith(ids);
+                        _selectedSourcesChanged.OnNext(true);
                     });
                 var instancesSubscription = Cache.Instances
                     .Connect()
                     .WhereReasonsAre(ChangeReason.Remove)
-                    .Subscribe(_ =>
+                    .Subscribe(changes =>
                     {
-                        Instances.Clear();
-                        _selectedSourcesChanged.OnNext(Unit.Default);
+                        var ids = changes.Select(x => x.Current.ID);
+                        Instances.ExceptWith(ids);
+                        _selectedSourcesChanged.OnNext(true);
                     });
 
                 _cacheSubscriptions = Disposable.Create(() =>
@@ -70,17 +72,16 @@ namespace MonikDesktop.ViewModels.ShowModels
             Groups.Clear();
             Instances.Clear();
 
-            _selectedSourcesChanged.OnNext(Unit.Default);
+            _selectedSourcesChanged.OnNext(true);
         }
 
         public void SelectSourcesGroup(short groupId)
         {
             Groups.Add(groupId);
-            var gInstances = Cache.GetGroup(groupId).Instances;
-            foreach (var i in gInstances)
-                Instances.Remove(i.ID);
+            var ids = Cache.GetGroup(groupId).Instances.Select(x => x.ID);
+            Instances.ExceptWith(ids);
 
-            _selectedSourcesChanged.OnNext(Unit.Default);
+            _selectedSourcesChanged.OnNext(true);
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace MonikDesktop.ViewModels.ShowModels
                 }
             }
 
-            _selectedSourcesChanged.OnNext(Unit.Default);
+            _selectedSourcesChanged.OnNext(false);
         }
     }
 }

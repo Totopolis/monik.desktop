@@ -45,6 +45,7 @@ namespace MonikDesktop.ViewModels
         [Reactive] public ReactiveCommand SelectNoneCommand { get; set; }
         [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
 
+        private IDisposable _cleanupRefresh;
         private bool _syncCheckStatusesInProcess;
         private IDisposable _itemsSubscription;
         [Reactive] public ReadOnlyObservableCollection<SourceItem> Items { get; set; }
@@ -69,16 +70,12 @@ namespace MonikDesktop.ViewModels
         private void SelectNone()
         {
             _model.SelectedSourcesClear();
-            SetChecked(_ => false);
         }
 
         private void SelectGroup()
         {
-            if (SelectedHack == null || _model.Groups.Contains(SelectedHack.GroupID))
-                return;
-
-            _model.SelectSourcesGroup(SelectedHack.GroupID);
-            SetChecked(x => x.Checked || x.GroupID == SelectedHack.GroupID);
+            if (SelectedHack != null && !_model.Groups.Contains(SelectedHack.GroupID))
+                _model.SelectSourcesGroup(SelectedHack.GroupID);
         }
 
         private void Reset()
@@ -133,17 +130,24 @@ namespace MonikDesktop.ViewModels
             SelectedItem = null;
             SelectedHack = null;
 
-            SelectNoneCommand?.Dispose();
-            SelectGroupCommand?.Dispose();
+            _cleanupRefresh?.Dispose();
 
             if (cacheIsChanged)
                 Reset();
 
-            SyncCheckStatuses();
+            var publish = _model.SelectedSourcesChanged
+                .StartWith(true)
+                .Publish();
+
+            var syncSubscription = publish
+                .Subscribe(needSync =>
+                {
+                    if (needSync)
+                        SyncCheckStatuses();
+                });
 
             // Select None Command
-            var canSelectNone = _model.SelectedSourcesChanged
-                .StartWith(Unit.Default)
+            var canSelectNone = publish
                 .Select(_ => _model.Instances.Count > 0 || _model.Groups.Count > 0);
 
             SelectNoneCommand = ReactiveCommand.Create(SelectNone, canSelectNone);
@@ -154,6 +158,16 @@ namespace MonikDesktop.ViewModels
                 .Select(si => si != null && !_model.Groups.Contains(si.GroupID));
 
             SelectGroupCommand = ReactiveCommand.Create(SelectGroup, canSelectGroup);
+
+            var connection = publish.Connect();
+
+            _cleanupRefresh = Disposable.Create(() =>
+            {
+                SelectNoneCommand?.Dispose();
+                SelectGroupCommand?.Dispose();
+                syncSubscription?.Dispose();
+                connection?.Dispose();
+            });
         }
     } //end of class
 }
