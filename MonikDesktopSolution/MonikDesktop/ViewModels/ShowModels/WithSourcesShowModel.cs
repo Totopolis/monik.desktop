@@ -28,7 +28,10 @@ namespace MonikDesktop.ViewModels.ShowModels
             Instances = new HashSet<int>();
 
             if (disableWhenSourcesChanged)
-                SelectedSourcesChanged.Subscribe(_ => Online = false);
+                SelectedSourcesChanged
+                    .ObserveOnDispatcher()
+                    .Subscribe(_ => Online = false)
+                    .DisposeWith(Disposables);
         }
 
         public override ISourcesCache Cache

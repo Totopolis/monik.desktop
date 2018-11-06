@@ -94,6 +94,7 @@ namespace MonikDesktop.ViewModels
                     .Ascending(x => x.GroupName)
                     .ThenByAscending(x => x.SourceName)
                     .ThenByAscending(x => x.InstanceName))
+                .ObserveOnDispatcher()
                 .Bind(out var items)
                 .Subscribe();
 

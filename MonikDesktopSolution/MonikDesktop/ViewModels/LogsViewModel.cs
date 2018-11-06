@@ -32,6 +32,7 @@ namespace MonikDesktop.ViewModels
 
             LogsSource
                 .Connect()
+                .ObserveOnDispatcher()
                 .Bind(out var logsItems)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -45,6 +46,7 @@ namespace MonikDesktop.ViewModels
             Disposables.Add(_model);
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
+                .ObserveOnDispatcher()
                 .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
 
             _model.ObservableForProperty(x => x.Online)

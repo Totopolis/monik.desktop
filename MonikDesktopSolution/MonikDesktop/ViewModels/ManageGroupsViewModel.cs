@@ -31,6 +31,7 @@ namespace MonikDesktop.ViewModels
                 .Connect()
                 .Sort(SortExpressionComparer<Group>
                     .Ascending(x => x.ID))
+                .ObserveOnDispatcher()
                 .Bind(out _listGroups)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -39,6 +40,7 @@ namespace MonikDesktop.ViewModels
                 .Connect()
                 .Sort(SortExpressionComparer<Instance>
                     .Ascending(x => x.ID))
+                .ObserveOnDispatcher()
                 .Bind(out _listWithoutGroup)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -53,6 +55,7 @@ namespace MonikDesktop.ViewModels
                 .TransformMany(x => x.Instances, x => x.ID)
                 .Sort(SortExpressionComparer<Instance>
                     .Ascending(x => x.ID))
+                .ObserveOnDispatcher()
                 .Bind(out _listInGroup)
                 .Subscribe()
                 .DisposeWith(Disposables);

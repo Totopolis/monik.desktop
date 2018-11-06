@@ -55,6 +55,7 @@ namespace MonikDesktop.ViewModels
                     .Ascending(x => x.Metric.Instance.Source.Name)
                     .ThenByAscending(x => x.Metric.Instance.Name)
                     .ThenByAscending(x => x.Metric.Name))
+                .ObserveOnDispatcher()
                 .Bind(out var metricValuesStatic)
                 .Subscribe()
                 .DisposeWith(Disposables);
@@ -67,6 +68,7 @@ namespace MonikDesktop.ViewModels
                 .DisposeWith(Disposables);
             metricValuesDynamicSource
                 .Connect()
+                .ObserveOnDispatcher()
                 .Bind(out var metricValuesDynamic)
                 .Subscribe()
                 .DisposeWith(Disposables);

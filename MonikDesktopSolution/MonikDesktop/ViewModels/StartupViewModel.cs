@@ -80,6 +80,7 @@ namespace MonikDesktop.ViewModels
 
             ServerUrlsSource
                 .Connect()
+                .ObserveOnDispatcher()
                 .Bind(out _serverUrls)
                 .ToCollection()
                 .Subscribe(items =>
@@ -105,6 +106,7 @@ namespace MonikDesktop.ViewModels
 
             AuthTokensSource
                 .Connect()
+                .ObserveOnDispatcher()
                 .Bind(out _authTokens)
                 .ToCollection()
                 .Subscribe(items =>

@@ -26,6 +26,7 @@ namespace MonikDesktop.ViewModels
 
             KeepAliveSource
                 .Connect()
+                .ObserveOnDispatcher()
                 .Bind(out var keepAliveItems)
                 .Subscribe()
                 .DisposeWith(Disposables);
