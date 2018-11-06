@@ -109,13 +109,13 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI, Version=9.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.9.1.1\lib\net461\ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\ReactiveUI.9.1.4\lib\net461\ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI.Fody.Helpers, Version=9.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.Fody.9.1.1\lib\net461\ReactiveUI.Fody.Helpers.dll</HintPath>
+      <HintPath>..\packages\ReactiveUI.Fody.9.1.4\lib\net461\ReactiveUI.Fody.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI.WPF, Version=9.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.WPF.9.1.1\lib\net461\ReactiveUI.WPF.dll</HintPath>
+      <HintPath>..\packages\ReactiveUI.WPF.9.1.4\lib\net461\ReactiveUI.WPF.dll</HintPath>
     </Reference>
     <Reference Include="Splat, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Splat.5.0.2\lib\net461\Splat.dll</HintPath>
@@ -194,8 +194,8 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Ui.Wpf.Common, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ui.Wpf.Common.1.0.17\lib\net462\Ui.Wpf.Common.dll</HintPath>
+    <Reference Include="Ui.Wpf.Common, Version=1.0.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ui.Wpf.Common.1.0.18\lib\net462\Ui.Wpf.Common.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
