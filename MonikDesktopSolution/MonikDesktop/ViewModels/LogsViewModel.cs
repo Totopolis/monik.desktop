@@ -9,6 +9,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -33,21 +34,20 @@ namespace MonikDesktop.ViewModels
             LogsSource
                 .Connect()
                 .ObserveOnDispatcher()
-                .Bind(out var logsItems)
+                .Bind(out _logsList)
                 .Subscribe()
                 .DisposeWith(Disposables);
-            LogsList = logsItems;
 
             _model = new LogsModel
             {
                 Caption = "Logs",
                 Cache = cacheProvider.CurrentCache
-            };
-            Disposables.Add(_model);
+            }.DisposeWith(Disposables);
 
             _model.WhenAnyValue(x => x.Caption, x => x.Online)
                 .ObserveOnDispatcher()
-                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"));
+                .Subscribe(v => Title = v.Item1 + (v.Item2 ? " >" : " ||"))
+                .DisposeWith(Disposables);
 
             _model.ObservableForProperty(x => x.Online)
                 .Subscribe(p =>
@@ -65,7 +65,8 @@ namespace MonikDesktop.ViewModels
                     }
                     else
                         _updateExecutor?.Dispose();
-                });
+                })
+                .DisposeWith(Disposables);
 
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
             StartCommand = ReactiveCommand.Create(() => _model.Online = true, canStart);
@@ -77,26 +78,35 @@ namespace MonikDesktop.ViewModels
             UpdateCommand.Subscribe(result =>
             {
                 LogsSource.AddRange(result);
+            });
 
-                if (_model.AutoScroll)
+            Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+                    h => ((INotifyCollectionChanged) _logsList).CollectionChanged += h,
+                    h => ((INotifyCollectionChanged) _logsList).CollectionChanged -= h)
+                .Where(x => x.EventArgs.Action == NotifyCollectionChangedAction.Add)
+                .Throttle(TimeSpan.FromSeconds(.1), RxApp.MainThreadScheduler)
+                .Where(_ => _model.AutoScroll)
+                .Subscribe(_ =>
                 {
-                    var last = result.LastOrDefault();
+                    var last = LogsSource.Items.LastOrDefault();
                     if (last != null)
                         ScrollTo.Handle(last).Wait();
-                }
-            });
+                })
+                .DisposeWith(Disposables);
 
             _model.ObservableForProperty(x => x.SelectedItem)
                 .Subscribe(v =>
                 {
                     var desc = aShell.Container.Resolve<LogDescriptionViewModel>();
                     desc.SelectedItem = v.Value;
-                });
+                })
+                .DisposeWith(Disposables);
         }
 
         public Interaction<LogItem, Unit> ScrollTo { get; set; }
         public SourceList<LogItem> LogsSource { get; set; }
-        public ReadOnlyObservableCollection<LogItem> LogsList { get; set; }
+        private ReadOnlyObservableCollection<LogItem> _logsList;
+        public ReadOnlyObservableCollection<LogItem> LogsList => _logsList;
         public ReactiveCommand<Unit, LogItem[]> UpdateCommand { get; set; }
 
         public long? LastId { get; private set; }
