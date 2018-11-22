@@ -1,5 +1,4 @@
-﻿using Autofac;
-using DynamicData;
+﻿using DynamicData;
 using MonikDesktop.Common.Enums;
 using MonikDesktop.Common.Interfaces;
 using MonikDesktop.Common.ModelsApi;
@@ -91,14 +90,6 @@ namespace MonikDesktop.ViewModels
                     var last = LogsSource.Items.LastOrDefault();
                     if (last != null)
                         ScrollTo.Handle(last).Wait();
-                })
-                .DisposeWith(Disposables);
-
-            _model.ObservableForProperty(x => x.SelectedItem)
-                .Subscribe(v =>
-                {
-                    var desc = aShell.Container.Resolve<LogDescriptionViewModel>();
-                    desc.SelectedItem = v.Value;
                 })
                 .DisposeWith(Disposables);
         }
