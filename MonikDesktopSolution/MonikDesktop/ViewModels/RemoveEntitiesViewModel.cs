@@ -8,6 +8,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common;
@@ -76,9 +77,9 @@ namespace MonikDesktop.ViewModels
                 .DisposeWith(Disposables);
         }
 
-        public ReactiveCommand RemoveSourceCommand { get; set; }
-        public ReactiveCommand RemoveInstanceCommand { get; set; }
-        public ReactiveCommand RemoveMetricCommand { get; set; }
+        public ReactiveCommand<Source, Unit> RemoveSourceCommand { get; set; }
+        public ReactiveCommand<Instance, Unit> RemoveInstanceCommand { get; set; }
+        public ReactiveCommand<Metric, Unit> RemoveMetricCommand { get; set; }
 
         [Reactive] public string FilterText { get; set; }
 

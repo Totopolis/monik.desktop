@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -132,22 +133,22 @@ namespace MonikDesktop.ViewModels
             RemoveUrlCommand = ReactiveCommand.Create<Uri>(url => ServerUrlsSource.Remove(url));
             RemoveAuthTokenCommand = ReactiveCommand.Create<string>(token => AuthTokensSource.Remove(token));
 
-            RefreshCommand = ReactiveCommand.Create(Refresh, hasUrl);
+            RefreshCommand = ReactiveCommand.CreateFromTask(Refresh, hasUrl);
 
             UpdateSourcesCache();
         }
 
-        public ReactiveCommand NewLogCommand       { get; set; }
-        public ReactiveCommand NewKeepAliveCommand { get; set; }
-        public ReactiveCommand NewMetricsCommand   { get; set; }
+        public ReactiveCommand<Unit, Unit> NewLogCommand       { get; set; }
+        public ReactiveCommand<Unit, Unit> NewKeepAliveCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> NewMetricsCommand   { get; set; }
 
-        public ReactiveCommand RemoveEntitiesCommand { get; set; }
-        public ReactiveCommand ManageGroupsCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> RemoveEntitiesCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> ManageGroupsCommand { get; set; }
 
-        public ReactiveCommand RemoveUrlCommand    { get; set; }
-        public ReactiveCommand RemoveAuthTokenCommand { get; set; }
+        public ReactiveCommand<Uri, Unit> RemoveUrlCommand    { get; set; }
+        public ReactiveCommand<string, Unit> RemoveAuthTokenCommand { get; set; }
 
-        public ReactiveCommand RefreshCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> RefreshCommand { get; set; }
 
         public void UpdateSourcesCache()
         {
@@ -215,9 +216,9 @@ namespace MonikDesktop.ViewModels
             }
         }
 
-        private ReactiveCommand CreateCommandWithInit(Action act, IObservable<bool> canExecute)
+        private ReactiveCommand<Unit, Unit> CreateCommandWithInit(Action act, IObservable<bool> canExecute)
         {
-            return ReactiveCommand.Create(WrapInInit(act), canExecute);
+            return ReactiveCommand.CreateFromTask(WrapInInit(act), canExecute);
         }
 
         private Func<Task> WrapInInit(Action act)

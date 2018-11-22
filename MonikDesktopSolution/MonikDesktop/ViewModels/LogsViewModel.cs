@@ -68,10 +68,18 @@ namespace MonikDesktop.ViewModels
                 .DisposeWith(Disposables);
 
             var canStart = _model.WhenAny(x => x.Online, x => !x.Value);
-            StartCommand = ReactiveCommand.Create(() => _model.Online = true, canStart);
+            StartCommand = ReactiveCommand.Create(() =>
+            {
+                _model.Online = true;
+                return Unit.Default;
+            }, canStart);
 
             var canStop = _model.WhenAny(x => x.Online, x => x.Value);
-            StopCommand = ReactiveCommand.Create(() => _model.Online = false, canStop);
+            StopCommand = ReactiveCommand.Create(() =>
+            {
+                _model.Online = false;
+                return Unit.Default;
+            }, canStop);
 
             UpdateCommand = ReactiveCommand.Create(OnUpdate);
             UpdateCommand.Subscribe(result =>
@@ -104,8 +112,8 @@ namespace MonikDesktop.ViewModels
 
         public ShowModel Model => _model;
 
-        public ReactiveCommand StartCommand { get; set; }
-        public ReactiveCommand StopCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StartCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StopCommand { get; set; }
 
         private LogItem[] OnUpdate()
         {

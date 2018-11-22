@@ -8,8 +8,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -63,7 +65,7 @@ namespace MonikDesktop.ViewModels
             SelectedGroup = ListGroups.FirstOrDefault();
 
             RemoveGroupCommand = ReactiveCommand.Create<Group>(RemoveGroup);
-            CreateGroupCommand = ReactiveCommand.Create(CreateGroup);
+            CreateGroupCommand = ReactiveCommand.CreateFromTask(CreateGroup);
         }
 
         [Reactive] public Group SelectedGroup { get; set; }
@@ -74,8 +76,8 @@ namespace MonikDesktop.ViewModels
         private readonly ReadOnlyObservableCollection<Instance> _listInGroup;
         public ReadOnlyObservableCollection<Instance> ListInGroup => _listInGroup;
 
-        public ReactiveCommand RemoveGroupCommand { get; set; }
-        public ReactiveCommand CreateGroupCommand { get; set; }
+        public ReactiveCommand<Group, Unit> RemoveGroupCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateGroupCommand { get; set; }
 
         private void RemoveGroup(Group gItem)
         {
@@ -91,7 +93,7 @@ namespace MonikDesktop.ViewModels
             }
         }
 
-        private async void CreateGroup()
+        private async Task CreateGroup()
         {
             var result = await ((MainWindow)_window).ShowGroupCreateDialog();
 

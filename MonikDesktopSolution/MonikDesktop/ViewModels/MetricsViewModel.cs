@@ -121,8 +121,8 @@ namespace MonikDesktop.ViewModels
         private readonly IObservableCache<Metric, int> _metricsCache;
         [Reactive] public ReadOnlyObservableCollection<MetricValueItem> MetricValuesList { get; set; }
         public ReactiveCommand<Unit, IEnumerable<MetricValueItem>> UpdateCommand { get; set; }
-        public ReactiveCommand StartCommand { get; set; }
-        public ReactiveCommand StopCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StartCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StopCommand { get; set; }
 
         public ChartValues<MetricValueItem> SeriesCollection { get; set; }
 

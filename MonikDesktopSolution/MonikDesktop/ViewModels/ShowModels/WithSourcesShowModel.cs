@@ -80,8 +80,12 @@ namespace MonikDesktop.ViewModels.ShowModels
 
         public void SelectSourcesGroup(short groupId)
         {
+            var group = Cache.GetGroup(groupId);
+            if (group == null)
+                return;
+
             Groups.Add(groupId);
-            var ids = Cache.GetGroup(groupId).Instances.Select(x => x.ID);
+            var ids = group.Instances.Select(x => x.ID);
             Instances.ExceptWith(ids);
 
             _selectedSourcesChanged.OnNext(true);

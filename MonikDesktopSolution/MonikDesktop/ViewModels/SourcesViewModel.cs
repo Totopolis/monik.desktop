@@ -8,6 +8,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Ui.Wpf.Common;
@@ -42,8 +43,8 @@ namespace MonikDesktop.ViewModels
                 .Subscribe(v => SelectedHack = v.Value);
         }
 
-        [Reactive] public ReactiveCommand SelectNoneCommand { get; set; }
-        [Reactive] public ReactiveCommand SelectGroupCommand { get; set; }
+        [Reactive] public ReactiveCommand<Unit, Unit> SelectNoneCommand { get; set; }
+        [Reactive] public ReactiveCommand<Unit, Unit> SelectGroupCommand { get; set; }
 
         private IDisposable _cleanupRefresh;
         private bool _syncCheckStatusesInProcess;

@@ -66,8 +66,8 @@ namespace MonikDesktop.ViewModels
 
         public ShowModel Model => _model;
 
-        public ReactiveCommand StartCommand { get; set; }
-        public ReactiveCommand StopCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StartCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> StopCommand { get; set; }
 
         private void OnStart()
         {
