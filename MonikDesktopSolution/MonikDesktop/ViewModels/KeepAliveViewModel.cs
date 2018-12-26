@@ -97,7 +97,11 @@ namespace MonikDesktop.ViewModels
 
         private KeepAliveItem[] OnUpdate()
         {
-            var req = new EKeepAliveRequest();
+            var req = new EKeepAliveRequest
+            {
+                Groups = _model.Groups.ToArray(),
+                Instances = _model.Instances.ToArray()
+            };
 
             EKeepAlive_[] response;
 

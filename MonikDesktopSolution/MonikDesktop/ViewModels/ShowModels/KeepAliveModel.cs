@@ -4,7 +4,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace MonikDesktop.ViewModels.ShowModels
 {
-	public class KeepAliveModel : ShowModel
+	public class KeepAliveModel : WithSourcesShowModel
     {
         public KeepAliveModel()
         {
