@@ -3,20 +3,27 @@ using MonikDesktop.Common.ModelsApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace MonikDesktop.Common
 {
     public class MonikService : IMonikService
-	{
+    {
+        private readonly HttpClient _client;
 	    public Uri ServerUrl { get; }
 	    public string AuthToken { get; set; }
 
-	    public MonikService(Uri url)
-	    {
-	        ServerUrl = url;
-	    }
+        public MonikService(Uri url)
+        {
+            _client = new HttpClient(new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
+
+            ServerUrl = url;
+        }
 
         public EGroup[] GetGroups()
 		{
@@ -134,72 +141,54 @@ namespace MonikDesktop.Common
 
         private void Delete(string aMethod)
 	    {
-	        var request = CreateRequest(aMethod);
-	        request.Method = "DELETE";
+	        var request = CreateRequest(aMethod, HttpMethod.Delete);
             AddAuthorization(request);
 
-	        request.GetResponse();
+            _client.SendAsync(request).Wait();
 	    }
 
         private void Put(string aMethod)
         {
-            var request = CreateRequest(aMethod);
-            request.Method = "PUT";
+            var request = CreateRequest(aMethod, HttpMethod.Put);
             AddAuthorization(request);
 
-            request.ContentLength = 0;
-
-            request.GetResponse();
+            _client.SendAsync(request).Wait();
         }
 
         private string GetJson(string aMethod)
 		{
-		    var request = CreateRequest(aMethod);
-			request.Method = WebRequestMethods.Http.Get;
-			request.Accept = "application/json";
+		    var request = CreateRequest(aMethod, HttpMethod.Get);
+			request.Headers.Add("Accept", "application/json");
 
-			var response = request.GetResponse();
-			using (var sr = new StreamReader(response.GetResponseStream()))
-			{
-				var json = sr.ReadToEnd();
-				return json;
-			}
-		}
+            var response = _client.SendAsync(request).Result;
+            return response.Content.ReadAsStringAsync().Result;
+        }
 
 		private string PostJson(string aMethod, string aJson, bool needAuthorization = false)
 		{
-		    var request = CreateRequest(aMethod);
-			request.Method = WebRequestMethods.Http.Post;
-			request.Accept = "application/json";
-			request.ContentType = "application/json";
-
+		    var request = CreateRequest(aMethod, HttpMethod.Post, aJson);
+            request.Headers.Add("Accept", "application/json");
+            
             if (needAuthorization)
                 AddAuthorization(request);
 
-            using (var sw = new StreamWriter(request.GetRequestStream()))
-			{
-				sw.Write(aJson);
-			}
+            var response = _client.SendAsync(request).Result;
+            return response.Content.ReadAsStringAsync().Result;
 
-			var response = request.GetResponse();
-			using (var sr = new StreamReader(response.GetResponseStream()))
-			{
-				var json = sr.ReadToEnd();
-				return json;
-			}
-		}
+        }
 
-	    private HttpWebRequest CreateRequest(string aMethod)
+        private HttpRequestMessage CreateRequest(string aMethod, HttpMethod httpMethod, string aJson = null) =>
+            new HttpRequestMessage(httpMethod, new Uri(ServerUrl, aMethod))
+            {
+                Content = aJson != null
+                    ? new StringContent(aJson, Encoding.UTF8, "application/json")
+                    : null
+            };
+        
+
+	    private void AddAuthorization(HttpRequestMessage request)
 	    {
-	        var uri = new Uri(ServerUrl, aMethod);
-	        var request = (HttpWebRequest) WebRequest.Create(uri);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            return request;
-	    }
-
-	    private void AddAuthorization(HttpWebRequest request)
-	    {
-	        request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {AuthToken}");
+	        request.Headers.Add("Authorization", $"Bearer {AuthToken}");
         }
 	}
 }
