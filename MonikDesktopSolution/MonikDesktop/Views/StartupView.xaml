@@ -47,7 +47,7 @@
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Column="0" Margin="5,0,5,0" Width="26" Height="26" ToolTip="Reload cache" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
+        <Button Grid.Column="0" Margin="5,0,5,0" Width="26" Height="26" ToolTip="Reload cache" Style="{DynamicResource MahApps.Styles.Button.Circle}">
           <Button.Command>
             <Binding Path="RefreshCommand"/>
           </Button.Command>

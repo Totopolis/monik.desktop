@@ -49,16 +49,16 @@
               <DataTrigger.Binding>
                 <Binding Path="IsSelected" RelativeSource="{x:Static RelativeSource.Self}"/>
               </DataTrigger.Binding>
-              <Setter Property="Background" Value="{DynamicResource MetroDataGrid.HighlightBrush}"/>
-              <Setter Property="BorderBrush" Value="{DynamicResource MetroDataGrid.HighlightBrush}"/>
-              <Setter Property="Foreground" Value="{DynamicResource MetroDataGrid.HighlightTextBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.DataGrid.Highlight}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.DataGrid.Highlight}"/>
+              <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.DataGrid.HighlightText}"/>
             </DataTrigger>
             <DataTrigger Value="True">
               <DataTrigger.Binding>
                 <Binding Path="IsMouseOver" RelativeSource="{x:Static RelativeSource.Self}"/>
               </DataTrigger.Binding>
-              <Setter Property="Background" Value="{DynamicResource MetroDataGrid.MouseOverHighlightBrush}"/>
-              <Setter Property="BorderBrush" Value="{DynamicResource MetroDataGrid.MouseOverHighlightBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.DataGrid.MouseOverHighlight}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.DataGrid.MouseOverHighlight}"/>
             </DataTrigger>
           </Style.Triggers>
         </Style>
