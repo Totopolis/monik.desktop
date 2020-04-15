@@ -10,7 +10,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="3.7.0" />
-    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="Ui.Wpf.Common" Version="2.0.0" />
     <PackageReference Include="ReactiveUI.WPF" Version="11.3.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="11.3.1" />
