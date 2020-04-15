@@ -15,6 +15,22 @@
           <Style.Triggers>
             <MultiDataTrigger>
               <MultiDataTrigger.Conditions>
+                <Condition Value="0">
+                  <Condition.Binding>
+                    <Binding Path="Severity"/>
+                  </Condition.Binding>
+                </Condition>
+                <Condition Value="True">
+                  <Condition.Binding>
+                    <Binding Path="Data.Model.Colorized" Source="{StaticResource Proxy}"/>
+                  </Condition.Binding>
+                </Condition>
+              </MultiDataTrigger.Conditions>
+              <Setter Property="Foreground" Value="White"/>
+              <Setter Property="Background" Value="#FFB800C1"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
                 <Condition Value="10">
                   <Condition.Binding>
                     <Binding Path="Severity"/>
