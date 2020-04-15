@@ -1,0 +1,33 @@
+<ns1:ViewUserControl x:Class="MonikDesktop.Views.LogDescriptionView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Common.Converters" xmlns:ns1="clr-namespace:MonikDesktop.Views">
+  <ns1:ViewUserControl.Resources>
+    <ns0:SeverityToNameConverter x:Key="SeverityToName"/>
+    <ns0:LevelToNameConverter x:Key="LevelToName"/>
+  </ns1:ViewUserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0" Orientation="Horizontal">
+      <Label>Created:</Label>
+      <TextBox IsReadOnly="True" Text="{Binding SelectedItem.CreatedStr}"/>
+      <Label>Received:</Label>
+      <TextBox IsReadOnly="True" Text="{Binding SelectedItem.ReceivedStr}"/>
+    </StackPanel>
+    <StackPanel Grid.Row="1" Orientation="Horizontal">
+      <Label>Source:</Label>
+      <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Source.Name}"/>
+      <TextBox>.</TextBox>
+      <TextBox IsReadOnly="True" Text="{Binding SelectedItem.Instance.Name}"/>
+    </StackPanel>
+    <StackPanel Grid.Row="2" Orientation="Horizontal">
+      <Label>Level</Label>
+      <TextBox IsReadOnly="True" Text="{Binding Path=SelectedItem.Level, Converter={StaticResource LevelToName}}"/>
+      <Label>Severity</Label>
+      <TextBox IsReadOnly="True" Text="{Binding Path=SelectedItem.Severity, Converter={StaticResource SeverityToName}}"/>
+    </StackPanel>
+    <TextBox Grid.Row="3" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True" Text="{Binding SelectedItem.Body}"/>
+  </Grid>
+</ns1:ViewUserControl>

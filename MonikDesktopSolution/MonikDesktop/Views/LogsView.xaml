@@ -1,0 +1,77 @@
+<ns0:ViewUserControl x:Class="MonikDesktop.Views.LogsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:MonikDesktop.Common.Converters">
+  <ns0:ViewUserControl.Resources>
+    <ns0:BindingProxy x:Key="Proxy">
+      <ns0:BindingProxy.Data>
+        <Binding/>
+      </ns0:BindingProxy.Data>
+    </ns0:BindingProxy>
+    <ns1:SeverityToNameConverter x:Key="SeverityToName"/>
+    <ns1:LevelToNameConverter x:Key="LevelToName"/>
+  </ns0:ViewUserControl.Resources>
+  <Grid>
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" SelectedItem="{Binding Model.SelectedItem}" ItemsSource="{Binding LogsList}" x:Name="MainGrid">
+      <DataGrid.RowStyle>
+        <Style BasedOn="{StaticResource MahApps.Styles.DataGridRow}" TargetType="{x:Type DataGridRow}">
+          <Style.Triggers>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Value="10">
+                  <Condition.Binding>
+                    <Binding Path="Severity"/>
+                  </Condition.Binding>
+                </Condition>
+                <Condition Value="True">
+                  <Condition.Binding>
+                    <Binding Path="Data.Model.Colorized" Source="{StaticResource Proxy}"/>
+                  </Condition.Binding>
+                </Condition>
+              </MultiDataTrigger.Conditions>
+              <Setter Property="Foreground" Value="White"/>
+              <Setter Property="Background" Value="#FFFF5959"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Value="20">
+                  <Condition.Binding>
+                    <Binding Path="Severity"/>
+                  </Condition.Binding>
+                </Condition>
+                <Condition Value="True">
+                  <Condition.Binding>
+                    <Binding Path="Data.Model.Colorized" Source="{StaticResource Proxy}"/>
+                  </Condition.Binding>
+                </Condition>
+              </MultiDataTrigger.Conditions>
+              <Setter Property="Foreground" Value="Black"/>
+              <Setter Property="Background" Value="#FFFFFF64"/>
+            </MultiDataTrigger>
+            <DataTrigger Value="True">
+              <DataTrigger.Binding>
+                <Binding Path="IsSelected" RelativeSource="{x:Static RelativeSource.Self}"/>
+              </DataTrigger.Binding>
+              <Setter Property="Background" Value="{DynamicResource MetroDataGrid.HighlightBrush}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource MetroDataGrid.HighlightBrush}"/>
+              <Setter Property="Foreground" Value="{DynamicResource MetroDataGrid.HighlightTextBrush}"/>
+            </DataTrigger>
+            <DataTrigger Value="True">
+              <DataTrigger.Binding>
+                <Binding Path="IsMouseOver" RelativeSource="{x:Static RelativeSource.Self}"/>
+              </DataTrigger.Binding>
+              <Setter Property="Background" Value="{DynamicResource MetroDataGrid.MouseOverHighlightBrush}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource MetroDataGrid.MouseOverHighlightBrush}"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </DataGrid.RowStyle>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="Auto"/>
+        <DataGridTextColumn Header="Created" Binding="{Binding CreatedStr}" Width="Auto"/>
+        <DataGridTextColumn Header="Source" Binding="{Binding Instance.Source.Name}" Width="Auto"/>
+        <DataGridTextColumn Header="Instance" Binding="{Binding Instance.Name}" Width="Auto"/>
+        <DataGridTextColumn Header="Level" Binding="{Binding Path=Level, Converter={StaticResource LevelToName}}" Width="Auto"/>
+        <DataGridTextColumn Header="Severity" Binding="{Binding Path=Severity, Converter={StaticResource SeverityToName}}" Width="Auto"/>
+        <DataGridTextColumn Header="Message" Binding="{Binding Body}" Width="*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</ns0:ViewUserControl>

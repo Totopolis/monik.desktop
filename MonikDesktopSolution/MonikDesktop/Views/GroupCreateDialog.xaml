@@ -1,0 +1,74 @@
+<ns2:CustomDialog x:Class="MonikDesktop.Views.GroupCreateDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" xmlns:ns2="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro" Title="New Group">
+  <Grid Margin="0 10 0 0">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock VerticalAlignment="Center" Text="Name" TextWrapping="Wrap" Grid.Row="0" Grid.Column="0" Margin="0 5 20 0">
+        <TextBlock.FontSize>
+          <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.FontSize>
+        <TextBlock.Foreground>
+          <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.Foreground>
+      </TextBlock>
+      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource AccentColorBrush}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupNameTextBox">
+        <TextBox.FontSize>
+          <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.FontSize>
+        <TextBox.Foreground>
+          <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.Foreground>
+        <TextBox.Text>
+          <Binding Path="InputName" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.Text>
+      </TextBox>
+      <TextBlock VerticalAlignment="Center" Text="Description" TextWrapping="Wrap" Grid.Row="1" Grid.Column="0" Margin="0 5 20 0">
+        <TextBlock.FontSize>
+          <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.FontSize>
+        <TextBlock.Foreground>
+          <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.Foreground>
+      </TextBlock>
+      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource AccentColorBrush}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupDescriptionTextBox">
+        <TextBox.FontSize>
+          <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.FontSize>
+        <TextBox.Foreground>
+          <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.Foreground>
+        <TextBox.Text>
+          <Binding Path="InputDescription" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.Text>
+      </TextBox>
+      <TextBlock VerticalAlignment="Center" Text="Is Default" TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" Margin="0 10 20 0">
+        <TextBlock.FontSize>
+          <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.FontSize>
+        <TextBlock.Foreground>
+          <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBlock.Foreground>
+      </TextBlock>
+      <CheckBox x:Name="PART_GroupIsDefaultCheckBox" Grid.Row="2" Grid.Column="1" Margin="0 10 0 0" VerticalAlignment="Center">
+        <CheckBox.IsChecked>
+          <Binding Path="InputIsDefault" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
+        </CheckBox.IsChecked>
+      </CheckBox>
+    </Grid>
+    <StackPanel Grid.Row="1" Height="85" HorizontalAlignment="Right" Orientation="Horizontal">
+      <Button x:Name="PART_AffirmativeButton" Height="35" MinWidth="80" Margin="0 0 5 0" Content="Create" Style="{DynamicResource AccentedDialogSquareButton}"/>
+      <Button x:Name="PART_NegativeButton" Height="35" MinWidth="80" Margin="5 0 5 0" Content="Cancel"/>
+    </StackPanel>
+  </Grid>
+</ns2:CustomDialog>

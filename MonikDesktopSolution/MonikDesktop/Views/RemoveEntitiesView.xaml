@@ -1,0 +1,407 @@
+<ns0:ViewUserControl x:Class="MonikDesktop.Views.RemoveEntitiesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MonikDesktop.Views" xmlns:ns1="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" xmlns:ns2="clr-namespace:MonikDesktop.Common.ModelsApp"
+                     xmlns:ammySidekick="clr-namespace:AmmySidekick">
+  <ns0:ViewUserControl.Resources>
+    <ns0:BindingProxy x:Key="Proxy">
+      <ns0:BindingProxy.Data>
+        <Binding/>
+      </ns0:BindingProxy.Data>
+    </ns0:BindingProxy>
+  </ns0:ViewUserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid Row="1" Margin="5">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <TextBox Grid.Row="0" Margin="10,0,10,0" ns1:TextBoxHelper.ClearTextButton="True" ns1:TextBoxHelper.Watermark="Search..." ns1:TextBoxHelper.UseFloatingWatermark="True">
+        <TextBox.Text>
+          <Binding Path="FilterText" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        </TextBox.Text>
+      </TextBox>
+      <ns1:MetroAnimatedTabControl Grid.Row="1" Margin="10" ns1:TabControlHelper.Underlined="TabPanel" TabStripPlacement="Top">
+        <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Tree View">
+          <TreeView x:Name="RemovableEntities" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <TreeView.ItemsSource>
+              <Binding Path="Sources"/>
+            </TreeView.ItemsSource>
+            <TreeView.Resources>
+              <HierarchicalDataTemplate DataType="{x:Type ns2:Source}">
+                <HierarchicalDataTemplate.ItemsSource>
+                  <Binding Path="Instances"/>
+                </HierarchicalDataTemplate.ItemsSource>
+                <StackPanel Orientation="Horizontal">
+                  <Border Margin="0,0,10,0" Padding="5, 1, 5, 2" Background="DeepSkyBlue" CornerRadius="5">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="White" Text="Source"/>
+                  </Border>
+                  <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">
+                    <TextBlock.Text>
+                      <Binding Path="Name"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <TextBlock VerticalAlignment="Center" Foreground="LightGray">
+                    <TextBlock.Text>
+                      <Binding Path="ID" StringFormat="(id: {0})"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <Border MinWidth="19" Margin="10,0,10,0" Padding="5, 1, 5, 2" Background="Gold" CornerRadius="10">
+                    <TextBlock x:Name="AmountText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="Black">
+                      <TextBlock.Text>
+                        <Binding Path="Instances.Count"/>
+                      </TextBlock.Text>
+                    </TextBlock>
+                    <Border.Visibility>
+                      <Binding Path="Text" ElementName="AmountText" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Or&quot;&gt;&lt;staticcall method=&quot;IsNullOrEmpty&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/staticcall&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;prim val=&quot;0&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+                    </Border.Visibility>
+                  </Border>
+                  <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
+                    <Button.Style>
+                      <Style TargetType="{x:Type Button}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                              <Border x:Name="button" Padding="5,0,5,1" CornerRadius="5" Background="Red" BorderBrush="Black" BorderThickness="1">
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{TemplateBinding Button.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Background" Value="Brown" TargetName="button"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                  <Setter Property="Background" Value="DarkRed" TargetName="button"/>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="Opacity" Value="0"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}" Value="True">
+                            <DataTrigger.EnterActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                            <Setter Property="Opacity" Value="1"/>
+                          </DataTrigger>
+                          <Trigger Property="Opacity" Value="0">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                          </Trigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Button.Style>
+                    <Button.Command>
+                      <Binding Path="Data.RemoveSourceCommand" Source="{StaticResource Proxy}"/>
+                    </Button.Command>X
+                  </Button>
+                </StackPanel>
+              </HierarchicalDataTemplate>
+              <HierarchicalDataTemplate DataType="{x:Type ns2:Instance}">
+                <HierarchicalDataTemplate.ItemsSource>
+                  <Binding Path="Metrics"/>
+                </HierarchicalDataTemplate.ItemsSource>
+                <StackPanel Orientation="Horizontal">
+                  <Border Margin="0,0,10,0" Padding="5, 1, 5, 2" Background="LimeGreen" CornerRadius="5">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="White" Text="Instance"/>
+                  </Border>
+                  <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">
+                    <TextBlock.Text>
+                      <Binding Path="Name"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <TextBlock VerticalAlignment="Center" Foreground="LightGray">
+                    <TextBlock.Text>
+                      <Binding Path="ID" StringFormat="(id: {0})"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <Border MinWidth="19" Margin="10,0,10,0" Padding="5, 1, 5, 2" Background="Gold" CornerRadius="10">
+                    <TextBlock x:Name="AmountText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="Black">
+                      <TextBlock.Text>
+                        <Binding Path="Metrics.Count"/>
+                      </TextBlock.Text>
+                    </TextBlock>
+                    <Border.Visibility>
+                      <Binding Path="Text" ElementName="AmountText" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Or&quot;&gt;&lt;staticcall method=&quot;IsNullOrEmpty&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/staticcall&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;prim val=&quot;0&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+                    </Border.Visibility>
+                  </Border>
+                  <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
+                    <Button.Style>
+                      <Style TargetType="{x:Type Button}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                              <Border x:Name="button" Padding="5,0,5,1" CornerRadius="5" Background="Red" BorderBrush="Black" BorderThickness="1">
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{TemplateBinding Button.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Background" Value="Brown" TargetName="button"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                  <Setter Property="Background" Value="DarkRed" TargetName="button"/>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="Opacity" Value="0"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}" Value="True">
+                            <DataTrigger.EnterActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                            <Setter Property="Opacity" Value="1"/>
+                          </DataTrigger>
+                          <Trigger Property="Opacity" Value="0">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                          </Trigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Button.Style>
+                    <Button.Command>
+                      <Binding Path="Data.RemoveInstanceCommand" Source="{StaticResource Proxy}"/>
+                    </Button.Command>X
+                  </Button>
+                </StackPanel>
+              </HierarchicalDataTemplate>
+              <DataTemplate DataType="{x:Type ns2:Metric}">
+                <StackPanel Orientation="Horizontal">
+                  <Border Margin="0,0,10,0" Padding="5, 1, 5, 2" Background="OrangeRed" CornerRadius="5">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="White" Text="Metric"/>
+                  </Border>
+                  <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">
+                    <TextBlock.Text>
+                      <Binding Path="Name"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <TextBlock VerticalAlignment="Center" Foreground="LightGray">
+                    <TextBlock.Text>
+                      <Binding Path="ID" StringFormat="(id: {0})"/>
+                    </TextBlock.Text>
+                  </TextBlock>
+                  <Border MinWidth="19" Margin="10,0,10,0" Padding="5, 1, 5, 2" Background="Gold" CornerRadius="10">
+                    <TextBlock x:Name="AmountText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="Black"/>
+                    <Border.Visibility>
+                      <Binding Path="Text" ElementName="AmountText" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;0&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;binary op=&quot;Or&quot;&gt;&lt;staticcall method=&quot;IsNullOrEmpty&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/staticcall&gt;&lt;binary op=&quot;Equal&quot;&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;prim val=&quot;0&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/binary&gt;&lt;/binary&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+                    </Border.Visibility>
+                  </Border>
+                  <Button Margin="10,0,0,0">
+                    <Button.CommandParameter>
+                      <Binding/>
+                    </Button.CommandParameter>
+                    <Button.Style>
+                      <Style TargetType="{x:Type Button}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                              <Border x:Name="button" Padding="5,0,5,1" CornerRadius="5" Background="Red" BorderBrush="Black" BorderThickness="1">
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{TemplateBinding Button.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Background" Value="Brown" TargetName="button"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                  <Setter Property="Background" Value="DarkRed" TargetName="button"/>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="Opacity" Value="0"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}},Path=IsMouseOver}" Value="True">
+                            <DataTrigger.EnterActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                              <BeginStoryboard>
+                                <Storyboard>
+                                  <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                            <Setter Property="Opacity" Value="1"/>
+                          </DataTrigger>
+                          <Trigger Property="Opacity" Value="0">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                          </Trigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Button.Style>
+                    <Button.Command>
+                      <Binding Path="Data.RemoveMetricCommand" Source="{StaticResource Proxy}"/>
+                    </Button.Command>X
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </TreeView.Resources>
+          </TreeView>
+        </ns1:MetroTabItem>
+        <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Sources">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="SourcesGrid">
+            <DataGrid.ItemsSource>
+              <Binding Path="Sources"/>
+            </DataGrid.ItemsSource>
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="ID" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="ID"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Source" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Instances" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Instances.Count"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button>Remove
+                      <Button.Command>
+                        <Binding Path="Data.RemoveSourceCommand" Source="{StaticResource Proxy}"/>
+                      </Button.Command>
+                      <Button.CommandParameter>
+                        <Binding/>
+                      </Button.CommandParameter>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+        </ns1:MetroTabItem>
+        <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Instances">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="InstancesGrid">
+            <DataGrid.ItemsSource>
+              <Binding Path="Instances"/>
+            </DataGrid.ItemsSource>
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="ID" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="ID"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Source" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Source.Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Instance" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Metrics" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Metrics.Count"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button>Remove
+                      <Button.Command>
+                        <Binding Path="Data.RemoveInstanceCommand" Source="{StaticResource Proxy}"/>
+                      </Button.Command>
+                      <Button.CommandParameter>
+                        <Binding/>
+                      </Button.CommandParameter>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+        </ns1:MetroTabItem>
+        <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Metrics">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="MetricsGrid">
+            <DataGrid.ItemsSource>
+              <Binding Path="Metrics"/>
+            </DataGrid.ItemsSource>
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="ID" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="ID"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Source" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Instance.Source.Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Instance" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Instance.Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTextColumn Header="Metric" Width="Auto">
+                <DataGridTextColumn.Binding>
+                  <Binding Path="Name"/>
+                </DataGridTextColumn.Binding>
+              </DataGridTextColumn>
+              <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button>Remove
+                      <Button.Command>
+                        <Binding Path="Data.RemoveMetricCommand" Source="{StaticResource Proxy}"/>
+                      </Button.Command>
+                      <Button.CommandParameter>
+                        <Binding/>
+                      </Button.CommandParameter>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+        </ns1:MetroTabItem>
+      </ns1:MetroAnimatedTabControl>
+    </Grid>
+  </Grid>
+</ns0:ViewUserControl>

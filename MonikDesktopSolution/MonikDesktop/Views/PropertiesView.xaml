@@ -1,0 +1,163 @@
+<ns2:ViewUserControl x:Class="MonikDesktop.Views.PropertiesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                     xmlns:ns2="clr-namespace:MonikDesktop.Views"
+                     xmlns:ammySidekick="clr-namespace:AmmySidekick">
+  <Grid>
+    <StackPanel Orientation="Vertical" Margin="3">
+      <TextBlock Margin="5">
+        <TextBlock.Text>
+          <Binding Path="Model.Cache.Service.ServerUrl"/>
+        </TextBlock.Text>
+      </TextBlock>
+      <Separator/>
+      <Button Margin="5">
+        <Button.Command>
+          <Binding Path="ShowWindow.StartCommand"/>
+        </Button.Command>Start
+      </Button>
+      <Button Margin="5">
+        <Button.Command>
+          <Binding Path="ShowWindow.StopCommand"/>
+        </Button.Command>Stop
+      </Button>
+      <Label>Caption</Label>
+      <TextBox Height="20">
+        <TextBox.Text>
+          <Binding Path="Model.Caption"/>
+        </TextBox.Text>
+      </TextBox>
+      <Label>Refresh period (sec.)</Label>
+      <ns0:NumericUpDown>
+        <ns0:NumericUpDown.Value>
+          <Binding Path="Model.RefreshSec"/>
+        </ns0:NumericUpDown.Value>
+      </ns0:NumericUpDown>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="LogsVisible" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </StackPanel.Visibility>
+        <Label>Level filter</Label>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="LevelTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.Level" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+        <Label>Severity Cutoff</Label>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="SeverityCutoffTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.SeverityCutoff" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+        <Label>Top</Label>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="TopTypes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.Top" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+        <CheckBox Margin="5,10,0,0">
+          <CheckBox.IsChecked>
+            <Binding Path="Model.AutoScroll"/>
+          </CheckBox.IsChecked>AutoScroll
+        </CheckBox>
+        <CheckBox Margin="5,5,0,0">
+          <CheckBox.IsChecked>
+            <Binding Path="Model.Colorized"/>
+          </CheckBox.IsChecked>Colorized
+        </CheckBox>
+        <CheckBox Margin="5,5,0,5">
+          <CheckBox.IsChecked>
+            <Binding Path="Model.GroupDuplicatingItems" Mode="TwoWay"/>
+          </CheckBox.IsChecked>GroupDoublingLogs
+        </CheckBox>
+      </StackPanel>
+      <Label>Datetime format</Label>
+      <ComboBox>
+        <ComboBox.ItemsSource>
+          <Binding Path="DatetimeFormats"/>
+        </ComboBox.ItemsSource>
+        <ComboBox.SelectedValue>
+          <Binding Path="Model.DateTimeFormat"/>
+        </ComboBox.SelectedValue>
+      </ComboBox>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Style>
+          <Style TargetType="{x:Type StackPanel}">
+            <Style.Triggers>
+              <DataTrigger Value="False">
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <DataTrigger.Binding>
+                  <Binding Path="LogsVisible"/>
+                </DataTrigger.Binding>
+              </DataTrigger>
+              <DataTrigger Value="False">
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <DataTrigger.Binding>
+                  <Binding Path="Model.GroupDuplicatingItems"/>
+                </DataTrigger.Binding>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <Label>Duplicated Datetime format</Label>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="DatetimeFormats"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.DuplicatedDateTimeFormat"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+      </StackPanel>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="KeepAlivesVisible" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </StackPanel.Visibility>
+        <Label>Keep Alive Warning period (sec.)</Label>
+        <ns0:NumericUpDown>
+          <ns0:NumericUpDown.Value>
+            <Binding Path="Model.KeepAliveWarningPeriod"/>
+          </ns0:NumericUpDown.Value>
+        </ns0:NumericUpDown>
+      </StackPanel>
+      <StackPanel Orientation="Vertical" Margin="0">
+        <StackPanel.Visibility>
+          <Binding Path="MetricsVisible" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+        </StackPanel.Visibility>
+        <Label>Metrics Mode</Label>
+        <ComboBox>
+          <ComboBox.ItemsSource>
+            <Binding Path="MetricTerminalModes"/>
+          </ComboBox.ItemsSource>
+          <ComboBox.SelectedValue>
+            <Binding Path="Model.MetricTerminalMode" Mode="TwoWay"/>
+          </ComboBox.SelectedValue>
+        </ComboBox>
+        <StackPanel Orientation="Vertical" Margin="0">
+          <StackPanel.Visibility>
+            <Binding Path="Model.MetricDiagramVisible" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;1&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
+          </StackPanel.Visibility>
+          <Label>History depth (in hours)</Label>
+          <ns0:NumericUpDown Minimum="1" Maximum="333">
+            <ns0:NumericUpDown.Value>
+              <Binding Path="Model.MetricHistoryDepthHours"/>
+            </ns0:NumericUpDown.Value>
+          </ns0:NumericUpDown>
+          <Label>History skip 5 min intervals</Label>
+          <ns0:NumericUpDown>
+            <ns0:NumericUpDown.Value>
+              <Binding Path="Model.MetricHistorySkip5Min"/>
+            </ns0:NumericUpDown.Value>
+          </ns0:NumericUpDown>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</ns2:ViewUserControl>

@@ -33,7 +33,7 @@ namespace MonikDesktop.ViewModels
         [Reactive] public string AppTitle { get; set; }
         [Reactive] public string AuthTokenDescription { get; set; }
 
-        public List<string> Accents { get; } = ThemeManager.Accents.Select(a => a.Name).ToList();
+        public List<string> Accents { get; } = ThemeManager.ColorSchemes.Select(a => a.Name).ToList();
         [Reactive] public string Accent { get; set; }
         [Reactive] public bool IsDark { get; set; }
 
@@ -320,9 +320,9 @@ namespace MonikDesktop.ViewModels
                 Settings.Default.Save();
             }
 
-            ThemeManager.ChangeAppStyle(Application.Current,
-                ThemeManager.GetAccent(Accent),
-                ThemeManager.GetAppTheme(IsDark ? "BaseDark" : "BaseLight"));
+            ThemeManager.ChangeTheme(Application.Current,
+                IsDark ? ThemeManager.BaseColorDark : ThemeManager.BaseColorLight,
+                Accent);
         }
     }
 }
