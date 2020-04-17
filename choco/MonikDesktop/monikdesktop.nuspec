@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>monikdesktop</id>
+    <version>$version$</version>
+    <title>Monik Desktop Client</title>
+    <authors>Totopolis</authors>
+    <owners>Totopolis</owners>
+    <licenseUrl>https://github.com/Totopolis/monik.desktop/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Totopolis/monik.desktop</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Monik Desktop Client is an application for interaction with Monik service
+      Helps to access Monik's logs, metrics and keepalives
+      Supports Monik's entities management
+    </description>
+    <summary>Desktop application to access Monik logs, metrics and keepalives</summary>
+    <releaseNotes>https://github.com/Totopolis/monik.desktop/releases</releaseNotes>
+  </metadata>
+  <files>
+    <file src="..\..\MonikDesktopSolution\MonikDesktop\bin\Release\netcoreapp3.1\win-x64\publish\**\*.*" target="" />
+    <file src="MonikDesktop.exe.gui" />
+    <file src="tools\**" target="tools" />
+    <file src="..\..\LICENSE" target="tools\LICENSE.txt" />
+  </files>
+</package>
