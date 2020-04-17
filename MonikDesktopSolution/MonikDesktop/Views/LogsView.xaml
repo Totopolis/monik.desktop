@@ -9,7 +9,7 @@
     <ns1:LevelToNameConverter x:Key="LevelToName"/>
   </ns0:ViewUserControl.Resources>
   <Grid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" SelectedItem="{Binding Model.SelectedItem}" ItemsSource="{Binding LogsList}" x:Name="MainGrid">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" SelectedItem="{Binding Model.SelectedItem}" ItemsSource="{Binding LogsList}" x:Name="MainGrid">
       <DataGrid.RowStyle>
         <Style BasedOn="{StaticResource MahApps.Styles.DataGridRow}" TargetType="{x:Type DataGridRow}">
           <Style.Triggers>

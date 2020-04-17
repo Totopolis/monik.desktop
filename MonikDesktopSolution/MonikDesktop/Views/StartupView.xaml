@@ -132,7 +132,7 @@
           <Binding Path="UpdateAuthToken" UpdateSourceTrigger="LostFocus" ValidatesOnExceptions="True"/>
         </ComboBox.Text>
       </ComboBox>
-      <TextBlock Margin="3" Foreground="{DynamicResource GrayBrush4}">
+      <TextBlock Margin="3" Foreground="{DynamicResource MahApps.Brushes.Gray4}">
         <TextBlock.Visibility>
           <Binding Path="AuthTokenDescription" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;5&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;staticcall method=&quot;IsNullOrEmpty&quot;&gt;&lt;typeinfo typename=&quot;System.String&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/staticcall&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;val&quot; type=&quot;System.String&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
         </TextBlock.Visibility>
@@ -152,7 +152,7 @@
         </Button.Command>Manage groups
       </Button>
     </StackPanel>
-    <Grid Background="{DynamicResource WhiteBrush}" Opacity="0.75">
+    <Grid Background="{DynamicResource MahApps.Brushes.White}" Opacity="0.75">
       <Grid.Visibility>
         <Binding Path="IsBusy" Converter="{x:Static ammySidekick:ExpressionConverter.Instance}" ConverterParameter="&lt;expr id=&quot;6&quot;&gt;&lt;lambda isaction=&quot;False&quot;&gt;&lt;ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;prim val=&quot;System.Windows.Visibility.Visible&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;prim val=&quot;System.Windows.Visibility.Collapsed&quot; isnull=&quot;False&quot;&gt;&lt;typeinfo typename=&quot;System.Windows.Visibility&quot; isarray=&quot;False&quot;&gt;&lt;/typeinfo&gt;&lt;/prim&gt;&lt;/ternary&gt;&lt;parameter name=&quot;isBusy&quot; type=&quot;System.Boolean&quot; /&gt;&lt;/lambda&gt;&lt;/expr&gt;"/>
       </Grid.Visibility>

@@ -22,7 +22,7 @@
           <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
         </TextBlock.Foreground>
       </TextBlock>
-      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource AccentColorBrush}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupNameTextBox">
+      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource MahApps.Brushes.Accent}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupNameTextBox">
         <TextBox.FontSize>
           <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
         </TextBox.FontSize>
@@ -41,7 +41,7 @@
           <Binding Path="Foreground" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
         </TextBlock.Foreground>
       </TextBlock>
-      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource AccentColorBrush}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupDescriptionTextBox">
+      <TextBox ns1:ControlsHelper.FocusBorderBrush="{DynamicResource MahApps.Brushes.Accent}" ns1:TextBoxHelper.SelectAllOnFocus="True" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Margin="0 5 0 0" x:Name="PART_GroupDescriptionTextBox">
         <TextBox.FontSize>
           <Binding Path="DialogMessageFontSize" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ns0:GroupCreateDialog}}" UpdateSourceTrigger="PropertyChanged"/>
         </TextBox.FontSize>
@@ -67,7 +67,7 @@
       </CheckBox>
     </Grid>
     <StackPanel Grid.Row="1" Height="85" HorizontalAlignment="Right" Orientation="Horizontal">
-      <Button x:Name="PART_AffirmativeButton" Height="35" MinWidth="80" Margin="0 0 5 0" Content="Create" Style="{DynamicResource AccentedDialogSquareButton}"/>
+      <Button x:Name="PART_AffirmativeButton" Height="35" MinWidth="80" Margin="0 0 5 0" Content="Create" Style="{DynamicResource MahApps.Styles.Button.Dialogs.Accent}"/>
       <Button x:Name="PART_NegativeButton" Height="35" MinWidth="80" Margin="5 0 5 0" Content="Cancel"/>
     </StackPanel>
   </Grid>

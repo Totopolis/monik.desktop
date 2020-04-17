@@ -4,7 +4,7 @@
     <ns0:LevelToNameConverter x:Key="LevelToName"/>
   </ns1:ViewUserControl.Resources>
   <Grid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" ItemsSource="{Binding KeepAliveList}" x:Name="MainGrid">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="20" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" ItemsSource="{Binding KeepAliveList}" x:Name="MainGrid">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Source" Binding="{Binding Instance.Source.Name}" Width="Auto"/>
         <DataGridTextColumn Header="Instance" Binding="{Binding Instance.Name}" Width="Auto"/>

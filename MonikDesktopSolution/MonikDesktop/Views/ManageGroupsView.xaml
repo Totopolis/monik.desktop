@@ -25,7 +25,7 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <Border BorderBrush="{DynamicResource AccentBaseColorBrush}" BorderThickness="0,0,0,4" Grid.Column="1">
+      <Border BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}" BorderThickness="0,0,0,4" Grid.Column="1">
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Groups"/>
       </Border>
       <Button Grid.Column="2">
@@ -61,7 +61,7 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <Border BorderBrush="{DynamicResource AccentBaseColorBrush}" BorderThickness="0,0,0,4" Grid.Column="1">
+      <Border BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}" BorderThickness="0,0,0,4" Grid.Column="1">
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="In Group"/>
       </Border>
     </Grid>
@@ -91,11 +91,11 @@
           </Style>
         </Border.Style>
       </Border>
-      <Border BorderBrush="{DynamicResource AccentBaseColorBrush}" BorderThickness="0,0,0,4" Grid.Column="1">
+      <Border BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}" BorderThickness="0,0,0,4" Grid.Column="1">
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Without Group"/>
       </Border>
     </Grid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" Grid.Row="1" Grid.Column="0">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" Grid.Row="1" Grid.Column="0">
       <DataGrid.ItemsSource>
         <Binding Path="ListGroups"/>
       </DataGrid.ItemsSource>
@@ -191,7 +191,7 @@
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="InGroup" Grid.Row="1" Grid.Column="2">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>
@@ -213,7 +213,7 @@
         <Binding Path="ListInGroup"/>
       </DataGrid.ItemsSource>
     </DataGrid>
-    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
+    <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" PreviewMouseLeftButtonDown="GridMouseLeftButtonDown" PreviewMouseMove="GridMouseMove" Drop="GridDrop" DragEnter="GridDragEnter" DragOver="GridDragOver" AllowDrop="True" Tag="WithoutGroup" Grid.Row="1" Grid.Column="4">
       <DataGrid.Columns>
         <DataGridTextColumn Header="ID" Width="Auto">
           <DataGridTextColumn.Binding>

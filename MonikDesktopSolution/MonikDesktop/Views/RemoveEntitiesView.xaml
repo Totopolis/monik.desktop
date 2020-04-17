@@ -278,7 +278,7 @@
           </TreeView>
         </ns1:MetroTabItem>
         <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Sources">
-          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="SourcesGrid">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="SourcesGrid">
             <DataGrid.ItemsSource>
               <Binding Path="Sources"/>
             </DataGrid.ItemsSource>
@@ -316,7 +316,7 @@
           </DataGrid>
         </ns1:MetroTabItem>
         <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Instances">
-          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="InstancesGrid">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="InstancesGrid">
             <DataGrid.ItemsSource>
               <Binding Path="Instances"/>
             </DataGrid.ItemsSource>
@@ -359,7 +359,7 @@
           </DataGrid>
         </ns1:MetroTabItem>
         <ns1:MetroTabItem ns1:HeaderedControlHelper.HeaderFontSize="16" Header="Metrics">
-          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource SeperatorBrush}" VerticalGridLinesBrush="{DynamicResource SeperatorBrush}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="MetricsGrid">
+          <DataGrid IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" RowHeight="40" HorizontalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" VerticalGridLinesBrush="{DynamicResource MahApps.Brushes.Separator}" GridLinesVisibility="Horizontal" SelectionMode="Single" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" x:Name="MetricsGrid">
             <DataGrid.ItemsSource>
               <Binding Path="Metrics"/>
             </DataGrid.ItemsSource>
