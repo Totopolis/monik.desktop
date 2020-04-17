@@ -31,10 +31,7 @@ jobs:
         -s $env:MYGET_SOURCE
         -k ${{ secrets.MYGET_APIKEY }}
     - name: Package binaries
-      run: |
-        pushd $env:PUBLISH_PATH
-        zip MonikDesktop.$env:RELEASE_VERSION.zip .\*
-        popd
+      run: (cd $env:PUBLISH_PATH; zip MonikDesktop.$env:RELEASE_VERSION.zip .\*)
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
