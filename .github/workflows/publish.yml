@@ -7,8 +7,6 @@ on:
 jobs:
   publish:
     runs-on: windows-latest
-    env:
-      PUBLISH_PATH: MonikDesktopSolution\MonikDesktop\bin\Release\netcoreapp3.1\win-x64\publish
     steps:
     - name: Set env
       run: echo "##[set-env name=RELEASE_VERSION;]$($env:GITHUB_REF.substring(11))"
@@ -31,7 +29,10 @@ jobs:
         -s $env:MYGET_SOURCE
         -k ${{ secrets.MYGET_APIKEY }}
     - name: Package binaries
-      run: (cd $env:PUBLISH_PATH; zip MonikDesktop.$env:RELEASE_VERSION.zip .\*)
+      run: >
+        Compress-Archive
+        -Path MonikDesktopSolution\MonikDesktop\bin\Release\netcoreapp3.1\win-x64\publish\*
+        -DestinationPath MonikDesktop.$env:RELEASE_VERSION.zip
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
@@ -49,6 +50,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: $env:PUBLISH_PATH\MonikDesktop.$env:RELEASE_VERSION.zip
+        asset_path: MonikDesktop.$env:RELEASE_VERSION.zip
         asset_name: MonikDesktop.$env:RELEASE_VERSION.zip
         asset_content_type: application/zip
