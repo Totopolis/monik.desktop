@@ -21,6 +21,5 @@
     <file src="..\..\MonikDesktopSolution\MonikDesktop\bin\Release\netcoreapp3.1\win-x64\publish\**\*.*" target="" />
     <file src="MonikDesktop.exe.gui" />
     <file src="tools\**" target="tools" />
-    <file src="..\..\LICENSE" target="tools\LICENSE.txt" />
   </files>
 </package>
