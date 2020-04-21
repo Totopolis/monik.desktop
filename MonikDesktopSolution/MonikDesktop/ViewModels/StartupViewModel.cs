@@ -1,7 +1,6 @@
 ﻿using DynamicData;
 using MahApps.Metro;
 using MonikDesktop.Common.Interfaces;
-using MonikDesktop.Properties;
 using MonikDesktop.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -15,6 +14,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using MonikDesktop.Common.Config;
 using Ui.Wpf.Common;
 using Ui.Wpf.Common.ViewModels;
 
@@ -47,6 +47,9 @@ namespace MonikDesktop.ViewModels
             _shell = shell;
             _cacheProvider = cacheProvider;
             _window = window;
+
+            var appConfigStorage = new AppConfigStorage();
+            var config = appConfigStorage.Load();
             
             Title = "App settings";
 
@@ -58,26 +61,39 @@ namespace MonikDesktop.ViewModels
 
             // Theme
 
-            Accent = Settings.Default.Accent;
-            IsDark = Settings.Default.IsDark;
-            UpdateTheme(false);
+            Accent = config.Accent ?? "Blue";
+            IsDark = config.IsDark;
+            UpdateTheme();
 
             this.ObservableForProperty(x => x.Accent)
-                .Subscribe(_ => UpdateTheme());
+                .Subscribe(x =>
+                {
+                    config.Accent = x.Value;
+                    appConfigStorage.Save(config);
+                    UpdateTheme();
+                });
             this.ObservableForProperty(x => x.IsDark)
-                .Subscribe(_ => UpdateTheme());
+                .Subscribe(x =>
+                {
+                    config.IsDark = x.Value;
+                    appConfigStorage.Save(config);
+                    UpdateTheme();
+                });
 
             // Server Urls
 
-            var urls = Settings.Default.ServerUrl
+            var urls = config.ServerUrl?
                 .Split(';')
                 .Select(x => Uri.TryCreate(x, UriKind.Absolute, out var result) ? result : null as Uri)
                 .Where(x => x != null)
                 .ToArray();
 
             ServerUrlsSource = new SourceList<Uri>();
-            ServerUrlsSource.AddRange(urls);
-            ServerUrl = urls.FirstOrDefault();
+            if (urls != null)
+            {
+                ServerUrlsSource.AddRange(urls);
+                ServerUrl = urls.First();
+            }
 
             ServerUrlsSource
                 .Connect()
@@ -86,8 +102,8 @@ namespace MonikDesktop.ViewModels
                 .ToCollection()
                 .Subscribe(items =>
                 {
-                    Settings.Default.ServerUrl = string.Join(";", items);
-                    Settings.Default.Save();
+                    config.ServerUrl = string.Join(";", items);
+                    appConfigStorage.Save(config);
                 });
 
             this.WhenAnyValue(x => x.ServerUrl)
@@ -96,14 +112,17 @@ namespace MonikDesktop.ViewModels
 
             // Authorization Tokens
 
-            var tokens = Settings.Default.AuthToken
+            var tokens = config.AuthToken?
                 .Split(';')
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToArray();
 
             AuthTokensSource = new SourceList<string>();
-            AuthTokensSource.AddRange(tokens);
-            AuthToken = tokens.FirstOrDefault();
+            if (tokens != null)
+            {
+                AuthTokensSource.AddRange(tokens);
+                AuthToken = tokens.First();
+            }
 
             AuthTokensSource
                 .Connect()
@@ -112,8 +131,8 @@ namespace MonikDesktop.ViewModels
                 .ToCollection()
                 .Subscribe(items =>
                 {
-                    Settings.Default.AuthToken = string.Join(";", items);
-                    Settings.Default.Save();
+                    config.AuthToken = string.Join(";", items);
+                    appConfigStorage.Save(config);
                 });
 
             this.WhenAnyValue(x => x.AuthToken)
@@ -158,7 +177,7 @@ namespace MonikDesktop.ViewModels
 
         public string UpdateServerUrl
         {
-            get => ServerUrl.ToString();
+            get => ServerUrl?.ToString();
             set
             {
                 // will throw if Uri is incorrect
@@ -311,15 +330,8 @@ namespace MonikDesktop.ViewModels
             _shell.ShowTool<StartupView>(new ViewRequest("startup"));
         }
 
-        private void UpdateTheme(bool needToSave = true)
+        private void UpdateTheme()
         {
-            if (needToSave)
-            {
-                Settings.Default.Accent = Accent;
-                Settings.Default.IsDark = IsDark;
-                Settings.Default.Save();
-            }
-
             ThemeManager.ChangeTheme(Application.Current,
                 IsDark ? ThemeManager.BaseColorDark : ThemeManager.BaseColorLight,
                 Accent);
